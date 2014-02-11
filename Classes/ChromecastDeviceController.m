@@ -192,7 +192,7 @@ static NSString *const kReceiverAppID = @"YOUR_APP_ID_HERE";  //Replace with you
 }
 
 - (void)deviceManager:(GCKDeviceManager *)deviceManager
-    didFailToLaunchCastApplicationWithError:(NSError *)error {
+    didFailToConnectToApplicationWithError:(NSError *)error {
   [self showError:error];
 
   [self deviceDisconnected];
