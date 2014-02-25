@@ -16,7 +16,7 @@
                             <color key="textColor" red="0.99607849120000003" green="1" blue="0.99607849120000003" alpha="1" colorSpace="deviceRGB"/>
                         </textAttributes>
                     </navigationBar>
-                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="Hcf-iW-7vE" customClass="MiniPlayer">
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="Hcf-iW-7vE">
                         <rect key="frame" x="0.0" y="524" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </toolbar>
@@ -389,7 +389,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="H08-Zb-dfr"/>
-        <segue reference="BYP-uC-I0y"/>
+        <segue reference="2aK-Vl-c3F"/>
+        <segue reference="90r-3M-ZWY"/>
     </inferredMetricsTieBreakers>
 </document>

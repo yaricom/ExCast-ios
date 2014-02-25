@@ -92,6 +92,7 @@ static NSString *const kReceiverAppID = @"YOUR_APP_ID_HERE";  //Replace with you
 }
 
 - (void)connectToDevice:(GCKDevice *)device {
+  NSLog(@"Device address: %@:%d", device.ipAddress, (unsigned int) device.servicePort);
   self.selectedDevice = device;
 
   NSDictionary *info = [[NSBundle mainBundle] infoDictionary];
@@ -100,6 +101,15 @@ static NSString *const kReceiverAppID = @"YOUR_APP_ID_HERE";  //Replace with you
       [[GCKDeviceManager alloc] initWithDevice:self.selectedDevice clientPackageName:appIdentifier];
   self.deviceManager.delegate = self;
   [self.deviceManager connect];
+
+  // Start animating the cast connect images.
+  UIButton *chromecastButton = (UIButton *)self.chromecastBarButton.customView;
+  chromecastButton.tintColor = [UIColor whiteColor];
+  chromecastButton.imageView.animationImages =
+      @[ [UIImage imageNamed:@"icon_cast_on0.png"], [UIImage imageNamed:@"icon_cast_on1.png"],
+          [UIImage imageNamed:@"icon_cast_on2.png"], [UIImage imageNamed:@"icon_cast_on1.png"] ];
+  chromecastButton.imageView.animationDuration = 2;
+  [chromecastButton.imageView startAnimating];
 }
 
 - (void)disconnectFromDevice {
@@ -108,7 +118,7 @@ static NSString *const kReceiverAppID = @"YOUR_APP_ID_HERE";  //Replace with you
   // to leave it.
   [self.deviceManager leaveApplication];
   // If you want to force application to stop, uncomment below
-  //[self.deviceManager stopApplicationWithSessionID:self.applicationMetadata.sessionID];
+  //[self.deviceManager stopApplication];
   [self.deviceManager disconnect];
 }
 
@@ -267,20 +277,22 @@ static NSString *const kReceiverAppID = @"YOUR_APP_ID_HERE";  //Replace with you
 
 - (void)mediaControlChannel:(GCKMediaControlChannel *)mediaControlChannel
     didCompleteLoadWithSessionID:(NSInteger)sessionID {
-
+  _mediaControlChannel = mediaControlChannel;
 }
 
 - (void)mediaControlChannelDidUpdateStatus:(GCKMediaControlChannel *)mediaControlChannel {
   [self updateStatsFromDevice];
   NSLog(@"Media control channel status changed");
+  _mediaControlChannel = mediaControlChannel;
   if ([self.delegate respondsToSelector:@selector(didReceiveMediaStateChange)]) {
     [self.delegate didReceiveMediaStateChange];
   }
 }
 
 - (void)mediaControlChannelDidUpdateMetadata:(GCKMediaControlChannel *)mediaControlChannel {
-  [self updateStatsFromDevice];
   NSLog(@"Media control channel metadata changed");
+  _mediaControlChannel = mediaControlChannel;
+  [self updateStatsFromDevice];
 
   if ([self.delegate respondsToSelector:@selector(didReceiveMediaStateChange)]) {
     [self.delegate didReceiveMediaStateChange];
@@ -351,10 +363,10 @@ static NSString *const kReceiverAppID = @"YOUR_APP_ID_HERE";  //Replace with you
 
 - (void)initControls {
   // Create chromecast bar button.
-  _btnImage = [UIImage imageNamed:@"cast_outline_white.png"];
+  _btnImage = [UIImage imageNamed:@"icon_cast_off.png"];
   _btnImageConnected = [UIImage imageNamed:@"cast_solid_custom.png"];
 
-  UIButton *chromecastButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+  UIButton *chromecastButton = [UIButton buttonWithType:UIButtonTypeSystem];
   [chromecastButton addTarget:self
                        action:@selector(chooseDevice:)
              forControlEvents:UIControlEventTouchDown];
@@ -436,6 +448,7 @@ static NSString *const kReceiverAppID = @"YOUR_APP_ID_HERE";  //Replace with you
   } else {
     chromecastButton.hidden = NO;
     if (self.deviceManager && self.deviceManager.isConnected) {
+      [chromecastButton.imageView stopAnimating];
       // Hilight with yellow tint color.
       [chromecastButton setTintColor:[UIColor yellowColor]];
       [chromecastButton setImage:_btnImageConnected forState:UIControlStateNormal];

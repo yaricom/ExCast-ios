@@ -74,7 +74,6 @@
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
-  [_chromecastController performScan:NO];
 }
 
 - (void)didReceiveMemoryWarning {

@@ -57,6 +57,8 @@
       [_chromecastController pauseCastMedia:NO];
     }
     [self performSegueWithIdentifier:@"castMedia" sender:self];
+  } else {
+    [self playMovieIfExists];
   }
 }
 
@@ -65,8 +67,6 @@
 - (void)setMediaToPlay:(id)newMediaToPlay {
   if (_mediaToPlay != newMediaToPlay) {
     _mediaToPlay = newMediaToPlay;
-    // Update the view.
-    [self playMovieIfExists];
   }
 }
 
@@ -134,7 +134,8 @@
     // Next create the movie player, on top of the thumbnail view.
     self.moviePlayer = [[MPMoviePlayerController alloc] init];
     self.moviePlayer.view.frame = _thumbnailView.frame;
-    self.moviePlayer.view.hidden = _chromecastController.isConnected;
+    //self.moviePlayer.view.hidden = _chromecastController.isConnected;
+    self.moviePlayer.view.hidden = YES;
     [self.view addSubview:self.moviePlayer.view];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -147,6 +148,20 @@
            selector:@selector(moviePlayBackDidChange:)
                name:MPMoviePlayerPlaybackStateDidChangeNotification
              object:self.moviePlayer];
+  }
+  if (!_thumbnailView.image) {
+    // Asynchronously load the table view image
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
+
+    dispatch_async(queue, ^{
+      UIImage *image = [UIImage
+                        imageWithData:[SimpleImageFetcher getDataFromImageURL:self.mediaToPlay.thumbnailURL]];
+
+      dispatch_sync(dispatch_get_main_queue(), ^{
+        _thumbnailView.image = image;
+        [_thumbnailView setNeedsLayout];
+      });
+    });
   }
 }
 
@@ -181,14 +196,13 @@
   // Assign ourselves as delegate ONLY in viewWillAppear of a view controller.
   _chromecastController.delegate = self;
 
-  [self playMovieIfExists];
-  [self updateControls];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
   if (self.moviePlayer) {
     self.moviePlayer.view.frame = _thumbnailView.frame;
+    self.moviePlayer.view.hidden = YES;
   }
   [self updateControls];
 }
@@ -246,7 +260,6 @@
  */
 - (void)didDisconnect {
   [self updateControls];
-  [self playMovieIfExists];
 }
 
 /**
@@ -276,10 +289,10 @@
   // Check if the selected media is also playing on the screen. If so display the pause button.
   NSString *title =
       [_chromecastController.mediaInformation.metadata stringForKey:kGCKMetadataKeyTitle];
-  self.playPauseButton.selected =
+  self.playPauseButton.selected = (_chromecastController.isConnected &&
       ([title isEqualToString:self.mediaToPlay.title] &&
        (_chromecastController.playerState == GCKMediaPlayerStatePlaying ||
-        _chromecastController.playerState == GCKMediaPlayerStateBuffering));
+        _chromecastController.playerState == GCKMediaPlayerStateBuffering)));
   self.playPauseButton.highlighted = NO;
 
   [_chromecastController updateToolbarForViewController:self];
