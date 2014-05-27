@@ -58,7 +58,7 @@ NSString *const CellIdForDeviceName = @"deviceName";
   // Return the number of rows in the section.
   if (self.castDeviceController.isConnected == NO) {
     self.title = @"Connect to";
-    return self.castDeviceController.deviceScanner.devices.count;
+    return self.castDeviceController.deviceFilter.devices.count;
   } else {
     self.title =
         [NSString stringWithFormat:@"Connected to %@", self.castDeviceController.deviceName];
@@ -79,7 +79,7 @@ NSString *const CellIdForDeviceName = @"deviceName";
 
     // Configure the cell...
     GCKDevice *device =
-        [self.castDeviceController.deviceScanner.devices objectAtIndex:indexPath.row];
+        [self.castDeviceController.deviceFilter.devices objectAtIndex:indexPath.row];
     cell.textLabel.text = device.friendlyName;
     cell.detailTextLabel.text = device.modelName;
   } else if (self.castDeviceController.isPlayingMedia == NO) {
@@ -142,9 +142,9 @@ NSString *const CellIdForDeviceName = @"deviceName";
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   if (self.castDeviceController.isConnected == NO) {
-    if (indexPath.row < self.castDeviceController.deviceScanner.devices.count) {
+    if (indexPath.row < self.castDeviceController.deviceFilter.devices.count) {
       GCKDevice *device =
-          [self.castDeviceController.deviceScanner.devices objectAtIndex:indexPath.row];
+          [self.castDeviceController.deviceFilter.devices objectAtIndex:indexPath.row];
       NSLog(@"Selecting device:%@", device.friendlyName);
       [self.castDeviceController connectToDevice:device];
     }

@@ -15,7 +15,7 @@
 #import "ChromecastDeviceController.h"
 #import "SimpleImageFetcher.h"
 
-static NSString *const kReceiverAppID = @"YOUR_APP_ID_HERE";  //Replace with your app id
+static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 
 @interface ChromecastDeviceController () {
   ChromecastControllerFeatures _features;
@@ -59,6 +59,17 @@ static NSString *const kReceiverAppID = @"YOUR_APP_ID_HERE";  //Replace with you
 
     // Initialize device scanner
     self.deviceScanner = [[GCKDeviceScanner alloc] init];
+     
+    // Create filter criteria to only show devices that can run your app
+    GCKFilterCriteria *filterCriteria = [[GCKFilterCriteria alloc] init];
+    filterCriteria = [GCKFilterCriteria criteriaForAvailableApplicationWithID:kReceiverAppID];
+      
+      
+    // Create Device filter that only shows devices that can run your app.
+    // This allows you to publish your app to the Apple App store before before publishing in Cast console.
+    // Once the app is published in Cast console the cast icon will begin showing up on ios devices.
+    // If an app is not published in the Cast console the cast icon will only appear for whitelisted dongles
+    self.deviceFilter = [[GCKDeviceFilter alloc] initWithDeviceScanner:self.deviceScanner criteria:filterCriteria];
 
     // Initialize UI controls for navigation bar and tool bar.
     [self initControls];
@@ -83,11 +94,15 @@ static NSString *const kReceiverAppID = @"YOUR_APP_ID_HERE";  //Replace with you
 - (void)performScan:(BOOL)start {
 
   if (start) {
+    NSLog(@"Start Scan");
     [self.deviceScanner addListener:self];
+    [self.deviceFilter addDeviceFilterListener:self];
     [self.deviceScanner startScan];
   } else {
+    NSLog(@"Stop Scan");
     [self.deviceScanner stopScan];
     [self.deviceScanner removeListener:self];
+    [self.deviceFilter removeDeviceFilterListener:self];
   }
 }
 
@@ -262,15 +277,26 @@ static NSString *const kReceiverAppID = @"YOUR_APP_ID_HERE";  //Replace with you
 
 #pragma mark - GCKDeviceScannerListener
 - (void)deviceDidComeOnline:(GCKDevice *)device {
-  NSLog(@"device found!! %@", device.friendlyName);
-  [self updateCastIconButtonStates];
-  if ([self.delegate respondsToSelector:@selector(didDiscoverDeviceOnNetwork)]) {
-    [self.delegate didDiscoverDeviceOnNetwork];
-  }
+    NSLog(@"device found!! %@", device.friendlyName);
 }
 
 - (void)deviceDidGoOffline:(GCKDevice *)device {
-  [self updateCastIconButtonStates];
+
+}
+
+
+
+#pragma mark - GCKDeviceFilterListener
+- (void)deviceDidComeOnline:(GCKDevice *)device forDeviceFilter:(GCKDeviceFilter *)deviceFilter {
+    NSLog(@"filtered device found!! %@", device.friendlyName);
+    [self updateCastIconButtonStates];
+    if ([self.delegate respondsToSelector:@selector(didDiscoverDeviceOnNetwork)]) {
+        [self.delegate didDiscoverDeviceOnNetwork];
+    }
+}
+
+- (void)deviceDidGoOffline:(GCKDevice *)device forDeviceFilter:(GCKDeviceFilter *)deviceFilter {
+    [self updateCastIconButtonStates];
 }
 
 #pragma - GCKMediaControlChannelDelegate methods
@@ -443,7 +469,7 @@ static NSString *const kReceiverAppID = @"YOUR_APP_ID_HERE";  //Replace with you
 - (void)updateCastIconButtonStates {
   // Hide the button if there are no devices found.
   UIButton *chromecastButton = (UIButton *)self.chromecastBarButton.customView;
-  if (self.deviceScanner.devices.count == 0) {
+  if (self.deviceFilter.devices.count == 0) {
     chromecastButton.hidden = YES;
   } else {
     chromecastButton.hidden = NO;

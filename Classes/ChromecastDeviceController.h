@@ -82,6 +82,9 @@ typedef NS_ENUM(NSInteger, ChromecastControllerFeatures) {
 /** The device scanner used to detect devices on the network. */
 @property(nonatomic, strong) GCKDeviceScanner* deviceScanner;
 
+/** The device scanner used to detect devices on the network. */
+@property(nonatomic, strong) GCKDeviceFilter* deviceFilter;
+
 /** The device manager used to manage conencted chromecast device. */
 @property(nonatomic, strong) GCKDeviceManager* deviceManager;
 
