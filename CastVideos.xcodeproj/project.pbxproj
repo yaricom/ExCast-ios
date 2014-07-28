@@ -109,6 +109,10 @@
 		CCE5BD43196F037300016BAB /* MediaAccessibility.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE5BD42196F037300016BAB /* MediaAccessibility.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		CCE5BD45196F038400016BAB /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE5BD44196F038400016BAB /* CoreText.framework */; };
 		CCE5BD48196F0AC000016BAB /* GoogleCast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE5BD46196F03BB00016BAB /* GoogleCast.framework */; };
+		EF110FAE197590DE0009410F /* SemiModalAnimatedTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = EF110FAD197590DE0009410F /* SemiModalAnimatedTransition.m */; };
+		EF110FB119759BB30009410F /* CastInstructionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EF110FB019759BB30009410F /* CastInstructionsViewController.m */; };
+		EF110FB41976AA2C0009410F /* cling.png in Resources */ = {isa = PBXBuildFile; fileRef = EF110FB21976AA2C0009410F /* cling.png */; };
+		EF110FB51976AA2C0009410F /* cling@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EF110FB31976AA2C0009410F /* cling@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -237,6 +241,12 @@
 		CCE5BD42196F037300016BAB /* MediaAccessibility.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaAccessibility.framework; path = System/Library/Frameworks/MediaAccessibility.framework; sourceTree = SDKROOT; };
 		CCE5BD44196F038400016BAB /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		CCE5BD46196F03BB00016BAB /* GoogleCast.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleCast.framework; sourceTree = "<group>"; };
+		EF110FAC197590DE0009410F /* SemiModalAnimatedTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SemiModalAnimatedTransition.h; sourceTree = "<group>"; };
+		EF110FAD197590DE0009410F /* SemiModalAnimatedTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SemiModalAnimatedTransition.m; sourceTree = "<group>"; };
+		EF110FAF19759BB30009410F /* CastInstructionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CastInstructionsViewController.h; sourceTree = "<group>"; };
+		EF110FB019759BB30009410F /* CastInstructionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CastInstructionsViewController.m; sourceTree = "<group>"; };
+		EF110FB21976AA2C0009410F /* cling.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cling.png; sourceTree = "<group>"; };
+		EF110FB31976AA2C0009410F /* cling@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cling@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -305,6 +315,10 @@
 		284CBD8B182ADC2D007F65F9 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				EF110FAF19759BB30009410F /* CastInstructionsViewController.h */,
+				EF110FB019759BB30009410F /* CastInstructionsViewController.m */,
+				EF110FAC197590DE0009410F /* SemiModalAnimatedTransition.h */,
+				EF110FAD197590DE0009410F /* SemiModalAnimatedTransition.m */,
 				496D46FC182DBE9100343F72 /* Media.h */,
 				496D46FD182DBE9100343F72 /* Media.m */,
 				496D46FF182DBE9C00343F72 /* MediaListModel.h */,
@@ -365,6 +379,8 @@
 		284CC025182B0F9B007F65F9 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				EF110FB21976AA2C0009410F /* cling.png */,
+				EF110FB31976AA2C0009410F /* cling@2x.png */,
 				12E66C2218AC2A31004CF45B /* icon_cast_off.png */,
 				12E66C2318AC2A31004CF45B /* icon_cast_on.png */,
 				12E66C2418AC2A31004CF45B /* icon_cast_on0.png */,
@@ -488,7 +504,7 @@
 		284CBD7A182ADC2D007F65F9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Google inc";
 				TargetAttributes = {
 					284CBD81182ADC2D007F65F9 = {
@@ -525,6 +541,7 @@
 			files = (
 				12E0CD2218550A0700447896 /* play_black@2x.png in Resources */,
 				12E66C2018AC29F6004CF45B /* icon_cast_on1@2x.png in Resources */,
+				EF110FB51976AA2C0009410F /* cling@2x.png in Resources */,
 				12E0CD0218550A0700447896 /* cast_outline_white@2x.png in Resources */,
 				12E0CCFE18550A0700447896 /* cast_outline_black@2x.png in Resources */,
 				125F8FCA1880BA3300F14A9F /* logo_castvideos.png in Resources */,
@@ -532,6 +549,7 @@
 				284CC02E182B0F9B007F65F9 /* icon-cast-identified.png in Resources */,
 				12E66C1D18AC29F6004CF45B /* icon_cast_off@2x.png in Resources */,
 				12E66C2A18AC2A31004CF45B /* icon_cast_on1.png in Resources */,
+				EF110FB41976AA2C0009410F /* cling.png in Resources */,
 				12E0CD1C18550A0700447896 /* list_outline@2x.png in Resources */,
 				12E0CD1F18550A0700447896 /* pause_black.png in Resources */,
 				12E0CD2418550A0700447896 /* prev_black@2x.png in Resources */,
@@ -625,12 +643,14 @@
 				284CBD9F182ADC2D007F65F9 /* MediaTableViewController.m in Sources */,
 				284CC035182C3396007F65F9 /* CastViewController.m in Sources */,
 				284CBD92182ADC2D007F65F9 /* main.m in Sources */,
+				EF110FAE197590DE0009410F /* SemiModalAnimatedTransition.m in Sources */,
 				124377D0187CC2B500ADF736 /* DeviceTableViewController.m in Sources */,
 				491627AF184FBF9C00351397 /* SimpleImageFetcher.m in Sources */,
 				496D46FE182DBE9100343F72 /* Media.m in Sources */,
 				284CBDA2182ADC2D007F65F9 /* LocalPlayerViewController.m in Sources */,
 				496D4701182DBE9C00343F72 /* MediaListModel.m in Sources */,
 				12E0CCBA184FEF4F00447896 /* VolumeChangeController.m in Sources */,
+				EF110FB119759BB30009410F /* CastInstructionsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -692,7 +712,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -732,7 +751,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -765,7 +783,6 @@
 		284CBDBB182ADC2E007F65F9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -793,7 +810,6 @@
 		284CBDBC182ADC2E007F65F9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -821,7 +837,6 @@
 		284CBDBE182ADC2E007F65F9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Chromecast_iOS.app/Chromecast_iOS";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -844,7 +859,6 @@
 		284CBDBF182ADC2E007F65F9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Chromecast_iOS.app/Chromecast_iOS";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",

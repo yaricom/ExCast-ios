@@ -75,6 +75,7 @@ typedef NS_ENUM(NSInteger, ChromecastControllerFeatures) {
  * the device, launch an application, load media and control its playback.
  */
 @interface ChromecastDeviceController : NSObject<GCKDeviceScannerListener,
+                                                 GCKDeviceFilterListener,
                                                  GCKDeviceManagerDelegate,
                                                  GCKMediaControlChannelDelegate,
                                                  VolumeChangeControllerDelegate>
@@ -108,6 +109,9 @@ typedef NS_ENUM(NSInteger, ChromecastControllerFeatures) {
 
 /** The delegate attached to this controller. */
 @property(nonatomic, assign) id<ChromecastControllerDelegate> delegate;
+
+/** The volume the device is currently at **/
+@property(nonatomic) float deviceVolume;
 
 /** Initialize the controller with features for various experiences. */
 - (id)initWithFeatures:(ChromecastControllerFeatures)features;
@@ -153,5 +157,7 @@ typedef NS_ENUM(NSInteger, ChromecastControllerFeatures) {
 
 /** Increase or decrease the volume on the Chromecast device. */
 - (void)changeVolumeIncrease:(BOOL)goingUp;
+
+
 
 @end

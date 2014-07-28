@@ -16,6 +16,7 @@
 #import "LocalPlayerViewController.h"
 #import "CastViewController.h"
 #import "SimpleImageFetcher.h"
+#import "CastInstructionsViewController.h"
 
 #define MOVIE_CONTAINER_TAG 1
 
@@ -31,17 +32,6 @@
 @end
 
 @implementation LocalPlayerViewController
-
-- (id)initWithCoder:(NSCoder *)decoder {
-  self = [super initWithCoder:decoder];
-  if (self) {
-  }
-
-  return self;
-}
-
-- (void)dealloc {
-}
 
 #pragma mark State management
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
@@ -71,7 +61,7 @@
 }
 
 - (void)moviePlayBackDidChange:(NSNotification *)notification {
-  NSLog(@"Movie playback state did change %d", _moviePlayer.playbackState);
+  NSLog(@"Movie playback state did change %d",(int) _moviePlayer.playbackState);
 }
 
 - (void)moviePlayBackDidFinish:(NSNotification *)notification {
@@ -174,7 +164,7 @@
 
   //Add cast button
   if (_chromecastController.deviceScanner.devices.count > 0) {
-    self.navigationItem.rightBarButtonItem = _chromecastController.chromecastBarButton;
+    [self showCastIcon];
   }
 
   // Set an empty image for selected ("pause") state.
@@ -215,11 +205,6 @@
   }
 }
 
-- (void)didReceiveMemoryWarning {
-  [super didReceiveMemoryWarning];
-  // Dispose of any resources that can be recreated.
-}
-
 - (void)deviceOrientationDidChange:(NSNotification *)notification {
   // Respond to orientation only when not connected.
   if (_chromecastController.isConnected == YES) {
@@ -241,7 +226,7 @@
 
 - (void)didDiscoverDeviceOnNetwork {
   // Add the chromecast icon if not present.
-  self.navigationItem.rightBarButtonItem = _chromecastController.chromecastBarButton;
+  [self showCastIcon];
 }
 
 /**
@@ -281,6 +266,15 @@
  */
 - (void)shouldPresentPlaybackController {
   [self performSegueWithIdentifier:@"castMedia" sender:self];
+}
+
+#pragma mark - Showing the overlay
+
+// Show cast icon. If this is the first time the cast icon is appearing, show an overlay with
+// instructions highlighting the cast icon.
+- (void) showCastIcon {
+  self.navigationItem.rightBarButtonItem = _chromecastController.chromecastBarButton;
+  [CastInstructionsViewController showIfFirstTimeOverViewController:self];
 }
 
 #pragma mark - Implementation

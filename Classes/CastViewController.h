@@ -25,7 +25,16 @@
 /** The media object being played on Chromecast device. Set this before presenting the view. */
 @property(strong, nonatomic) Media* mediaToPlay;
 
+/** The volume slider control **/
+@property(strong, nonatomic) IBOutlet UISlider *volumeSlider;
+
+/** The entire volume control container, including the label **/
+@property(strong, nonatomic) IBOutlet UIView *volumeControls;
+
 /** The media object and when to start playing on Chromecast device. Set this before presenting the view. */
 - (void)setMediaToPlay:(Media*)newMedia withStartingTime:(NSTimeInterval)startTime;
+
+/** Shows the slider for a few seconds if touched **/
+- (IBAction)showVolumeSlider:(id)sender;
 
 @end

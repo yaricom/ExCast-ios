@@ -30,27 +30,18 @@
 @property(weak, nonatomic) IBOutlet UILabel* mediaTitleLabel;
 @property(weak, nonatomic) IBOutlet UIActivityIndicatorView* castActivityIndicator;
 @property(weak, nonatomic) NSTimer* updateStreamTimer;
+@property(weak, nonatomic) NSTimer* fadeVolumeControlTimer;
 
 @property(nonatomic) UIBarButtonItem* currTime;
 @property(nonatomic) UIBarButtonItem* totalTime;
 @property(nonatomic) UISlider* slider;
 @property(nonatomic) NSArray* playToolbar;
 @property(nonatomic) NSArray* pauseToolbar;
+@property BOOL isManualVolumeChange;
+
 @end
 
 @implementation CastViewController
-
-- (id)initWithCoder:(NSCoder*)decoder {
-  self = [super initWithCoder:decoder];
-  if (self) {
-    [self initControls];
-  }
-
-  return self;
-}
-
-- (void)dealloc {
-}
 
 - (void)viewDidLoad {
   [super viewDidLoad];
@@ -64,12 +55,50 @@
   self.castingToLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Casting to %@", nil),
       _chromecastController.deviceName];
   self.mediaTitleLabel.text = self.mediaToPlay.title;
+
+  self.volumeSlider.minimumValue = 0;
+  self.volumeSlider.maximumValue = 1.0;
+  self.volumeSlider.value = 0.5;
+  self.volumeSlider.continuous = NO;
+  [self.volumeSlider addTarget:self
+                        action:@selector(sliderValueChanged:)
+              forControlEvents:UIControlEventValueChanged];
+
+  _isManualVolumeChange = NO;
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(receivedVolumeChangedNotification:)
+                                               name:@"Volume changed"
+                                             object:_chromecastController];
+
+  UIButton *transparencyButton = [[UIButton alloc] initWithFrame:self.view.bounds];
+  transparencyButton.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+  transparencyButton.backgroundColor = [UIColor clearColor];
+  [self.view insertSubview:transparencyButton aboveSubview:self.thumbnailImage];
+  [transparencyButton addTarget:self action:@selector(showVolumeSlider:) forControlEvents:UIControlEventTouchUpInside];
+  [self initControls];
+
 }
 
-- (void)didReceiveMemoryWarning {
-  [super didReceiveMemoryWarning];
-  // Dispose of any resources that can be recreated.
+- (void)receivedVolumeChangedNotification:(NSNotification *) notification {
+    if(!_isManualVolumeChange) {
+      ChromecastDeviceController *deviceController = (ChromecastDeviceController *) notification.object;
+      NSLog(@"Got volume changed notification: %g", deviceController.deviceVolume);
+      self.volumeSlider.value = _chromecastController.deviceVolume;
+    }
 }
+
+- (IBAction)sliderValueChanged:(id)sender {
+    UISlider *slider = (UISlider *) sender;
+    // Essentially a fake lock to prevent us from being stuck in an endless loop (volume change
+    // triggers notification, triggers UI change, triggers volume change ...
+    // This method is not foolproof (not thread safe), but for most use cases *should* be safe
+    // enough.
+    _isManualVolumeChange = YES;
+    NSLog(@"Got new slider value: %.2f", slider.value);
+    _chromecastController.deviceVolume = slider.value;
+    _isManualVolumeChange = NO;
+}
+
 
 #pragma mark - Managing the detail item
 
@@ -96,6 +125,46 @@
   self.navigationController.toolbarHidden = YES;
   _readyToShowInterface = NO;
 }
+
+- (IBAction)showVolumeSlider:(id)sender {
+  if(self.volumeControls.hidden) {
+    self.volumeControls.hidden = NO;
+    [self.volumeControls setAlpha:0];
+
+    [UIView animateWithDuration:0.5
+                     animations:^{
+                       self.volumeControls.alpha = 1.0;
+                     }
+                     completion:^(BOOL finished){
+                       NSLog(@"Done!");
+                     }];
+
+  }
+  // Do this so if a user taps the screen or plays with the volume slider, it resets the timer
+  // for fading the volume controls
+  if(self.fadeVolumeControlTimer != nil) {
+    [self.fadeVolumeControlTimer invalidate];
+  }
+  self.fadeVolumeControlTimer = [NSTimer scheduledTimerWithTimeInterval:3.0
+                                                                 target:self
+                                                               selector:@selector(fadeVolumeSlider:)
+                                                               userInfo:nil repeats:NO];
+
+
+}
+
+- (void)fadeVolumeSlider:(NSTimer *)timer {
+  [self.volumeControls setAlpha:1.0];
+
+  [UIView animateWithDuration:0.5
+                   animations:^{
+                     self.volumeControls.alpha = 0.0;
+                   }
+                   completion:^(BOOL finished){
+                     self.volumeControls.hidden = YES;
+                   }];
+}
+
 
 - (void)mediaNowPlaying {
   _readyToShowInterface = YES;
@@ -134,11 +203,11 @@
 // Little formatting option here
 
 - (NSString*)getFormattedTime:(NSTimeInterval)timeInSeconds {
-  NSInteger seconds = (NSInteger) round(timeInSeconds);
-  NSInteger hours = seconds / (60 * 60);
+  int seconds = round(timeInSeconds);
+  int hours = seconds / (60 * 60);
   seconds %= (60 * 60);
 
-  NSInteger minutes = seconds / 60;
+  int minutes = seconds / 60;
   seconds %= 60;
 
   if (hours > 0) {

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#import <CommonCrypto/CommonDigest.h>
 #import "SimpleImageFetcher.h"
 
 @implementation SimpleImageFetcher
@@ -19,8 +20,7 @@
 + (NSData *)getDataFromImageURL:(NSURL *)urlToFetch {
   NSFileManager *fileManager = [NSFileManager defaultManager];
 
-  // We should really use a better hashing mechanism than this.
-  NSString *cacheFileName = [NSString stringWithFormat:@"%ul", [[urlToFetch absoluteString] hash]];
+  NSString *cacheFileName = [self sha1HashForString:[urlToFetch absoluteString]];
   NSURL *cacheDirectory =
       [[[fileManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject]
           URLByAppendingPathComponent:@"thumbnails"];
@@ -54,6 +54,20 @@
     return imageData;
   }
 
+}
+
++ (NSString *)sha1HashForString: (NSString *) input {
+  NSData *data = [input dataUsingEncoding:NSUTF8StringEncoding];
+
+  uint8_t digest[CC_SHA1_DIGEST_LENGTH];
+
+  CC_SHA1([data bytes], [data length], digest);
+
+  NSMutableString *hash = [NSMutableString stringWithCapacity:40];
+  for (int i = 0; i < CC_SHA1_DIGEST_LENGTH; i++)
+    [hash appendFormat:@"%02x", digest[i]];
+  
+  return hash;
 }
 
 @end

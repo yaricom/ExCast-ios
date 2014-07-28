@@ -18,6 +18,7 @@
 #import "SimpleImageFetcher.h"
 #import "Media.h"
 #import "MediaListModel.h"
+#import "CastInstructionsViewController.h"
 
 @interface MediaTableViewController () {
   __weak ChromecastDeviceController *_chromecastController;
@@ -27,16 +28,6 @@
 @end
 
 @implementation MediaTableViewController
-
-- (id)initWithCoder:(NSCoder *)decoder {
-  self = [super initWithCoder:decoder];
-  if (self) {
-  }
-  return self;
-}
-
-- (void)dealloc {
-}
 
 - (void)viewDidLoad {
   [super viewDidLoad];
@@ -51,7 +42,7 @@
 
   // Display cast icon in the right nav bar button, if we have devices.
   if (_chromecastController.deviceScanner.devices.count > 0) {
-    self.navigationItem.rightBarButtonItem = _chromecastController.chromecastBarButton;
+    [self showCastIcon];
   }
 
   // Asynchronously load the media json
@@ -60,6 +51,14 @@
     self.title = self.mediaList.mediaTitle;
     [self.tableView reloadData];
   }];
+
+}
+
+// Show cast icon. If this is the first time the cast icon is appearing, show an overlay with
+// instructions highlighting the cast icon.
+- (void) showCastIcon {
+  self.navigationItem.rightBarButtonItem = _chromecastController.chromecastBarButton;
+  [CastInstructionsViewController showIfFirstTimeOverViewController:self];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -71,14 +70,6 @@
 
 - (void)viewDidAppear:(BOOL)animated {
   [_chromecastController updateToolbarForViewController:self];
-}
-
-- (void)viewDidDisappear:(BOOL)animated {
-}
-
-- (void)didReceiveMemoryWarning {
-  [super didReceiveMemoryWarning];
-  // Dispose of any resources that can be recreated.
 }
 
 #pragma mark - Table View
@@ -95,7 +86,7 @@
          cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   UITableViewCell *cell =
       [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
-  Media *media = [self.mediaList mediaAtIndex:indexPath.row];
+  Media *media = [self.mediaList mediaAtIndex:(int)indexPath.row];
 
   UILabel *mediaTitle = (UILabel *)[cell viewWithTag:1];
   mediaTitle.text = media.title;
@@ -129,7 +120,7 @@
   if ([[segue identifier] isEqualToString:@"castMedia"] ||
       [[segue identifier] isEqualToString:@"playMedia"]) {
     NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-    Media *media = [self.mediaList mediaAtIndex:indexPath.row];
+    Media *media = [self.mediaList mediaAtIndex:(int)indexPath.row];
     [[segue destinationViewController] setMediaToPlay:media];
   }
 }
@@ -141,7 +132,7 @@
  */
 - (void)didDiscoverDeviceOnNetwork {
   // Add the chromecast icon if not present.
-  self.navigationItem.rightBarButtonItem = _chromecastController.chromecastBarButton;
+  [self showCastIcon];
 }
 
 /**

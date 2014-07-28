@@ -28,10 +28,15 @@
 
     dispatch_sync(dispatch_get_main_queue(), ^{
       NSError *error;
+      NSDictionary *mediaData;
 
       NSMutableArray *mediaBuilder = [[NSMutableArray alloc] initWithCapacity:10];
-      NSDictionary *mediaData =
-          [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:&error];
+      if (jsonData) {
+        mediaData =
+            [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:&error];
+      } else {
+        NSLog(@"Media data was nil - maybe a problem contacting the server.");
+      }
       if (error) {
         // Handle error here
         NSLog(@"Oh no! We got an error loading up our media data! %@",
@@ -63,7 +68,7 @@
 }
 
 - (int)numberOfMediaLoaded {
-  return [_medias count];
+  return (int)[_medias count];
 }
 
 - (Media *)mediaAtIndex:(int)index {

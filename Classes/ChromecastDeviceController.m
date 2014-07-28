@@ -27,8 +27,9 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 @property GCKMediaControlChannel *mediaControlChannel;
 @property GCKApplicationMetadata *applicationMetadata;
 @property GCKDevice *selectedDevice;
-@property float deviceVolume;
+
 @property bool deviceMuted;
+@property bool isReconnecting;
 @property(nonatomic) VolumeChangeController *volumeChangeController;
 @property(nonatomic) NSArray *idleStateToolbarButtons;
 @property(nonatomic) NSArray *playStateToolbarButtons;
@@ -42,6 +43,7 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 @implementation ChromecastDeviceController
 
 - (id)init {
+  self.isReconnecting = NO;
   return [self initWithFeatures:ChromecastControllerFeaturesNone];
 }
 
@@ -151,6 +153,10 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
   }
 }
 
+- (void)setDeviceVolume:(float)deviceVolume {
+  [self.deviceManager setVolume:deviceVolume];
+}
+
 - (void)changeVolumeIncrease:(BOOL)goingUp {
   float idealVolume = self.deviceVolume + (goingUp ? 0.1 : -0.1);
   idealVolume = MIN(1.0, MAX(0.0, idealVolume));
@@ -187,9 +193,15 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 #pragma mark - GCKDeviceManagerDelegate
 
 - (void)deviceManagerDidConnect:(GCKDeviceManager *)deviceManager {
-  NSLog(@"connected!!");
 
-  [self.deviceManager launchApplication:kReceiverAppID];
+  if(!self.isReconnecting) {
+    [self.deviceManager launchApplication:kReceiverAppID];
+  } else {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString* lastSessionID = [defaults valueForKey:@"lastSessionID"];
+    [self.deviceManager joinApplication:kReceiverAppID sessionID:lastSessionID];
+  }
+  [self updateCastIconButtonStates];
 }
 
 - (void)deviceManager:(GCKDeviceManager *)deviceManager
@@ -197,7 +209,7 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
                       sessionID:(NSString *)sessionID
             launchedApplication:(BOOL)launchedApplication {
 
-  NSLog(@"application has launched");
+  self.isReconnecting = NO;
   self.mediaControlChannel = [[GCKMediaControlChannel alloc] init];
   self.mediaControlChannel.delegate = self;
   [self.deviceManager addChannel:self.mediaControlChannel];
@@ -214,11 +226,23 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
   if (_features & ChromecastControllerFeatureHWVolumeControl) {
     [self.volumeChangeController captureVolumeButtons];
   }
+
+  // Store sessionID in case of restart
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  [defaults setObject:sessionID forKey:@"lastSessionID"];
+  [defaults setObject:[self.selectedDevice deviceID] forKey:@"lastDeviceID"];
+  [defaults synchronize];
 }
 
 - (void)deviceManager:(GCKDeviceManager *)deviceManager
-    didFailToConnectToApplicationWithError:(NSError *)error {
-  [self showError:error];
+  didFailToConnectToApplicationWithError:(NSError *)error {
+  if(self.isReconnecting && [error code] == GCKErrorCodeApplicationNotRunning) {
+    // Expected error when unable to reconnect to previous session after another
+    // application has been running
+    self.isReconnecting = false;
+  } else {
+    [self showError:error];
+  }
 
   [self deviceDisconnected];
   [self updateCastIconButtonStates];
@@ -260,6 +284,11 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
   if ([self.delegate respondsToSelector:@selector(didDisconnect)]) {
     [self.delegate didDisconnect];
   }
+
+  // Remove previously stored deviceID
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  [defaults removeObjectForKey:@"lastDeviceID"];
+  [defaults synchronize];
 }
 
 - (void)deviceManager:(GCKDeviceManager *)deviceManager
@@ -270,14 +299,25 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 - (void)deviceManager:(GCKDeviceManager *)deviceManager
     volumeDidChangeToLevel:(float)volumeLevel
                    isMuted:(BOOL)isMuted {
-  NSLog(@"New volume level of %f reported!", volumeLevel);
-  self.deviceVolume = volumeLevel;
+  _deviceVolume = volumeLevel;
   self.deviceMuted = isMuted;
+
+  // Fire off a notification, so no matter what controller we are in, we can show the volume
+  // slider
+  [[NSNotificationCenter defaultCenter] postNotificationName:@"Volume changed" object:self];
+
 }
 
 #pragma mark - GCKDeviceScannerListener
 - (void)deviceDidComeOnline:(GCKDevice *)device {
-    NSLog(@"device found!! %@", device.friendlyName);
+  NSLog(@"device found!! %@", device.friendlyName);
+
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  NSString* lastDeviceID = [defaults objectForKey:@"lastDeviceID"];
+  if(lastDeviceID != nil && [[device deviceID] isEqualToString:lastDeviceID]){
+    self.isReconnecting = true;
+    [self connectToDevice:device];
+  }
 }
 
 - (void)deviceDidGoOffline:(GCKDevice *)device {
@@ -288,11 +328,11 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 
 #pragma mark - GCKDeviceFilterListener
 - (void)deviceDidComeOnline:(GCKDevice *)device forDeviceFilter:(GCKDeviceFilter *)deviceFilter {
-    NSLog(@"filtered device found!! %@", device.friendlyName);
-    [self updateCastIconButtonStates];
-    if ([self.delegate respondsToSelector:@selector(didDiscoverDeviceOnNetwork)]) {
-        [self.delegate didDiscoverDeviceOnNetwork];
-    }
+  NSLog(@"filtered device found!! %@", device.friendlyName);
+  [self updateCastIconButtonStates];
+  if ([self.delegate respondsToSelector:@selector(didDiscoverDeviceOnNetwork)]) {
+    [self.delegate didDiscoverDeviceOnNetwork];
+  }
 }
 
 - (void)deviceDidGoOffline:(GCKDevice *)device forDeviceFilter:(GCKDeviceFilter *)deviceFilter {
@@ -373,8 +413,9 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 #pragma mark - implementation
 
 - (void)showError:(NSError *)error {
-  UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
-                                                  message:NSLocalizedString(error.description, nil)
+  NSLog(@"Received error: %@", error.description);
+  UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Cast Error", nil)
+                                                  message:NSLocalizedString(@"An error occurred. Make sure your Chromecast is powered up and connected to the network.", nil)
                                                  delegate:nil
                                         cancelButtonTitle:NSLocalizedString(@"OK", nil)
                                         otherButtonTitles:nil];
@@ -480,7 +521,7 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
       [chromecastButton setImage:_btnImageConnected forState:UIControlStateNormal];
 
     } else {
-      // Remove the hilight.
+      // Remove the highlight.
       [chromecastButton setTintColor:nil];
       [chromecastButton setImage:_btnImage forState:UIControlStateNormal];
     }
@@ -530,7 +571,6 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
     UIImage *image = [UIImage imageWithData:[SimpleImageFetcher getDataFromImageURL:img.URL]];
 
     dispatch_async(dispatch_get_main_queue(), ^{
-      NSLog(@"Loaded thumbnail image");
       self.toolbarThumbnailURL = img.URL;
       self.toolbarThumbnailImage.image = image;
     });
