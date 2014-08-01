@@ -1,6 +1,6 @@
-# demo-cast-video-ios
+# CastVideos-ios
 
-This Google Cast demo application shows how to cast videos from an iOS device in a way that is fully compliant with the UX Checklist. 
+CastVideos-ios application shows how to cast videos from an iOS device in a way that is fully compliant with the UX Checklist. 
 
 ## Dependencies
 * iOS Sender API library : can be downloaded here at: [https://developers.google.com/cast/docs/downloads/](https://developers.google.com/cast/docs/downloads/ "iOS Sender API library")
