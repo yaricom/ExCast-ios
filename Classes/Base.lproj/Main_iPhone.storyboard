@@ -64,34 +64,56 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <view hidden="YES" opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sHE-7a-Ifx" userLabel="Volume controls">
-                                <rect key="frame" x="80" y="87" width="160" height="106"/>
+                                <rect key="frame" x="55" y="87" width="210" height="106"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <slider opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="xUT-ET-JQe">
-                                        <rect key="frame" x="-38" y="44" width="236" height="31"/>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Volume" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="190" translatesAutoresizingMaskIntoConstraints="NO" id="eqf-cs-oj8">
+                                        <rect key="frame" x="10" y="10" width="190" height="21"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="xUT-ET-JQe">
+                                        <rect key="frame" x="38" y="46" width="134" height="31"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <connections>
                                             <action selector="showVolumeSlider:" destination="0Wa-zZ-cKY" eventType="valueChanged" id="mIS-cx-qf0"/>
                                         </connections>
                                     </slider>
-                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Volume" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eqf-cs-oj8">
-                                        <rect key="frame" x="52" y="0.0" width="57" height="21"/>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_volume0.png" translatesAutoresizingMaskIntoConstraints="NO" id="4HX-q1-lpf">
+                                        <rect key="frame" x="20" y="51" width="20" height="20"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="20" id="41P-Pj-B5D"/>
+                                            <constraint firstAttribute="width" constant="20" id="FTR-tH-xFj"/>
+                                        </constraints>
+                                    </imageView>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_volume3.png" translatesAutoresizingMaskIntoConstraints="NO" id="sqK-63-k6O">
+                                        <rect key="frame" x="180" y="51" width="20" height="20"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="20" id="7pZ-u8-nPI"/>
+                                            <constraint firstAttribute="width" constant="20" id="zKi-3f-FZb"/>
+                                        </constraints>
+                                    </imageView>
                                 </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.78922193877551017" green="0.78922193877551017" blue="0.78922193877551017" alpha="0.70000000000000007" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="106" id="6wi-Xr-E7I"/>
-                                    <constraint firstItem="xUT-ET-JQe" firstAttribute="leading" secondItem="sHE-7a-Ifx" secondAttribute="leading" constant="10" id="HgO-Tv-AJv"/>
-                                    <constraint firstAttribute="trailing" secondItem="xUT-ET-JQe" secondAttribute="trailing" constant="10" id="Nhx-rt-aRl"/>
-                                    <constraint firstAttribute="width" constant="160" id="Ou6-XT-Vzh"/>
-                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="xUT-ET-JQe" secondAttribute="trailing" constant="5" id="hnt-AH-oev"/>
+                                    <constraint firstItem="xUT-ET-JQe" firstAttribute="leading" secondItem="sHE-7a-Ifx" secondAttribute="leading" constant="40" id="HgO-Tv-AJv"/>
+                                    <constraint firstAttribute="trailing" secondItem="xUT-ET-JQe" secondAttribute="trailing" constant="40" id="Nhx-rt-aRl"/>
+                                    <constraint firstAttribute="width" constant="210" id="Ou6-XT-Vzh"/>
+                                    <constraint firstAttribute="trailing" secondItem="sqK-63-k6O" secondAttribute="trailing" constant="10" id="Oxo-Za-vIy"/>
+                                    <constraint firstItem="4HX-q1-lpf" firstAttribute="leading" secondItem="sHE-7a-Ifx" secondAttribute="leading" constant="20" id="R4S-Kr-jt5"/>
+                                    <constraint firstItem="eqf-cs-oj8" firstAttribute="bottom" secondItem="xUT-ET-JQe" secondAttribute="top" constant="-15" id="ad4-bU-lPN"/>
+                                    <constraint firstItem="4HX-q1-lpf" firstAttribute="top" secondItem="eqf-cs-oj8" secondAttribute="bottom" constant="20" id="ceF-n4-Tcx"/>
+                                    <constraint firstItem="eqf-cs-oj8" firstAttribute="top" secondItem="sHE-7a-Ifx" secondAttribute="top" constant="10" id="cja-wy-Wge"/>
+                                    <constraint firstAttribute="trailing" secondItem="eqf-cs-oj8" secondAttribute="trailing" constant="10" id="jCh-yd-E4A"/>
                                     <constraint firstAttribute="centerX" secondItem="eqf-cs-oj8" secondAttribute="centerX" id="s53-Hh-sW9"/>
                                     <constraint firstAttribute="centerX" secondItem="xUT-ET-JQe" secondAttribute="centerX" id="tQu-k1-ObP"/>
-                                    <constraint firstItem="xUT-ET-JQe" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="sHE-7a-Ifx" secondAttribute="leading" constant="5" id="vl1-xr-7Gy"/>
+                                    <constraint firstItem="eqf-cs-oj8" firstAttribute="leading" secondItem="sHE-7a-Ifx" secondAttribute="leading" constant="10" id="v2O-1C-lxB"/>
+                                    <constraint firstItem="sqK-63-k6O" firstAttribute="top" secondItem="eqf-cs-oj8" secondAttribute="bottom" constant="20" id="vdl-na-kIX"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -121,6 +143,7 @@
                         <outlet property="castingToLabel" destination="gJl-zs-Kw9" id="qBL-9o-rGf"/>
                         <outlet property="mediaTitleLabel" destination="Cmh-ea-aVI" id="9aE-z2-Lx1"/>
                         <outlet property="thumbnailImage" destination="ma0-x3-mBq" id="t6s-Tz-VrZ"/>
+                        <outlet property="volumeControlLabel" destination="eqf-cs-oj8" id="paQ-Wg-lCN"/>
                         <outlet property="volumeControls" destination="sHE-7a-Ifx" id="o5w-Bi-Xl9"/>
                         <outlet property="volumeSlider" destination="xUT-ET-JQe" id="Ib9-uA-NBm"/>
                         <segue destination="EiA-UH-4E3" kind="unwind" identifier="unwindToMaster" unwindAction="unwind:" id="pH6-T7-av1"/>
@@ -318,8 +341,48 @@
                                     </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="disconnectButton" id="6E4-CU-9xS">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="volumeController" id="ysb-vZ-DNk">
                                 <rect key="frame" x="0.0" y="163" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ysb-vZ-DNk" id="xyg-US-G8y">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <slider opaque="NO" tag="201" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="4yL-Ex-R83">
+                                            <rect key="frame" x="52" y="7" width="215" height="31"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        </slider>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_volume0_black.png" translatesAutoresizingMaskIntoConstraints="NO" id="UTI-lp-vDG">
+                                            <rect key="frame" x="19" y="4" width="35" height="35"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" secondItem="UTI-lp-vDG" secondAttribute="height" multiplier="1:1" id="itV-Zh-VX2"/>
+                                            </constraints>
+                                        </imageView>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_volume3_black.png" translatesAutoresizingMaskIntoConstraints="NO" id="2io-3s-H1i">
+                                            <rect key="frame" x="275" y="4" width="35" height="35"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" secondItem="2io-3s-H1i" secondAttribute="height" multiplier="1:1" id="0jm-ni-cTh"/>
+                                            </constraints>
+                                        </imageView>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="centerY" secondItem="4yL-Ex-R83" secondAttribute="centerY" id="85C-4J-mP0"/>
+                                        <constraint firstAttribute="bottom" secondItem="UTI-lp-vDG" secondAttribute="bottom" constant="4" id="ABD-rd-rkd"/>
+                                        <constraint firstItem="2io-3s-H1i" firstAttribute="leading" secondItem="4yL-Ex-R83" secondAttribute="trailing" constant="10" id="H7u-2i-o7y"/>
+                                        <constraint firstAttribute="centerX" secondItem="4yL-Ex-R83" secondAttribute="centerX" id="IdP-2l-ReV"/>
+                                        <constraint firstItem="4yL-Ex-R83" firstAttribute="leading" secondItem="UTI-lp-vDG" secondAttribute="trailing" id="NDj-IP-jds"/>
+                                        <constraint firstItem="2io-3s-H1i" firstAttribute="top" secondItem="xyg-US-G8y" secondAttribute="top" constant="4" id="Olh-e7-Eiz"/>
+                                        <constraint firstAttribute="trailing" secondItem="2io-3s-H1i" secondAttribute="trailing" constant="10" id="bgP-tL-uje"/>
+                                        <constraint firstAttribute="bottom" secondItem="2io-3s-H1i" secondAttribute="bottom" constant="4" id="h5n-ip-rGF"/>
+                                        <constraint firstItem="UTI-lp-vDG" firstAttribute="leading" secondItem="xyg-US-G8y" secondAttribute="leading" constant="19" id="mFw-WW-K5E"/>
+                                        <constraint firstItem="UTI-lp-vDG" firstAttribute="top" secondItem="xyg-US-G8y" secondAttribute="top" constant="4" id="zKF-FG-cXk"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="disconnectButton" id="6E4-CU-9xS">
+                                <rect key="frame" x="0.0" y="207" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="6E4-CU-9xS" id="QPH-AL-VrD">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -339,7 +402,7 @@
                                 </tableViewCellContentView>
                             </tableViewCell>
                             <tableViewCell userInteractionEnabled="NO" contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="readyStatus" textLabel="4YR-8q-20n" style="IBUITableViewCellStyleDefault" id="gUk-Nm-e8q">
-                                <rect key="frame" x="0.0" y="207" width="320" height="44"/>
+                                <rect key="frame" x="0.0" y="251" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="gUk-Nm-e8q" id="nLn-v5-q9M">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -356,7 +419,7 @@
                                 </tableViewCellContentView>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="playerController" textLabel="wjw-NF-HXa" detailTextLabel="20K-0j-NIC" rowHeight="95" style="IBUITableViewCellStyleSubtitle" id="ijK-H7-IQq">
-                                <rect key="frame" x="0.0" y="251" width="320" height="95"/>
+                                <rect key="frame" x="0.0" y="295" width="320" height="95"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ijK-H7-IQq" id="dGd-KW-s58">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="94"/>
@@ -564,6 +627,10 @@
         <image name="cast_solid_white.png" width="27" height="21"/>
         <image name="cling.png" width="179" height="179"/>
         <image name="icon_settings_outline_black.png" width="25" height="25"/>
+        <image name="icon_volume0.png" width="30" height="30"/>
+        <image name="icon_volume0_black.png" width="30" height="30"/>
+        <image name="icon_volume3.png" width="30" height="30"/>
+        <image name="icon_volume3_black.png" width="30" height="30"/>
         <image name="play_black.png" width="49" height="49"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
@@ -572,7 +639,7 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="90r-3M-ZWY"/>
+        <segue reference="BYP-uC-I0y"/>
         <segue reference="2aK-Vl-c3F"/>
     </inferredMetricsTieBreakers>
 </document>

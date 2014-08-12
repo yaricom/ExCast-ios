@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "CastViewController.h"
-#import "LocalPlayerViewController.h"
 #import "AppDelegate.h"
+#import "CastViewController.h"
 #import "SimpleImageFetcher.h"
 
 @interface CastViewController ()<VolumeChangeControllerDelegate> {
@@ -22,6 +21,8 @@
   BOOL _currentlyDraggingSlider;
   BOOL _readyToShowInterface;
   BOOL _joinExistingSession;
+  NSTimeInterval _lastKnownTime;
+  __weak id<RemotePlayerDelegate> _localPlayer;
   __weak ChromecastDeviceController* _chromecastController;
 }
 @property(strong, nonatomic) UIPopoverController* masterPopoverController;
@@ -46,9 +47,7 @@
 - (void)viewDidLoad {
   [super viewDidLoad];
 
-  // Store a reference to the chromecast controller.
-  AppDelegate* delegate = (AppDelegate*)[UIApplication sharedApplication].delegate;
-  _chromecastController = delegate.chromecastDeviceController;
+  [self syncChromeCastController];
 
   self.navigationItem.rightBarButtonItem = _chromecastController.chromecastBarButton;
 
@@ -56,9 +55,12 @@
       _chromecastController.deviceName];
   self.mediaTitleLabel.text = self.mediaToPlay.title;
 
+  self.volumeControlLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%@ Volume", nil),
+                              _chromecastController.deviceName];
   self.volumeSlider.minimumValue = 0;
   self.volumeSlider.maximumValue = 1.0;
-  self.volumeSlider.value = 0.5;
+  self.volumeSlider.value = _chromecastController.deviceVolume ?
+      _chromecastController.deviceVolume : 0.5;
   self.volumeSlider.continuous = NO;
   [self.volumeSlider addTarget:self
                         action:@selector(sliderValueChanged:)
@@ -77,6 +79,13 @@
   [transparencyButton addTarget:self action:@selector(showVolumeSlider:) forControlEvents:UIControlEventTouchUpInside];
   [self initControls];
 
+}
+
+- (ChromecastDeviceController *)syncChromeCastController {
+  // Store a reference to the chromecast controller.
+  AppDelegate* delegate = (AppDelegate*)[UIApplication sharedApplication].delegate;
+  _chromecastController = delegate.chromecastDeviceController;
+  return _chromecastController;
 }
 
 - (void)receivedVolumeChangedNotification:(NSNotification *) notification {
@@ -102,11 +111,17 @@
 
 #pragma mark - Managing the detail item
 
+- (void)setLocalPlayer:(id<RemotePlayerDelegate>)delegate {
+  _localPlayer = delegate;
+}
+
 - (void)setMediaToPlay:(Media*)newDetailItem {
   [self setMediaToPlay:newDetailItem withStartingTime:0];
 }
 
 - (void)setMediaToPlay:(Media*)newMedia withStartingTime:(NSTimeInterval)startTime {
+  // Ensure we have a local reference to the chromecast controller.
+  [self syncChromeCastController];
   _mediaStartTime = startTime;
   if (_mediaToPlay != newMedia) {
     _mediaToPlay = newMedia;
@@ -185,6 +200,7 @@
   }
 
   if (_chromecastController.streamDuration > 0 && !_currentlyDraggingSlider) {
+    _lastKnownTime = _chromecastController.streamPosition;
     self.currTime.title = [self getFormattedTime:_chromecastController.streamPosition];
     self.totalTime.title = [self getFormattedTime:_chromecastController.streamDuration];
     [self.slider
@@ -239,7 +255,8 @@
 
     // If the newMedia is already playing, join the existing session.
     if (![self.mediaToPlay.title isEqualToString:[_chromecastController.mediaInformation.metadata
-            stringForKey:kGCKMetadataKeyTitle]]) {
+            stringForKey:kGCKMetadataKeyTitle]] ||
+          _chromecastController.playerState == GCKMediaPlayerStateIdle) {
       //Cast the movie!!
       [_chromecastController loadMedia:url
                           thumbnailURL:self.mediaToPlay.thumbnailURL
@@ -373,6 +390,9 @@
  * Called when connection to the device was closed.
  */
 - (void)didDisconnect {
+  if (_localPlayer) {
+    [_localPlayer setLastKnownDuration:_lastKnownTime];
+  }
   [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -384,6 +404,7 @@
   self.navigationController.toolbarHidden = NO;
 
   if (_chromecastController.playerState == GCKMediaPlayerStateIdle) {
+    _mediaToPlay = nil; // Forget media.
     [self.navigationController popViewControllerAnimated:YES];
   }
 }
@@ -407,6 +428,12 @@
                                                     target:self
                                                     action:@selector(pauseButtonClicked:)];
   pauseButton.tintColor = [UIColor whiteColor];
+  UIBarButtonItem *volumeButton =
+      [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_volume3.png"]
+                                       style:UIBarButtonItemStylePlain
+                                      target:self
+                                      action:@selector(showVolumeSlider:)];
+  volumeButton.tintColor = [UIColor whiteColor];
   self.currTime = [[UIBarButtonItem alloc] initWithTitle:@"00:00"
                                                    style:UIBarButtonItemStylePlain
                                                   target:nil
@@ -429,6 +456,10 @@
       [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
                                                     target:nil
                                                     action:nil];
+  UIBarButtonItem* flexibleSpace4 =
+      [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+                                                target:nil
+                                                action:nil];
 
   self.slider = [[UISlider alloc] init];
   [self.slider addTarget:self
@@ -450,9 +481,13 @@
     sliderItem.width = 500;
   }
 
+  // Round the corners on the volume pop up.
+  self.volumeControls.layer.cornerRadius = 5;
+  self.volumeControls.layer.masksToBounds = YES;
+
   self.playToolbar = [NSArray arrayWithObjects:flexibleSpace,
-      playButton, flexibleSpace2, self.currTime, sliderItem, self.totalTime, flexibleSpace3, nil];
+      playButton, flexibleSpace2, volumeButton, flexibleSpace3, self.currTime, sliderItem, self.totalTime, flexibleSpace4, nil];
   self.pauseToolbar = [NSArray arrayWithObjects:flexibleSpace,
-      pauseButton, flexibleSpace2, self.currTime, sliderItem, self.totalTime, flexibleSpace3, nil];
+      pauseButton, flexibleSpace2, volumeButton, flexibleSpace3, self.currTime, sliderItem, self.totalTime, flexibleSpace4, nil];
 }
 @end

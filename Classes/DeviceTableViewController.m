@@ -17,9 +17,10 @@
 #import "ChromecastDeviceController.h"
 #import "SimpleImageFetcher.h"
 
-NSString *const CellIdForDeviceName = @"deviceName";
-
-@implementation DeviceTableViewController
+@implementation DeviceTableViewController {
+  BOOL _isManualVolumeChange;
+  UISlider *_volumeSlider;
+}
 
 - (ChromecastDeviceController *)castDeviceController {
   AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
@@ -41,7 +42,7 @@ NSString *const CellIdForDeviceName = @"deviceName";
   } else {
     self.title =
         [NSString stringWithFormat:@"%@", self.castDeviceController.deviceName];
-    return 2;
+    return 3;
   }
 }
 
@@ -51,6 +52,8 @@ NSString *const CellIdForDeviceName = @"deviceName";
   static NSString *CellIdForReadyStatus = @"readyStatus";
   static NSString *CellIdForDisconnectButton = @"disconnectButton";
   static NSString *CellIdForPlayerController = @"playerController";
+  static NSString *CellIdForVolumeControl = @"volumeController";
+  static int TagForVolumeSlider = 201;
 
   UITableViewCell *cell;
   if (self.castDeviceController.isConnected == NO) {
@@ -61,7 +64,81 @@ NSString *const CellIdForDeviceName = @"deviceName";
         [self.castDeviceController.deviceFilter.devices objectAtIndex:indexPath.row];
     cell.textLabel.text = device.friendlyName;
     cell.detailTextLabel.text = device.modelName;
-  } else if (self.castDeviceController.isPlayingMedia == NO) {
+  } else {
+    if (indexPath.row == 0) {
+      if (self.castDeviceController.isPlayingMedia == NO) {
+        cell =
+          [tableView dequeueReusableCellWithIdentifier:CellIdForReadyStatus forIndexPath:indexPath];
+      } else {
+        // Display the view describing the playing media.
+        cell = [tableView dequeueReusableCellWithIdentifier:CellIdForPlayerController
+                                               forIndexPath:indexPath];
+        cell.textLabel.text =
+        [self.castDeviceController.mediaInformation.metadata stringForKey:kGCKMetadataKeyTitle];
+        cell.detailTextLabel.text = [self.castDeviceController.mediaInformation.metadata
+                                     stringForKey:kGCKMetadataKeySubtitle];
+
+        // Accessory is the play/pause button.
+        BOOL playing = (self.castDeviceController.playerState == GCKMediaPlayerStatePlaying ||
+                        self.castDeviceController.playerState == GCKMediaPlayerStateBuffering);
+        UIImage *playImage = (playing ? [UIImage imageNamed:@"pause_black.png"]
+                              : [UIImage imageNamed:@"play_black.png"]);
+        CGRect frame = CGRectMake(0, 0, playImage.size.width, playImage.size.height);
+        UIButton *button = [[UIButton alloc] initWithFrame:frame];
+        [button setBackgroundImage:playImage forState:UIControlStateNormal];
+        [button addTarget:self
+                   action:@selector(playPausePressed:)
+         forControlEvents:UIControlEventTouchUpInside];
+        cell.accessoryView = button;
+
+        // Asynchronously load the table view image
+        if (self.castDeviceController.mediaInformation.metadata.images.count > 0) {
+          dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
+
+          dispatch_async(queue, ^{
+            GCKImage *mediaImage =
+            [self.castDeviceController.mediaInformation.metadata.images objectAtIndex:0];
+            UIImage *image =
+            [UIImage imageWithData:[SimpleImageFetcher getDataFromImageURL:mediaImage.URL]];
+
+            CGSize itemSize = CGSizeMake(40, 40);
+            UIImage *thumbnailImage = [self scaleImage:image toSize:itemSize];
+
+            dispatch_sync(dispatch_get_main_queue(), ^{
+              UIImageView *mediaThumb = cell.imageView;
+              [mediaThumb setImage:thumbnailImage];
+              [cell setNeedsLayout];
+            });
+          });
+        }
+      }
+    } else if (indexPath.row == 1) {
+      // Display volume control as second cell.
+      cell = [tableView dequeueReusableCellWithIdentifier:CellIdForVolumeControl
+                                             forIndexPath:indexPath];
+
+      _volumeSlider = (UISlider *)[cell.contentView viewWithTag:TagForVolumeSlider];
+      _volumeSlider.minimumValue = 0;
+      _volumeSlider.maximumValue = 1.0;
+      _volumeSlider.value = [self castDeviceController].deviceVolume;
+      _volumeSlider.continuous = NO;
+      [_volumeSlider addTarget:self
+                        action:@selector(sliderValueChanged:)
+              forControlEvents:UIControlEventValueChanged];
+      [[NSNotificationCenter defaultCenter] addObserver:self
+                                               selector:@selector(receivedVolumeChangedNotification:)
+                                                   name:@"Volume changed"
+                                                 object:[self castDeviceController]];
+
+    } else {
+      // Display disconnect control as last cell.
+      cell = [tableView dequeueReusableCellWithIdentifier:CellIdForDisconnectButton
+                                             forIndexPath:indexPath];
+    }
+
+
+
+  }if (self.castDeviceController.isPlayingMedia == NO) {
     if (indexPath.row == 0) {
       cell =
           [tableView dequeueReusableCellWithIdentifier:CellIdForReadyStatus forIndexPath:indexPath];
@@ -70,51 +147,7 @@ NSString *const CellIdForDeviceName = @"deviceName";
                                              forIndexPath:indexPath];
     }
   } else {
-    if (indexPath.row == 0) {
-      cell = [tableView dequeueReusableCellWithIdentifier:CellIdForPlayerController
-                                             forIndexPath:indexPath];
-      cell.textLabel.text =
-          [self.castDeviceController.mediaInformation.metadata stringForKey:kGCKMetadataKeyTitle];
-      cell.detailTextLabel.text = [self.castDeviceController.mediaInformation.metadata
-          stringForKey:kGCKMetadataKeySubtitle];
 
-      // Accessory is the play/pause button.
-      BOOL playing = (self.castDeviceController.playerState == GCKMediaPlayerStatePlaying ||
-                      self.castDeviceController.playerState == GCKMediaPlayerStateBuffering);
-      UIImage *playImage = (playing ? [UIImage imageNamed:@"pause_black.png"]
-                                    : [UIImage imageNamed:@"play_black.png"]);
-      CGRect frame = CGRectMake(0, 0, playImage.size.width, playImage.size.height);
-      UIButton *button = [[UIButton alloc] initWithFrame:frame];
-      [button setBackgroundImage:playImage forState:UIControlStateNormal];
-      [button addTarget:self
-                    action:@selector(playPausePressed:)
-          forControlEvents:UIControlEventTouchUpInside];
-      cell.accessoryView = button;
-
-      // Asynchronously load the table view image
-      if (self.castDeviceController.mediaInformation.metadata.images.count > 0) {
-        dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
-
-        dispatch_async(queue, ^{
-          GCKImage *mediaImage =
-              [self.castDeviceController.mediaInformation.metadata.images objectAtIndex:0];
-          UIImage *image =
-              [UIImage imageWithData:[SimpleImageFetcher getDataFromImageURL:mediaImage.URL]];
-
-          CGSize itemSize = CGSizeMake(40, 40);
-          UIImage *thumbnailImage = [self scaleImage:image toSize:itemSize];
-
-          dispatch_sync(dispatch_get_main_queue(), ^{
-            UIImageView *mediaThumb = cell.imageView;
-            [mediaThumb setImage:thumbnailImage];
-            [cell setNeedsLayout];
-          });
-        });
-      }
-    } else {
-      cell = [tableView dequeueReusableCellWithIdentifier:CellIdForDisconnectButton
-                                             forIndexPath:indexPath];
-    }
   }
   return cell;
 }
@@ -186,6 +219,23 @@ NSString *const CellIdForDeviceName = @"deviceName";
   UIGraphicsEndImageContext();
 
   return scaledImage;
+}
+
+# pragma mark - volume
+
+- (void)receivedVolumeChangedNotification:(NSNotification *) notification {
+  if(!_isManualVolumeChange) {
+    ChromecastDeviceController *deviceController = (ChromecastDeviceController *) notification.object;
+    _volumeSlider.value = deviceController.deviceVolume;
+  }
+}
+
+- (IBAction)sliderValueChanged:(id)sender {
+  UISlider *slider = (UISlider *) sender;
+  _isManualVolumeChange = YES;
+  NSLog(@"Got new slider value: %.2f", slider.value);
+  [self castDeviceController].deviceVolume = slider.value;
+  _isManualVolumeChange = NO;
 }
 
 @end

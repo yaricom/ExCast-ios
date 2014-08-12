@@ -21,7 +21,7 @@
 #define MOVIE_CONTAINER_TAG 1
 
 @interface LocalPlayerViewController () {
-  int lastKnownPlaybackTime;
+  NSTimeInterval _lastKnownPlaybackTime;
   __weak IBOutlet UIImageView *_thumbnailView;
   __weak ChromecastDeviceController *_chromecastController;
 }
@@ -37,7 +37,8 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
   if ([[segue identifier] isEqualToString:@"castMedia"]) {
     [(CastViewController *)[segue destinationViewController] setMediaToPlay:self.mediaToPlay
-                                                           withStartingTime:lastKnownPlaybackTime];
+                                                           withStartingTime:_lastKnownPlaybackTime];
+    [(CastViewController *)[segue destinationViewController] setLocalPlayer:self];
   }
 }
 
@@ -190,7 +191,8 @@
 
 - (void)viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
-  if (self.moviePlayer) {
+  // Hide the player, unless it is paused.
+  if (self.moviePlayer && !self.moviePlayer.playbackState == MPMoviePlaybackStatePaused) {
     self.moviePlayer.view.frame = _thumbnailView.frame;
     self.moviePlayer.view.hidden = YES;
   }
@@ -222,6 +224,14 @@
   }
 }
 
+#pragma mark - RemotePlayerDelegate
+
+- (void)setLastKnownDuration: (NSTimeInterval)time {
+  if (time > 0) {
+    _lastKnownPlaybackTime = time;
+  }
+}
+
 #pragma mark - ChromecastControllerDelegate
 
 - (void)didDiscoverDeviceOnNetwork {
@@ -235,7 +245,9 @@
  * @param device The device to which the connection was established.
  */
 - (void)didConnectToDevice:(GCKDevice *)device {
-  lastKnownPlaybackTime = [self.moviePlayer currentPlaybackTime];
+  if (_lastKnownPlaybackTime == 0) {
+    _lastKnownPlaybackTime = [self.moviePlayer currentPlaybackTime];
+  }
   [self.moviePlayer stop];
   [self performSegueWithIdentifier:@"castMedia" sender:self];
 }

@@ -94,7 +94,6 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 }
 
 - (void)performScan:(BOOL)start {
-
   if (start) {
     NSLog(@"Start Scan");
     [self.deviceScanner addListener:self];
@@ -244,7 +243,6 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
     [self showError:error];
   }
 
-  [self deviceDisconnected];
   [self updateCastIconButtonStates];
   // Hook to hardware volume controls.
   if (_features & ChromecastControllerFeatureHWVolumeControl) {
@@ -256,7 +254,7 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
     didFailToConnectWithError:(GCKError *)error {
   [self showError:error];
 
-  [self deviceDisconnected];
+  [self deviceDisconnectedForgetDevice:YES];
   [self updateCastIconButtonStates];
   // Hook to hardware volume controls.
   if (_features & ChromecastControllerFeatureHWVolumeControl) {
@@ -264,31 +262,57 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
   }
 }
 
+- (BOOL)isConnectivityError:(NSError *)error {
+  if (!error) {
+    return false;
+  }
+
+  return (error.code == GCKErrorCodeNetworkError || error.code == GCKErrorCodeTimeout);
+}
+
 - (void)deviceManager:(GCKDeviceManager *)deviceManager didDisconnectWithError:(GCKError *)error {
   NSLog(@"Received notification that device disconnected");
 
-  if (error != nil) {
+  if (error) {
     [self showError:error];
   }
 
-  [self deviceDisconnected];
+  // Forget the device except when the error is a connectivity related, such a WiFi problem.
+  [self deviceDisconnectedForgetDevice:![self isConnectivityError:error]];
   [self updateCastIconButtonStates];
 
 }
 
-- (void)deviceDisconnected {
+- (void)deviceManager:(GCKDeviceManager *)deviceManager
+    didDisconnectFromApplicationWithError:(NSError *)error {
+  NSLog(@"Received notification that app disconnected");
+
+  if (error) {
+    NSLog(@"Application disconnected with error: %@", error);
+  }
+
+  // Forget the device except when the error is a connectivity related, such a WiFi problem.
+  [self deviceDisconnectedForgetDevice:![self isConnectivityError:error]];
+  [self updateCastIconButtonStates];
+}
+
+- (void)deviceDisconnectedForgetDevice:(BOOL)clear {
   self.mediaControlChannel = nil;
-  self.deviceManager = nil;
+  _playerState = 0;
+  _mediaInformation = nil;
   self.selectedDevice = nil;
 
   if ([self.delegate respondsToSelector:@selector(didDisconnect)]) {
     [self.delegate didDisconnect];
   }
 
-  // Remove previously stored deviceID
-  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-  [defaults removeObjectForKey:@"lastDeviceID"];
-  [defaults synchronize];
+  if (clear) {
+    // Remove previously stored deviceID if we need to. This will prevent automatically
+    // reconnecting to the cast device if we see it again.
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults removeObjectForKey:@"lastDeviceID"];
+    [defaults synchronize];
+  }
 }
 
 - (void)deviceManager:(GCKDeviceManager *)deviceManager
@@ -321,10 +345,8 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 }
 
 - (void)deviceDidGoOffline:(GCKDevice *)device {
-
+    [self updateCastIconButtonStates];
 }
-
-
 
 #pragma mark - GCKDeviceFilterListener
 - (void)deviceDidComeOnline:(GCKDevice *)device forDeviceFilter:(GCKDeviceFilter *)deviceFilter {
@@ -431,7 +453,7 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 - (void)initControls {
   // Create chromecast bar button.
   _btnImage = [UIImage imageNamed:@"icon_cast_off.png"];
-  _btnImageConnected = [UIImage imageNamed:@"cast_solid_custom.png"];
+  _btnImageConnected = [UIImage imageNamed:@"icon_cast_on_filled.png"];
 
   UIButton *chromecastButton = [UIButton buttonWithType:UIButtonTypeSystem];
   [chromecastButton addTarget:self

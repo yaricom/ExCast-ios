@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import <UIKit/UIKit.h>
-#import "Media.h"
 #import "ChromecastDeviceController.h"
+#import "LocalPlayerViewController.h"
+#import "Media.h"
+#import <UIKit/UIKit.h>
 
 /**
  * A view that shows the media thumbnail and controls for media playing on the
@@ -28,6 +29,9 @@
 /** The volume slider control **/
 @property(strong, nonatomic) IBOutlet UISlider *volumeSlider;
 
+/** The label in the volume control container. **/
+@property (weak, nonatomic) IBOutlet UILabel *volumeControlLabel;
+
 /** The entire volume control container, including the label **/
 @property(strong, nonatomic) IBOutlet UIView *volumeControls;
 
@@ -36,5 +40,8 @@
 
 /** Shows the slider for a few seconds if touched **/
 - (IBAction)showVolumeSlider:(id)sender;
+
+/** The local player can be notified with duration updates from the cast for syncing between states. */
+- (void)setLocalPlayer:(id<RemotePlayerDelegate>)delegate;
 
 @end
