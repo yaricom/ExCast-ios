@@ -16,7 +16,7 @@
 #import "CastViewController.h"
 #import "SimpleImageFetcher.h"
 
-@interface CastViewController ()<VolumeChangeControllerDelegate> {
+@interface CastViewController () {
   NSTimeInterval _mediaStartTime;
   BOOL _currentlyDraggingSlider;
   BOOL _readyToShowInterface;

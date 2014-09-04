@@ -15,7 +15,6 @@
 		1293D581185A764A001EFCF2 /* actionbar_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 1293D580185A764A001EFCF2 /* actionbar_logo.png */; };
 		129886E31872348A00B013D2 /* video_thumb_mini.png in Resources */ = {isa = PBXBuildFile; fileRef = 129886E11872348A00B013D2 /* video_thumb_mini.png */; };
 		129886E41872348A00B013D2 /* video_thumb_mini@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 129886E21872348A00B013D2 /* video_thumb_mini@2x.png */; };
-		12E0CCBA184FEF4F00447896 /* VolumeChangeController.m in Sources */ = {isa = PBXBuildFile; fileRef = 12E0CCB9184FEF4F00447896 /* VolumeChangeController.m */; };
 		12E0CCBD18511D8400447896 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12E0CCBB184FFD9B00447896 /* AVFoundation.framework */; };
 		12E0CCCD18513C9D00447896 /* icon-ios_democast_58.png in Resources */ = {isa = PBXBuildFile; fileRef = 12E0CCC818513C9D00447896 /* icon-ios_democast_58.png */; };
 		12E0CCCE18513C9D00447896 /* icon-ios_democast_76.png in Resources */ = {isa = PBXBuildFile; fileRef = 12E0CCC918513C9D00447896 /* icon-ios_democast_76.png */; };
@@ -153,8 +152,6 @@
 		1293D580185A764A001EFCF2 /* actionbar_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = actionbar_logo.png; sourceTree = "<group>"; };
 		129886E11872348A00B013D2 /* video_thumb_mini.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = video_thumb_mini.png; sourceTree = "<group>"; };
 		129886E21872348A00B013D2 /* video_thumb_mini@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "video_thumb_mini@2x.png"; sourceTree = "<group>"; };
-		12E0CCB8184FEF4F00447896 /* VolumeChangeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolumeChangeController.h; sourceTree = "<group>"; };
-		12E0CCB9184FEF4F00447896 /* VolumeChangeController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VolumeChangeController.m; sourceTree = "<group>"; };
 		12E0CCBB184FFD9B00447896 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		12E0CCC818513C9D00447896 /* icon-ios_democast_58.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-ios_democast_58.png"; sourceTree = "<group>"; };
 		12E0CCC918513C9D00447896 /* icon-ios_democast_76.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-ios_democast_76.png"; sourceTree = "<group>"; };
@@ -373,8 +370,6 @@
 				284CBDA1182ADC2D007F65F9 /* LocalPlayerViewController.m */,
 				284CC030182B1891007F65F9 /* ChromecastDeviceController.h */,
 				284CC031182B1891007F65F9 /* ChromecastDeviceController.m */,
-				12E0CCB8184FEF4F00447896 /* VolumeChangeController.h */,
-				12E0CCB9184FEF4F00447896 /* VolumeChangeController.m */,
 				491627AD184FBF9C00351397 /* SimpleImageFetcher.h */,
 				491627AE184FBF9C00351397 /* SimpleImageFetcher.m */,
 				284CBDA3182ADC2D007F65F9 /* Images.xcassets */,
@@ -721,7 +716,6 @@
 				496D46FE182DBE9100343F72 /* Media.m in Sources */,
 				284CBDA2182ADC2D007F65F9 /* LocalPlayerViewController.m in Sources */,
 				496D4701182DBE9C00343F72 /* MediaListModel.m in Sources */,
-				12E0CCBA184FEF4F00447896 /* VolumeChangeController.m in Sources */,
 				EF110FB119759BB30009410F /* CastInstructionsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -15,13 +15,10 @@
 #import <GoogleCast/GoogleCast.h>
 #import <Foundation/Foundation.h>
 #import "Media.h"
-#import "VolumeChangeController.h"
 
 typedef NS_ENUM(NSInteger, ChromecastControllerFeatures) {
   // Constant for no features.
   ChromecastControllerFeaturesNone = 0x0,
-  // Constant for controller device volume from hardware volume buttons.
-  ChromecastControllerFeatureHWVolumeControl = 0x1,
   // Constant for adding notification support.
   ChromecastControllerFeatureNotifications = 0x2,
   // Constant for adding lock screen controls.
@@ -77,8 +74,7 @@ typedef NS_ENUM(NSInteger, ChromecastControllerFeatures) {
 @interface ChromecastDeviceController : NSObject<GCKDeviceScannerListener,
                                                  GCKDeviceFilterListener,
                                                  GCKDeviceManagerDelegate,
-                                                 GCKMediaControlChannelDelegate,
-                                                 VolumeChangeControllerDelegate>
+                                                 GCKMediaControlChannelDelegate>
 
 /** The device scanner used to detect devices on the network. */
 @property(nonatomic, strong) GCKDeviceScanner* deviceScanner;
