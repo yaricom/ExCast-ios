@@ -14,11 +14,11 @@
 
 #import "ChromecastDeviceController.h"
 #import "SimpleImageFetcher.h"
+#import "TracksTableViewController.h"
 
 static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 
 @interface ChromecastDeviceController () {
-  ChromecastControllerFeatures _features;
   UIImage *_btnImage;
   UIImage *_btnImageConnected;
   dispatch_queue_t _queue;
@@ -37,20 +37,15 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 @property(nonatomic) NSURL *toolbarThumbnailURL;
 @property(nonatomic) UILabel *toolbarTitleLabel;
 @property(nonatomic) UILabel *toolbarSubTitleLabel;
+@property(nonatomic) GCKMediaTextTrackStyle *textTrackStyle;
 @end
 
 @implementation ChromecastDeviceController
 
 - (id)init {
-  self.isReconnecting = NO;
-  return [self initWithFeatures:ChromecastControllerFeaturesNone];
-}
-
-- (id)initWithFeatures:(ChromecastControllerFeatures)featureFlags {
   self = [super init];
   if (self) {
-    // Remember the features.
-    _features = featureFlags;
+    self.isReconnecting = NO;
 
     // Initialize device scanner
     self.deviceScanner = [[GCKDeviceScanner alloc] init];
@@ -68,6 +63,7 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
     // Initialize UI controls for navigation bar and tool bar.
     [self initControls];
 
+    // Queue used for loading thumbnails.
     _queue = dispatch_queue_create("com.google.sample.Chromecast", NULL);
 
   }
@@ -122,10 +118,9 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 
 - (void)disconnectFromDevice {
   NSLog(@"Disconnecting device:%@", self.selectedDevice.friendlyName);
-  // New way of doing things: We're not going to stop the applicaton. We're just going
-  // to leave it.
+  // We're not going to stop the applicaton in case we're not the last client.
   [self.deviceManager leaveApplication];
-  // If you want to force application to stop, uncomment below
+  // If you want to force application to stop, uncomment below.
   //[self.deviceManager stopApplication];
   [self.deviceManager disconnect];
 }
@@ -141,6 +136,9 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 
     _playerState = self.mediaControlChannel.mediaStatus.playerState;
     _mediaInformation = self.mediaControlChannel.mediaStatus.mediaInformation;
+    if (!self.selectedTrackByIdentifier) {
+      [self zeroSelectedTracks];
+    }
   }
 }
 
@@ -351,6 +349,7 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
   [self updateStatsFromDevice];
   NSLog(@"Media control channel status changed");
   _mediaControlChannel = mediaControlChannel;
+  [self updateTrackSelectionFromActiveTracks:_mediaControlChannel.mediaStatus.activeTrackIDs];
   if ([self.delegate respondsToSelector:@selector(didReceiveMediaStateChange)]) {
     [self.delegate didReceiveMediaStateChange];
   }
@@ -371,12 +370,14 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
             title:(NSString *)title
          subtitle:(NSString *)subtitle
          mimeType:(NSString *)mimeType
+           tracks:(NSArray *)tracks
         startTime:(NSTimeInterval)startTime
          autoPlay:(BOOL)autoPlay {
   if (!self.deviceManager || !self.deviceManager.isConnected) {
     return NO;
   }
-
+  // Reset selected tracks.
+  self.selectedTrackByIdentifier = nil;
   GCKMediaMetadata *metadata = [[GCKMediaMetadata alloc] init];
   if (title) {
     [metadata setString:title forKey:kGCKMetadataKeyTitle];
@@ -396,10 +397,116 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
                                          contentType:mimeType
                                             metadata:metadata
                                       streamDuration:0
+                                         mediaTracks:tracks
+                                      textTrackStyle:[self textTrackStyle]
                                           customData:nil];
+
   [self.mediaControlChannel loadMedia:mediaInformation autoplay:autoPlay playPosition:startTime];
 
   return YES;
+}
+
+# pragma mark - GCKMediaTextTrackStyle
+
+/** Modify the default style based on the preferences from the Settings app. */
+- (GCKMediaTextTrackStyle *)textTrackStyle {
+  if (_textTrackStyle) {
+    return _textTrackStyle;
+  }
+
+  GCKMediaTextTrackStyle *style = [GCKMediaTextTrackStyle createDefault];
+  NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+  style.fontScale = [defaults floatForKey:@"fontsize"];
+  style.edgeType = [self edgetypeForString:[defaults stringForKey:@"edgeytype"]];
+  style.fontGenericFamily = [self fontFamilyForString:[defaults stringForKey:@"fontfamily"]];
+  if (style.fontGenericFamily != GCKMediaTextTrackStyleFontGenericFamilySansSerif) {
+    // Override default Helvetica if we are in a different family.
+    style.fontFamily = nil;
+  }
+  NSString *textOpacity = [defaults stringForKey:@"textopacity"];
+  if (!textOpacity) {
+    textOpacity = @"FF";
+  }
+  GCKColor *foreground = [[GCKColor alloc] initWithCSSString:[NSString stringWithFormat:@"#%@%@",
+                                                            [defaults stringForKey:@"textcolor"],
+                                                            textOpacity]];
+  style.foregroundColor = foreground;
+  GCKColor *background = [[GCKColor alloc] initWithCSSString:[NSString stringWithFormat:@"#%@%@",
+                                                            [defaults stringForKey:@"bgcolor"],
+                                                            [defaults stringForKey:@"bgopacity"]]];
+  style.backgroundColor = background;
+  style.windowType = [defaults boolForKey:@"rounded"] ?
+      GCKMediaTextTrackStyleWindowTypeRoundedCorners :
+      GCKMediaTextTrackStyleWindowTypeNormal;
+  _textTrackStyle = style;
+  return style;
+}
+
+- (GCKMediaTextTrackStyleEdgeType)edgetypeForString:(NSString*)edge {
+  if ([edge isEqualToString:@"GCKMediaTextTrackStyleEdgeTypeOutline"]) {
+    return GCKMediaTextTrackStyleEdgeTypeOutline;
+  }
+  if ([edge isEqualToString:@"GCKMediaTextTrackStyleEdgeTypeDropShadow"]) {
+    return GCKMediaTextTrackStyleEdgeTypeDropShadow;
+  }
+  if ([edge isEqualToString:@"GCKMediaTextTrackStyleEdgeTypeDepressed"]) {
+    return GCKMediaTextTrackStyleEdgeTypeDepressed;
+  }
+  if ([edge isEqualToString:@"GCKMediaTextTrackStyleEdgeTypeRaised"]) {
+    return GCKMediaTextTrackStyleEdgeTypeRaised;
+  }
+  return GCKMediaTextTrackStyleEdgeTypeNone;
+}
+
+- (GCKMediaTextTrackStyleFontGenericFamily)fontFamilyForString:(NSString*)font {
+  if ([font isEqualToString:@"GCKMediaTextTrackStyleFontGenericFamilySansSerif"]) {
+    return GCKMediaTextTrackStyleFontGenericFamilySansSerif;
+  }
+  if ([font isEqualToString:@"GCKMediaTextTrackStyleFontGenericFamilyMonospacedSansSerif"]) {
+    return GCKMediaTextTrackStyleFontGenericFamilyMonospacedSansSerif;
+  }
+  if ([font isEqualToString:@"GCKMediaTextTrackStyleFontGenericFamilySerif"]) {
+    return GCKMediaTextTrackStyleFontGenericFamilySerif;
+  }
+  if ([font isEqualToString:@"GCKMediaTextTrackStyleFontGenericFamilyMonospacedSerif"]) {
+    return GCKMediaTextTrackStyleFontGenericFamilyMonospacedSerif;
+  }
+  if ([font isEqualToString:@"GCKMediaTextTrackStyleFontGenericFamilyCasual"]) {
+    return GCKMediaTextTrackStyleFontGenericFamilyCasual;
+  }
+  if ([font isEqualToString:@"GCKMediaTextTrackStyleFontGenericFamilyCursive"]) {
+    return GCKMediaTextTrackStyleFontGenericFamilyCursive;
+  }
+  if ([font isEqualToString:@"GCKMediaTextTrackStyleFontGenericFamilySmallCapitals"]) {
+    return GCKMediaTextTrackStyleFontGenericFamilySmallCapitals;
+  }
+  return GCKMediaTextTrackStyleFontGenericFamilyNone;
+}
+
+- (void)registerDefaultStyles {
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  NSDictionary *appDefaults =
+      [NSDictionary dictionaryWithObjects:@[
+                                            @1.0,
+                                            @"GCKMediaTextTrackStyleEdgeTypeNone",
+                                            @"GCKMediaTextTrackStyleFontGenericFamilySansSerif",
+                                            @"FFFFFF",
+                                            @"FF",
+                                            @"000000",
+                                            @"FF",
+                                            @NO
+                                            ]
+                                  forKeys:@[
+                                            @"fontsize",
+                                            @"edgetype",
+                                            @"fontGenericFamily",
+                                            @"textcolor",
+                                            @"textopacity",
+                                            @"bgcolor",
+                                            @"bgopacity",
+                                            @"rounded"
+                                            ]];
+  [defaults registerDefaults:appDefaults];
 }
 
 #pragma mark - implementation
@@ -582,4 +689,44 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
     [self.delegate shouldPresentPlaybackController];
   }
 }
+
+# pragma mark - Tracks management
+
+- (void)updateActiveTracks {
+  NSMutableArray *tracks = [NSMutableArray arrayWithCapacity:[self.selectedTrackByIdentifier count]];
+  NSEnumerator *enumerator = [self.selectedTrackByIdentifier keyEnumerator];
+  NSNumber *key;
+  while ((key = [enumerator nextObject])) {
+    if ([[self.selectedTrackByIdentifier objectForKey:key] boolValue]) {
+      [tracks addObject:key];
+    }
+  }
+  [self.mediaControlChannel setActiveTrackIDs:tracks];
+}
+
+- (void)updateTrackSelectionFromActiveTracks:(NSArray *)activeTracks {
+  if ([_mediaControlChannel.mediaStatus.activeTrackIDs count] == 0) {
+    [self zeroSelectedTracks];
+  }
+
+  NSEnumerator *enumerator = [self.selectedTrackByIdentifier keyEnumerator];
+  NSNumber *key;
+  while ((key = [enumerator nextObject])) {
+    [self.selectedTrackByIdentifier
+        setObject:[NSNumber numberWithBool:[activeTracks containsObject:key]]
+           forKey:key];
+    }
+}
+
+- (void)zeroSelectedTracks {
+  // Disable tracks.
+  self.selectedTrackByIdentifier =
+      [NSMutableDictionary dictionaryWithCapacity:[self.mediaInformation.mediaTracks count]];
+  NSNumber *nope = [NSNumber numberWithBool:NO];
+  for (GCKMediaTrack *track in self.mediaInformation.mediaTracks) {
+    [self.selectedTrackByIdentifier setObject:nope
+                                       forKey:[NSNumber numberWithInteger:track.identifier]];
+  }
+}
+
 @end

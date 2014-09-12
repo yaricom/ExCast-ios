@@ -27,6 +27,9 @@
   // Initialize the chromecast device controller.
   self.chromecastDeviceController = [[ChromecastDeviceController alloc] init];
 
+  // Register the default styles if necessary.
+  [self.chromecastDeviceController registerDefaultStyles];
+
   // Scan for devices.
   [self.chromecastDeviceController performScan:YES];
 

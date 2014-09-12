@@ -15,7 +15,7 @@
 #import <Foundation/Foundation.h>
 
 #define MEDIA_URL_BASE @"http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/"
-#define MEDIA_URL_FILE @"videos-enhanced-b.json"
+#define MEDIA_URL_FILE @"d.json"
 
 /**
  * Defines a media object that can be played back on Chromcast device.
@@ -29,6 +29,7 @@
 @property(nonatomic, strong) NSURL *URL;
 @property(nonatomic, strong) NSURL *thumbnailURL;
 @property(nonatomic, strong) NSURL *posterURL;
+@property(nonatomic, strong) NSArray *tracks;
 
 /// Creates a Media object given a JSON dictionary.
 + (id)mediaFromExternalJSON:(NSDictionary *)jsonAsDict;

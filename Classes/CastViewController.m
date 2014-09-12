@@ -15,6 +15,7 @@
 #import "AppDelegate.h"
 #import "CastViewController.h"
 #import "SimpleImageFetcher.h"
+#import "TracksTableViewController.h"
 
 @interface CastViewController () {
   NSTimeInterval _mediaStartTime;
@@ -35,6 +36,7 @@
 
 @property(nonatomic) UIBarButtonItem* currTime;
 @property(nonatomic) UIBarButtonItem* totalTime;
+@property(nonatomic) UIBarButtonItem* cc;
 @property(nonatomic) UISlider* slider;
 @property(nonatomic) NSArray* playToolbar;
 @property(nonatomic) NSArray* pauseToolbar;
@@ -108,6 +110,26 @@
     _isManualVolumeChange = NO;
 }
 
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+  if ([[segue identifier] isEqualToString:@"listTracks"]) {
+    [self syncChromeCastController];
+    UITabBarController *controller;
+    if ([[segue destinationViewController] class] == [UITabBarController class]) {
+       controller = (UITabBarController *)[segue destinationViewController];
+    } else {
+      // iPad has an extra navigation controller.
+      controller = (UITabBarController *)[(UINavigationController *)[segue destinationViewController] visibleViewController];
+    }
+    TracksTableViewController *trackController  = controller.viewControllers[0];
+    [trackController setMedia:self.mediaToPlay forType:GCKMediaTrackTypeText deviceController:_chromecastController];
+    TracksTableViewController *audioTrackController  = controller.viewControllers[1];
+    [audioTrackController setMedia:self.mediaToPlay forType:GCKMediaTrackTypeAudio deviceController:_chromecastController];
+  }
+}
+
+- (IBAction)unwindToCastView:(UIStoryboardSegue *)segue; {
+  [self dismissViewControllerAnimated:true completion:nil];
+}
 
 #pragma mark - Managing the detail item
 
@@ -253,6 +275,8 @@
       });
     });
 
+    self.cc.enabled = [self.mediaToPlay.tracks count] > 0;
+
     // If the newMedia is already playing, join the existing session.
     if (![self.mediaToPlay.title isEqualToString:[_chromecastController.mediaInformation.metadata
             stringForKey:kGCKMetadataKeyTitle]] ||
@@ -263,6 +287,7 @@
                                  title:self.mediaToPlay.title
                               subtitle:self.mediaToPlay.subtitle
                               mimeType:self.mediaToPlay.mimeType
+                                tracks:self.mediaToPlay.tracks
                              startTime:_mediaStartTime
                               autoPlay:YES];
       _joinExistingSession = NO;
@@ -349,6 +374,10 @@
   [_chromecastController pauseCastMedia:NO];
 }
 
+- (IBAction)subtitleButtonClicked:(id)sender {
+  [self performSegueWithIdentifier:@"listTracks" sender:self];
+}
+
 // Unsed, but if you wanted a stop, as opposed to a pause button, this is probably
 // what you would call
 - (IBAction)stopButtonClicked:(id)sender {
@@ -401,7 +430,10 @@
  */
 - (void)didReceiveMediaStateChange {
   _readyToShowInterface = YES;
-  self.navigationController.toolbarHidden = NO;
+  if ([self isViewLoaded] && self.view.window) {
+    // Display toolbar if we are current view.
+    self.navigationController.toolbarHidden = NO;
+  }
 
   if (_chromecastController.playerState == GCKMediaPlayerStateIdle) {
     _mediaToPlay = nil; // Forget media.
@@ -434,6 +466,12 @@
                                       target:self
                                       action:@selector(showVolumeSlider:)];
   volumeButton.tintColor = [UIColor whiteColor];
+  self.cc =
+    [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"closed_caption_white.png"]
+                                                    style:UIBarButtonItemStylePlain
+                                                    target:self
+                                                    action:@selector(subtitleButtonClicked:)];
+  self.cc.tintColor = [UIColor whiteColor];
   self.currTime = [[UIBarButtonItem alloc] initWithTitle:@"00:00"
                                                    style:UIBarButtonItemStylePlain
                                                   target:nil
@@ -486,8 +524,12 @@
   self.volumeControls.layer.masksToBounds = YES;
 
   self.playToolbar = [NSArray arrayWithObjects:flexibleSpace,
-      playButton, flexibleSpace2, volumeButton, flexibleSpace3, self.currTime, sliderItem, self.totalTime, flexibleSpace4, nil];
+      playButton, flexibleSpace2, volumeButton, flexibleSpace3,
+      self.currTime, sliderItem, self.totalTime, flexibleSpace4,
+      self.cc, nil];
   self.pauseToolbar = [NSArray arrayWithObjects:flexibleSpace,
-      pauseButton, flexibleSpace2, volumeButton, flexibleSpace3, self.currTime, sliderItem, self.totalTime, flexibleSpace4, nil];
+      pauseButton, flexibleSpace2, volumeButton, flexibleSpace3,
+      self.currTime, sliderItem, self.totalTime, flexibleSpace4,
+      self.cc, nil];
 }
 @end

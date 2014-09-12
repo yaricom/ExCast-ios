@@ -49,8 +49,8 @@
               NSArray *mediaList = [category objectForKey:@"videos"];
               if (mediaList && [mediaList isKindOfClass:[NSArray class]]) {
                 self.mediaTitle = [category objectForKey:@"name"];
-                for (NSDictionary *mediaOjbectAsDict in mediaList) {
-                  Media *nextMedia = [Media mediaFromExternalJSON:mediaOjbectAsDict];
+                for (NSDictionary *mediaObjectAsDict in mediaList) {
+                  Media *nextMedia = [Media mediaFromExternalJSON:mediaObjectAsDict];
                   [mediaBuilder addObject:nextMedia];
                 }
                 break;

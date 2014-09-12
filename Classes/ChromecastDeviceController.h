@@ -16,15 +16,6 @@
 #import <Foundation/Foundation.h>
 #import "Media.h"
 
-typedef NS_ENUM(NSInteger, ChromecastControllerFeatures) {
-  // Constant for no features.
-  ChromecastControllerFeaturesNone = 0x0,
-  // Constant for adding notification support.
-  ChromecastControllerFeatureNotifications = 0x2,
-  // Constant for adding lock screen controls.
-  ChromecastControllerFeatureLockscreenControl = 0x4
-};
-
 /**
  * The delegate to ChromecastDeviceController. Allows responsding to device and
  * media states and reflecting that in the UI.
@@ -109,8 +100,8 @@ typedef NS_ENUM(NSInteger, ChromecastControllerFeatures) {
 /** The volume the device is currently at **/
 @property(nonatomic) float deviceVolume;
 
-/** Initialize the controller with features for various experiences. */
-- (id)initWithFeatures:(ChromecastControllerFeatures)features;
+/** Map of track identifier NSNumber to NSNumber boolean for enabled/disabled. */
+@property(nonatomic, strong) NSMutableDictionary *selectedTrackByIdentifier;
 
 /** Update the toolbar representing the playback state of media on the device. */
 - (void)updateToolbarForViewController:(UIViewController*)viewController;
@@ -125,11 +116,12 @@ typedef NS_ENUM(NSInteger, ChromecastControllerFeatures) {
 - (void)disconnectFromDevice;
 
 /** Load a media on the device with supplied media metadata. */
-- (BOOL)loadMedia:(NSURL*)url
-     thumbnailURL:(NSURL*)thumbnailURL
-            title:(NSString*)title
-         subtitle:(NSString*)subtitle
-         mimeType:(NSString*)mimeType
+- (BOOL)loadMedia:(NSURL *)url
+     thumbnailURL:(NSURL *)thumbnailURL
+            title:(NSString *)title
+         subtitle:(NSString *)subtitle
+         mimeType:(NSString *)mimeType
+           tracks:(NSArray *)tracks
         startTime:(NSTimeInterval)startTime
          autoPlay:(BOOL)autoPlay;
 
@@ -154,6 +146,10 @@ typedef NS_ENUM(NSInteger, ChromecastControllerFeatures) {
 /** Increase or decrease the volume on the Chromecast device. */
 - (void)changeVolumeIncrease:(BOOL)goingUp;
 
+/** Update the actively used tracks to the selectedTrackByType. */
+- (void)updateActiveTracks;
 
+/** Register the defaults for the text track style settings. */
+- (void)registerDefaultStyles;
 
 @end

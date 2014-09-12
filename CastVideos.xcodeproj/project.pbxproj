@@ -112,6 +112,9 @@
 		EF110FB119759BB30009410F /* CastInstructionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EF110FB019759BB30009410F /* CastInstructionsViewController.m */; };
 		EF110FB41976AA2C0009410F /* cling.png in Resources */ = {isa = PBXBuildFile; fileRef = EF110FB21976AA2C0009410F /* cling.png */; };
 		EF110FB51976AA2C0009410F /* cling@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EF110FB31976AA2C0009410F /* cling@2x.png */; };
+		EF23DBA919C0EF7F00DA5ABB /* closed_caption_white.png in Resources */ = {isa = PBXBuildFile; fileRef = EF23DBA719C0EF7F00DA5ABB /* closed_caption_white.png */; };
+		EF23DBAA19C0EF7F00DA5ABB /* closed_caption_white@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EF23DBA819C0EF7F00DA5ABB /* closed_caption_white@2x.png */; };
+		EF23DBAD19C0FF2F00DA5ABB /* TracksTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EF23DBAC19C0FF2F00DA5ABB /* TracksTableViewController.m */; };
 		EFCC0D9A199A24560078166E /* icon_cast_on_filled@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EFCC0D98199A24560078166E /* icon_cast_on_filled@2x.png */; };
 		EFCC0D9B199A24560078166E /* icon_cast_on_filled.png in Resources */ = {isa = PBXBuildFile; fileRef = EFCC0D99199A24560078166E /* icon_cast_on_filled.png */; };
 		EFCC0DA0199D32E20078166E /* icon_volume0@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EFCC0D9C199D32E20078166E /* icon_volume0@2x.png */; };
@@ -130,6 +133,7 @@
 		EFCC0DB9199DF2880078166E /* icon_volume1_black.png in Resources */ = {isa = PBXBuildFile; fileRef = EFCC0DB5199DF2880078166E /* icon_volume1_black.png */; };
 		EFCC0DBA199DF2880078166E /* icon_volume2_black.png in Resources */ = {isa = PBXBuildFile; fileRef = EFCC0DB6199DF2880078166E /* icon_volume2_black.png */; };
 		EFCC0DBB199DF2880078166E /* icon_volume3_black.png in Resources */ = {isa = PBXBuildFile; fileRef = EFCC0DB7199DF2880078166E /* icon_volume3_black.png */; };
+		EFE761C219C3E43D003689EE /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = EFE761C119C3E43D003689EE /* Settings.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -262,6 +266,10 @@
 		EF110FB019759BB30009410F /* CastInstructionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CastInstructionsViewController.m; sourceTree = "<group>"; };
 		EF110FB21976AA2C0009410F /* cling.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cling.png; sourceTree = "<group>"; };
 		EF110FB31976AA2C0009410F /* cling@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cling@2x.png"; sourceTree = "<group>"; };
+		EF23DBA719C0EF7F00DA5ABB /* closed_caption_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = closed_caption_white.png; sourceTree = "<group>"; };
+		EF23DBA819C0EF7F00DA5ABB /* closed_caption_white@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "closed_caption_white@2x.png"; sourceTree = "<group>"; };
+		EF23DBAB19C0FF2F00DA5ABB /* TracksTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TracksTableViewController.h; sourceTree = "<group>"; };
+		EF23DBAC19C0FF2F00DA5ABB /* TracksTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TracksTableViewController.m; sourceTree = "<group>"; };
 		EFCC0D98199A24560078166E /* icon_cast_on_filled@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_cast_on_filled@2x.png"; sourceTree = "<group>"; };
 		EFCC0D99199A24560078166E /* icon_cast_on_filled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_cast_on_filled.png; sourceTree = "<group>"; };
 		EFCC0D9C199D32E20078166E /* icon_volume0@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_volume0@2x.png"; sourceTree = "<group>"; };
@@ -280,6 +288,7 @@
 		EFCC0DB5199DF2880078166E /* icon_volume1_black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_volume1_black.png; sourceTree = "<group>"; };
 		EFCC0DB6199DF2880078166E /* icon_volume2_black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_volume2_black.png; sourceTree = "<group>"; };
 		EFCC0DB7199DF2880078166E /* icon_volume3_black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_volume3_black.png; sourceTree = "<group>"; };
+		EFE761C119C3E43D003689EE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -366,6 +375,8 @@
 				284CC034182C3396007F65F9 /* CastViewController.m */,
 				124377CE187CC2B500ADF736 /* DeviceTableViewController.h */,
 				124377CF187CC2B500ADF736 /* DeviceTableViewController.m */,
+				EF23DBAB19C0FF2F00DA5ABB /* TracksTableViewController.h */,
+				EF23DBAC19C0FF2F00DA5ABB /* TracksTableViewController.m */,
 				284CBDA0182ADC2D007F65F9 /* LocalPlayerViewController.h */,
 				284CBDA1182ADC2D007F65F9 /* LocalPlayerViewController.m */,
 				284CC030182B1891007F65F9 /* ChromecastDeviceController.h */,
@@ -385,6 +396,7 @@
 				284CBD8E182ADC2D007F65F9 /* InfoPlist.strings */,
 				284CBD91182ADC2D007F65F9 /* main.m */,
 				284CBD93182ADC2D007F65F9 /* CastVideos-Prefix.pch */,
+				EFE761C119C3E43D003689EE /* Settings.bundle */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -410,6 +422,8 @@
 		284CC025182B0F9B007F65F9 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				EF23DBA719C0EF7F00DA5ABB /* closed_caption_white.png */,
+				EF23DBA819C0EF7F00DA5ABB /* closed_caption_white@2x.png */,
 				EFCC0DB4199DF2880078166E /* icon_volume0_black.png */,
 				EFCC0DB5199DF2880078166E /* icon_volume1_black.png */,
 				EFCC0DB6199DF2880078166E /* icon_volume2_black.png */,
@@ -622,6 +636,7 @@
 				12E0CD0018550A0700447896 /* cast_outline_custom@2x.png in Resources */,
 				12E0CD0118550A0700447896 /* cast_outline_white.png in Resources */,
 				12E66C2118AC29F6004CF45B /* icon_cast_on2@2x.png in Resources */,
+				EFE761C219C3E43D003689EE /* Settings.bundle in Resources */,
 				12E0CD1318550A0700447896 /* icon_photos_black.png in Resources */,
 				EFCC0DB3199DF2770078166E /* icon_volume3_black@2x.png in Resources */,
 				12E0CD0318550A0700447896 /* cast_outline.png in Resources */,
@@ -634,6 +649,7 @@
 				12E0CD0B18550A0700447896 /* cast_solid.png in Resources */,
 				284CC02F182B0F9B007F65F9 /* icon-cast-identified@2x.png in Resources */,
 				12E0CD0518550A0700447896 /* cast_solid_black.png in Resources */,
+				EF23DBA919C0EF7F00DA5ABB /* closed_caption_white.png in Resources */,
 				4945BD871851041900619BF8 /* play_dark.png in Resources */,
 				12E0CD1118550A0700447896 /* icon_music_black.png in Resources */,
 				EFCC0DAB199D33160078166E /* icon_volume3.png in Resources */,
@@ -670,6 +686,7 @@
 				12E66C1F18AC29F6004CF45B /* icon_cast_on0@2x.png in Resources */,
 				284CBD90182ADC2D007F65F9 /* InfoPlist.strings in Resources */,
 				12E0CD0418550A0700447896 /* cast_outline@2x.png in Resources */,
+				EF23DBAA19C0EF7F00DA5ABB /* closed_caption_white@2x.png in Resources */,
 				12E0CD2018550A0700447896 /* pause_black@2x.png in Resources */,
 				12E0CD1918550A0700447896 /* list_outline_white.png in Resources */,
 				12E0CD1A18550A0700447896 /* list_outline_white@2x.png in Resources */,
@@ -713,6 +730,7 @@
 				EF110FAE197590DE0009410F /* SemiModalAnimatedTransition.m in Sources */,
 				124377D0187CC2B500ADF736 /* DeviceTableViewController.m in Sources */,
 				491627AF184FBF9C00351397 /* SimpleImageFetcher.m in Sources */,
+				EF23DBAD19C0FF2F00DA5ABB /* TracksTableViewController.m in Sources */,
 				496D46FE182DBE9100343F72 /* Media.m in Sources */,
 				284CBDA2182ADC2D007F65F9 /* LocalPlayerViewController.m in Sources */,
 				496D4701182DBE9C00343F72 /* MediaListModel.m in Sources */,
