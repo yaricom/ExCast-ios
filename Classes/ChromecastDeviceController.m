@@ -71,7 +71,7 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 }
 
 - (BOOL)isConnected {
-  return self.deviceManager.isConnected;
+  return self.deviceManager.isConnectedToApp;
 }
 
 - (BOOL)isPlayingMedia {
@@ -239,12 +239,14 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
   [self updateCastIconButtonStates];
 }
 
-- (BOOL)isConnectivityError:(NSError *)error {
+- (BOOL)isRecoverableError:(NSError *)error {
   if (!error) {
-    return false;
+    return NO;
   }
 
-  return (error.code == GCKErrorCodeNetworkError || error.code == GCKErrorCodeTimeout);
+  return (error.code == GCKErrorCodeNetworkError ||
+          error.code == GCKErrorCodeTimeout ||
+          error.code == GCKErrorCodeAppDidEnterBackground);
 }
 
 - (void)deviceManager:(GCKDeviceManager *)deviceManager didDisconnectWithError:(GCKError *)error {
@@ -255,7 +257,7 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
   }
 
   // Forget the device except when the error is a connectivity related, such a WiFi problem.
-  [self deviceDisconnectedForgetDevice:![self isConnectivityError:error]];
+  [self deviceDisconnectedForgetDevice:![self isRecoverableError:error]];
   [self updateCastIconButtonStates];
 
 }
@@ -269,7 +271,7 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
   }
 
   // Forget the device except when the error is a connectivity related, such a WiFi problem.
-  [self deviceDisconnectedForgetDevice:![self isConnectivityError:error]];
+  [self deviceDisconnectedForgetDevice:![self isRecoverableError:error]];
   [self updateCastIconButtonStates];
 }
 
@@ -408,105 +410,14 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 
 # pragma mark - GCKMediaTextTrackStyle
 
-/** Modify the default style based on the preferences from the Settings app. */
 - (GCKMediaTextTrackStyle *)textTrackStyle {
-  if (_textTrackStyle) {
-    return _textTrackStyle;
+  if (!_textTrackStyle) {
+    // createDefault will use the system captions style via the MediaAccessibility framework
+    // in iOS 7 and above. For apps which support iOS 6 you may want to implement a Settings
+    // bundle and customise a GCKMediaTextTrackStyle manually on those systems.
+    _textTrackStyle = [GCKMediaTextTrackStyle createDefault];
   }
-
-  GCKMediaTextTrackStyle *style = [GCKMediaTextTrackStyle createDefault];
-  NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-  style.fontScale = [defaults floatForKey:@"fontsize"];
-  style.edgeType = [self edgetypeForString:[defaults stringForKey:@"edgeytype"]];
-  style.fontGenericFamily = [self fontFamilyForString:[defaults stringForKey:@"fontfamily"]];
-  if (style.fontGenericFamily != GCKMediaTextTrackStyleFontGenericFamilySansSerif) {
-    // Override default Helvetica if we are in a different family.
-    style.fontFamily = nil;
-  }
-  NSString *textOpacity = [defaults stringForKey:@"textopacity"];
-  if (!textOpacity) {
-    textOpacity = @"FF";
-  }
-  GCKColor *foreground = [[GCKColor alloc] initWithCSSString:[NSString stringWithFormat:@"#%@%@",
-                                                            [defaults stringForKey:@"textcolor"],
-                                                            textOpacity]];
-  style.foregroundColor = foreground;
-  GCKColor *background = [[GCKColor alloc] initWithCSSString:[NSString stringWithFormat:@"#%@%@",
-                                                            [defaults stringForKey:@"bgcolor"],
-                                                            [defaults stringForKey:@"bgopacity"]]];
-  style.backgroundColor = background;
-  style.windowType = [defaults boolForKey:@"rounded"] ?
-      GCKMediaTextTrackStyleWindowTypeRoundedCorners :
-      GCKMediaTextTrackStyleWindowTypeNormal;
-  _textTrackStyle = style;
-  return style;
-}
-
-- (GCKMediaTextTrackStyleEdgeType)edgetypeForString:(NSString*)edge {
-  if ([edge isEqualToString:@"GCKMediaTextTrackStyleEdgeTypeOutline"]) {
-    return GCKMediaTextTrackStyleEdgeTypeOutline;
-  }
-  if ([edge isEqualToString:@"GCKMediaTextTrackStyleEdgeTypeDropShadow"]) {
-    return GCKMediaTextTrackStyleEdgeTypeDropShadow;
-  }
-  if ([edge isEqualToString:@"GCKMediaTextTrackStyleEdgeTypeDepressed"]) {
-    return GCKMediaTextTrackStyleEdgeTypeDepressed;
-  }
-  if ([edge isEqualToString:@"GCKMediaTextTrackStyleEdgeTypeRaised"]) {
-    return GCKMediaTextTrackStyleEdgeTypeRaised;
-  }
-  return GCKMediaTextTrackStyleEdgeTypeNone;
-}
-
-- (GCKMediaTextTrackStyleFontGenericFamily)fontFamilyForString:(NSString*)font {
-  if ([font isEqualToString:@"GCKMediaTextTrackStyleFontGenericFamilySansSerif"]) {
-    return GCKMediaTextTrackStyleFontGenericFamilySansSerif;
-  }
-  if ([font isEqualToString:@"GCKMediaTextTrackStyleFontGenericFamilyMonospacedSansSerif"]) {
-    return GCKMediaTextTrackStyleFontGenericFamilyMonospacedSansSerif;
-  }
-  if ([font isEqualToString:@"GCKMediaTextTrackStyleFontGenericFamilySerif"]) {
-    return GCKMediaTextTrackStyleFontGenericFamilySerif;
-  }
-  if ([font isEqualToString:@"GCKMediaTextTrackStyleFontGenericFamilyMonospacedSerif"]) {
-    return GCKMediaTextTrackStyleFontGenericFamilyMonospacedSerif;
-  }
-  if ([font isEqualToString:@"GCKMediaTextTrackStyleFontGenericFamilyCasual"]) {
-    return GCKMediaTextTrackStyleFontGenericFamilyCasual;
-  }
-  if ([font isEqualToString:@"GCKMediaTextTrackStyleFontGenericFamilyCursive"]) {
-    return GCKMediaTextTrackStyleFontGenericFamilyCursive;
-  }
-  if ([font isEqualToString:@"GCKMediaTextTrackStyleFontGenericFamilySmallCapitals"]) {
-    return GCKMediaTextTrackStyleFontGenericFamilySmallCapitals;
-  }
-  return GCKMediaTextTrackStyleFontGenericFamilyNone;
-}
-
-- (void)registerDefaultStyles {
-  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-  NSDictionary *appDefaults =
-      [NSDictionary dictionaryWithObjects:@[
-                                            @1.0,
-                                            @"GCKMediaTextTrackStyleEdgeTypeNone",
-                                            @"GCKMediaTextTrackStyleFontGenericFamilySansSerif",
-                                            @"FFFFFF",
-                                            @"FF",
-                                            @"000000",
-                                            @"FF",
-                                            @NO
-                                            ]
-                                  forKeys:@[
-                                            @"fontsize",
-                                            @"edgetype",
-                                            @"fontGenericFamily",
-                                            @"textcolor",
-                                            @"textopacity",
-                                            @"bgcolor",
-                                            @"bgopacity",
-                                            @"rounded"
-                                            ]];
-  [defaults registerDefaults:appDefaults];
+  return _textTrackStyle;
 }
 
 #pragma mark - implementation
@@ -613,7 +524,7 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
     chromecastButton.hidden = YES;
   } else {
     chromecastButton.hidden = NO;
-    if (self.deviceManager && self.deviceManager.isConnected) {
+    if (self.deviceManager && self.deviceManager.isConnectedToApp) {
       [chromecastButton.imageView stopAnimating];
       // Hilight with yellow tint color.
       [chromecastButton setTintColor:[UIColor yellowColor]];

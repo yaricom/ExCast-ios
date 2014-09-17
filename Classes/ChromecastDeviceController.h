@@ -149,7 +149,4 @@
 /** Update the actively used tracks to the selectedTrackByType. */
 - (void)updateActiveTracks;
 
-/** Register the defaults for the text track style settings. */
-- (void)registerDefaultStyles;
-
 @end

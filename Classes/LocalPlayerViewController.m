@@ -36,6 +36,9 @@
 #pragma mark State management
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
   if ([[segue identifier] isEqualToString:@"castMedia"]) {
+    if (_lastKnownPlaybackTime == NAN) {
+      _lastKnownPlaybackTime = 0;
+    }
     [(CastViewController *)[segue destinationViewController] setMediaToPlay:self.mediaToPlay
                                                            withStartingTime:_lastKnownPlaybackTime];
     [(CastViewController *)[segue destinationViewController] setLocalPlayer:self];

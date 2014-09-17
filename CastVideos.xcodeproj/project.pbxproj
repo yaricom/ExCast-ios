@@ -82,11 +82,6 @@
 		284CBD9F182ADC2D007F65F9 /* MediaTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 284CBD9E182ADC2D007F65F9 /* MediaTableViewController.m */; };
 		284CBDA2182ADC2D007F65F9 /* LocalPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 284CBDA1182ADC2D007F65F9 /* LocalPlayerViewController.m */; };
 		284CBDA4182ADC2D007F65F9 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 284CBDA3182ADC2D007F65F9 /* Images.xcassets */; };
-		284CBDAB182ADC2D007F65F9 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 284CBDAA182ADC2D007F65F9 /* XCTest.framework */; };
-		284CBDAC182ADC2D007F65F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 284CBD85182ADC2D007F65F9 /* Foundation.framework */; };
-		284CBDAD182ADC2D007F65F9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 284CBD89182ADC2D007F65F9 /* UIKit.framework */; };
-		284CBDB5182ADC2D007F65F9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 284CBDB3182ADC2D007F65F9 /* InfoPlist.strings */; };
-		284CBDB7182ADC2D007F65F9 /* Chromecast_iOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 284CBDB6182ADC2D007F65F9 /* Chromecast_iOSTests.m */; };
 		284CC02B182B0F9B007F65F9 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 284CC026182B0F9B007F65F9 /* Default-568h@2x.png */; };
 		284CC02C182B0F9B007F65F9 /* icon-cast-connected.png in Resources */ = {isa = PBXBuildFile; fileRef = 284CC027182B0F9B007F65F9 /* icon-cast-connected.png */; };
 		284CC02D182B0F9B007F65F9 /* icon-cast-connected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 284CC028182B0F9B007F65F9 /* icon-cast-connected@2x.png */; };
@@ -133,18 +128,7 @@
 		EFCC0DB9199DF2880078166E /* icon_volume1_black.png in Resources */ = {isa = PBXBuildFile; fileRef = EFCC0DB5199DF2880078166E /* icon_volume1_black.png */; };
 		EFCC0DBA199DF2880078166E /* icon_volume2_black.png in Resources */ = {isa = PBXBuildFile; fileRef = EFCC0DB6199DF2880078166E /* icon_volume2_black.png */; };
 		EFCC0DBB199DF2880078166E /* icon_volume3_black.png in Resources */ = {isa = PBXBuildFile; fileRef = EFCC0DB7199DF2880078166E /* icon_volume3_black.png */; };
-		EFE761C219C3E43D003689EE /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = EFE761C119C3E43D003689EE /* Settings.bundle */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		284CBDAE182ADC2D007F65F9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 284CBD7A182ADC2D007F65F9 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 284CBD81182ADC2D007F65F9;
-			remoteInfo = Chromecast_iOS;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		124377CE187CC2B500ADF736 /* DeviceTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceTableViewController.h; sourceTree = "<group>"; };
@@ -229,11 +213,7 @@
 		284CBDA0182ADC2D007F65F9 /* LocalPlayerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalPlayerViewController.h; sourceTree = "<group>"; };
 		284CBDA1182ADC2D007F65F9 /* LocalPlayerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = LocalPlayerViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		284CBDA3182ADC2D007F65F9 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		284CBDA9182ADC2D007F65F9 /* CastVideosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CastVideosTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		284CBDAA182ADC2D007F65F9 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		284CBDB2182ADC2D007F65F9 /* Chromecast_iOSTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Chromecast_iOSTests-Info.plist"; sourceTree = "<group>"; };
-		284CBDB4182ADC2D007F65F9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		284CBDB6182ADC2D007F65F9 /* Chromecast_iOSTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Chromecast_iOSTests.m; sourceTree = "<group>"; };
 		284CC026182B0F9B007F65F9 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		284CC027182B0F9B007F65F9 /* icon-cast-connected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-cast-connected.png"; sourceTree = "<group>"; };
 		284CC028182B0F9B007F65F9 /* icon-cast-connected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-cast-connected@2x.png"; sourceTree = "<group>"; };
@@ -288,7 +268,6 @@
 		EFCC0DB5199DF2880078166E /* icon_volume1_black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_volume1_black.png; sourceTree = "<group>"; };
 		EFCC0DB6199DF2880078166E /* icon_volume2_black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_volume2_black.png; sourceTree = "<group>"; };
 		EFCC0DB7199DF2880078166E /* icon_volume3_black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_volume3_black.png; sourceTree = "<group>"; };
-		EFE761C119C3E43D003689EE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -306,16 +285,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		284CBDA6182ADC2D007F65F9 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				284CBDAB182ADC2D007F65F9 /* XCTest.framework in Frameworks */,
-				284CBDAD182ADC2D007F65F9 /* UIKit.framework in Frameworks */,
-				284CBDAC182ADC2D007F65F9 /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -324,7 +293,6 @@
 			children = (
 				284CC025182B0F9B007F65F9 /* Images */,
 				284CBD8B182ADC2D007F65F9 /* Classes */,
-				284CBDB0182ADC2D007F65F9 /* CastVideos_iOSTests */,
 				284CBD84182ADC2D007F65F9 /* Frameworks */,
 				284CBD83182ADC2D007F65F9 /* Products */,
 			);
@@ -334,7 +302,6 @@
 			isa = PBXGroup;
 			children = (
 				284CBD82182ADC2D007F65F9 /* CastVideos.app */,
-				284CBDA9182ADC2D007F65F9 /* CastVideosTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -396,25 +363,6 @@
 				284CBD8E182ADC2D007F65F9 /* InfoPlist.strings */,
 				284CBD91182ADC2D007F65F9 /* main.m */,
 				284CBD93182ADC2D007F65F9 /* CastVideos-Prefix.pch */,
-				EFE761C119C3E43D003689EE /* Settings.bundle */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		284CBDB0182ADC2D007F65F9 /* CastVideos_iOSTests */ = {
-			isa = PBXGroup;
-			children = (
-				284CBDB6182ADC2D007F65F9 /* Chromecast_iOSTests.m */,
-				284CBDB1182ADC2D007F65F9 /* Supporting Files */,
-			);
-			path = CastVideos_iOSTests;
-			sourceTree = "<group>";
-		};
-		284CBDB1182ADC2D007F65F9 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				284CBDB2182ADC2D007F65F9 /* Chromecast_iOSTests-Info.plist */,
-				284CBDB3182ADC2D007F65F9 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -543,24 +491,6 @@
 			productReference = 284CBD82182ADC2D007F65F9 /* CastVideos.app */;
 			productType = "com.apple.product-type.application";
 		};
-		284CBDA8182ADC2D007F65F9 /* CastVideosTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 284CBDBD182ADC2E007F65F9 /* Build configuration list for PBXNativeTarget "CastVideosTests" */;
-			buildPhases = (
-				284CBDA5182ADC2D007F65F9 /* Sources */,
-				284CBDA6182ADC2D007F65F9 /* Frameworks */,
-				284CBDA7182ADC2D007F65F9 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				284CBDAF182ADC2D007F65F9 /* PBXTargetDependency */,
-			);
-			name = CastVideosTests;
-			productName = Chromecast_iOSTests;
-			productReference = 284CBDA9182ADC2D007F65F9 /* CastVideosTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -572,9 +502,6 @@
 				TargetAttributes = {
 					284CBD81182ADC2D007F65F9 = {
 						DevelopmentTeam = EQHXZ8M8AV;
-					};
-					284CBDA8182ADC2D007F65F9 = {
-						TestTargetID = 284CBD81182ADC2D007F65F9;
 					};
 				};
 			};
@@ -592,7 +519,6 @@
 			projectRoot = "";
 			targets = (
 				284CBD81182ADC2D007F65F9 /* CastVideos */,
-				284CBDA8182ADC2D007F65F9 /* CastVideosTests */,
 			);
 		};
 /* End PBXProject section */
@@ -636,7 +562,6 @@
 				12E0CD0018550A0700447896 /* cast_outline_custom@2x.png in Resources */,
 				12E0CD0118550A0700447896 /* cast_outline_white.png in Resources */,
 				12E66C2118AC29F6004CF45B /* icon_cast_on2@2x.png in Resources */,
-				EFE761C219C3E43D003689EE /* Settings.bundle in Resources */,
 				12E0CD1318550A0700447896 /* icon_photos_black.png in Resources */,
 				EFCC0DB3199DF2770078166E /* icon_volume3_black@2x.png in Resources */,
 				12E0CD0318550A0700447896 /* cast_outline.png in Resources */,
@@ -707,14 +632,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		284CBDA7182ADC2D007F65F9 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				284CBDB5182ADC2D007F65F9 /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -738,23 +655,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		284CBDA5182ADC2D007F65F9 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				284CBDB7182ADC2D007F65F9 /* Chromecast_iOSTests.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		284CBDAF182ADC2D007F65F9 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 284CBD81182ADC2D007F65F9 /* CastVideos */;
-			targetProxy = 284CBDAE182ADC2D007F65F9 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		284CBD8E182ADC2D007F65F9 /* InfoPlist.strings */ = {
@@ -779,14 +680,6 @@
 				284CBD9B182ADC2D007F65F9 /* Base */,
 			);
 			name = Main_iPad.storyboard;
-			sourceTree = "<group>";
-		};
-		284CBDB3182ADC2D007F65F9 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				284CBDB4182ADC2D007F65F9 /* en */,
-			);
-			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -918,46 +811,6 @@
 			};
 			name = Release;
 		};
-		284CBDBE182ADC2E007F65F9 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Chromecast_iOS.app/Chromecast_iOS";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Chromecast_iOS/Chromecast_iOS-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = "Chromecast_iOSTests/Chromecast_iOSTests-Info.plist";
-				PRODUCT_NAME = CastVideosTests;
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Debug;
-		};
-		284CBDBF182ADC2E007F65F9 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Chromecast_iOS.app/Chromecast_iOS";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Chromecast_iOS/Chromecast_iOS-Prefix.pch";
-				INFOPLIST_FILE = "Chromecast_iOSTests/Chromecast_iOSTests-Info.plist";
-				PRODUCT_NAME = CastVideosTests;
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -975,15 +828,6 @@
 			buildConfigurations = (
 				284CBDBB182ADC2E007F65F9 /* Debug */,
 				284CBDBC182ADC2E007F65F9 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		284CBDBD182ADC2E007F65F9 /* Build configuration list for PBXNativeTarget "CastVideosTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				284CBDBE182ADC2E007F65F9 /* Debug */,
-				284CBDBF182ADC2E007F65F9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
