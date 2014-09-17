@@ -200,9 +200,7 @@
                         </connections>
                     </tableView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" id="tQt-TN-PWz">
-                        <barButtonItem key="leftBarButtonItem" image="icon_settings_outline_black.png" id="r88-XI-zow"/>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" id="tQt-TN-PWz"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <segue destination="Ah7-4n-0Wa" kind="push" identifier="playMedia" id="SIC-cU-79j"/>
@@ -725,7 +723,6 @@
         <image name="cast_solid_white.png" width="27" height="21"/>
         <image name="cling.png" width="179" height="179"/>
         <image name="closed_caption_white.png" width="48" height="48"/>
-        <image name="icon_settings_outline_black.png" width="25" height="25"/>
         <image name="icon_volume0.png" width="30" height="30"/>
         <image name="icon_volume0_black.png" width="30" height="30"/>
         <image name="icon_volume3.png" width="30" height="30"/>
@@ -739,6 +736,6 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="H08-Zb-dfr"/>
-        <segue reference="BYP-uC-I0y"/>
+        <segue reference="aqX-wX-tnU"/>
     </inferredMetricsTieBreakers>
 </document>

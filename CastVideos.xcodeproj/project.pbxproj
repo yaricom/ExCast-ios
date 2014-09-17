@@ -128,6 +128,7 @@
 		EFCC0DB9199DF2880078166E /* icon_volume1_black.png in Resources */ = {isa = PBXBuildFile; fileRef = EFCC0DB5199DF2880078166E /* icon_volume1_black.png */; };
 		EFCC0DBA199DF2880078166E /* icon_volume2_black.png in Resources */ = {isa = PBXBuildFile; fileRef = EFCC0DB6199DF2880078166E /* icon_volume2_black.png */; };
 		EFCC0DBB199DF2880078166E /* icon_volume3_black.png in Resources */ = {isa = PBXBuildFile; fileRef = EFCC0DB7199DF2880078166E /* icon_volume3_black.png */; };
+		EFE3184819C7D97B00C053EE /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EFE3184719C7D97B00C053EE /* SystemConfiguration.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -268,6 +269,7 @@
 		EFCC0DB5199DF2880078166E /* icon_volume1_black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_volume1_black.png; sourceTree = "<group>"; };
 		EFCC0DB6199DF2880078166E /* icon_volume2_black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_volume2_black.png; sourceTree = "<group>"; };
 		EFCC0DB7199DF2880078166E /* icon_volume3_black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_volume3_black.png; sourceTree = "<group>"; };
+		EFE3184719C7D97B00C053EE /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -275,6 +277,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EFE3184819C7D97B00C053EE /* SystemConfiguration.framework in Frameworks */,
 				CCE5BD45196F038400016BAB /* CoreText.framework in Frameworks */,
 				CCE5BD43196F037300016BAB /* MediaAccessibility.framework in Frameworks */,
 				12E0CCBD18511D8400447896 /* AVFoundation.framework in Frameworks */,
@@ -309,6 +312,7 @@
 		284CBD84182ADC2D007F65F9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EFE3184719C7D97B00C053EE /* SystemConfiguration.framework */,
 				CCE5BD46196F03BB00016BAB /* GoogleCast.framework */,
 				CCE5BD44196F038400016BAB /* CoreText.framework */,
 				CCE5BD42196F037300016BAB /* MediaAccessibility.framework */,
@@ -800,7 +804,7 @@
 				GCC_PREFIX_HEADER = "Classes/CastVideos-Prefix.pch";
 				INFOPLIST_FILE = "Classes/CastVideos-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = CastVideos;

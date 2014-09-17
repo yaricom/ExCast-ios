@@ -54,11 +54,11 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
     GCKFilterCriteria *filterCriteria = [[GCKFilterCriteria alloc] init];
     filterCriteria = [GCKFilterCriteria criteriaForAvailableApplicationWithID:kReceiverAppID];
 
-    // Create Device filter that only shows devices that can run your app.
+    // Add the criteria to the scanner to only show devices that can run your app.
     // This allows you to publish your app to the Apple App store before before publishing in Cast console.
     // Once the app is published in Cast console the cast icon will begin showing up on ios devices.
     // If an app is not published in the Cast console the cast icon will only appear for whitelisted dongles
-    self.deviceFilter = [[GCKDeviceFilter alloc] initWithDeviceScanner:self.deviceScanner criteria:filterCriteria];
+    self.deviceScanner.filterCriteria = filterCriteria;
 
     // Initialize UI controls for navigation bar and tool bar.
     [self initControls];
@@ -85,13 +85,11 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
   if (start) {
     NSLog(@"Start Scan");
     [self.deviceScanner addListener:self];
-    [self.deviceFilter addDeviceFilterListener:self];
     [self.deviceScanner startScan];
   } else {
     NSLog(@"Stop Scan");
     [self.deviceScanner stopScan];
     [self.deviceScanner removeListener:self];
-    [self.deviceFilter removeDeviceFilterListener:self];
   }
 }
 
@@ -225,7 +223,7 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
     // application has been running
     self.isReconnecting = false;
   } else {
-    [self showError:error];
+    [self showError:error.description];
   }
 
   [self updateCastIconButtonStates];
@@ -233,27 +231,18 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 
 - (void)deviceManager:(GCKDeviceManager *)deviceManager
     didFailToConnectWithError:(GCKError *)error {
-  [self showError:error];
+  [self showError:error.description];
 
   [self deviceDisconnectedForgetDevice:YES];
   [self updateCastIconButtonStates];
 }
 
-- (BOOL)isRecoverableError:(NSError *)error {
-  if (!error) {
-    return NO;
-  }
-
-  return (error.code == GCKErrorCodeNetworkError ||
-          error.code == GCKErrorCodeTimeout ||
-          error.code == GCKErrorCodeAppDidEnterBackground);
-}
-
 - (void)deviceManager:(GCKDeviceManager *)deviceManager didDisconnectWithError:(GCKError *)error {
   NSLog(@"Received notification that device disconnected");
 
-  if (error) {
-    [self showError:error];
+  // Network errors are displayed in the suspend code.
+  if (error && error.code != GCKErrorCodeNetworkError) {
+    [self showError:error.description];
   }
 
   // Forget the device except when the error is a connectivity related, such a WiFi problem.
@@ -273,6 +262,16 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
   // Forget the device except when the error is a connectivity related, such a WiFi problem.
   [self deviceDisconnectedForgetDevice:![self isRecoverableError:error]];
   [self updateCastIconButtonStates];
+}
+
+- (BOOL)isRecoverableError:(NSError *)error {
+  if (!error) {
+    return NO;
+  }
+
+  return (error.code == GCKErrorCodeNetworkError ||
+          error.code == GCKErrorCodeTimeout ||
+          error.code == GCKErrorCodeAppDidEnterBackground);
 }
 
 - (void)deviceDisconnectedForgetDevice:(BOOL)clear {
@@ -295,7 +294,7 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 }
 
 - (void)deviceManager:(GCKDeviceManager *)deviceManager
-    didReceiveStatusForApplication:(GCKApplicationMetadata *)applicationMetadata {
+    didReceiveApplicationMetadata:(GCKApplicationMetadata *)applicationMetadata {
   self.applicationMetadata = applicationMetadata;
 }
 
@@ -308,12 +307,27 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
   // Fire off a notification, so no matter what controller we are in, we can show the volume
   // slider
   [[NSNotificationCenter defaultCenter] postNotificationName:@"Volume changed" object:self];
+}
 
+- (void)deviceManager:(GCKDeviceManager *)deviceManager
+    didSuspendConnectionWithReason:(GCKConnectionSuspendReason)reason {
+  if (reason == GCKConnectionSuspendReasonAppBackgrounded) {
+    NSLog(@"Connection Suspended: App Backgrounded");
+  } else {
+    [self deviceDisconnectedForgetDevice:NO];
+    [self updateCastIconButtonStates];
+    [self showError:@"Connection Suspended: Network"];
+  }
+}
+
+- (void)deviceManagerDidResumeConnection:(GCKDeviceManager *)deviceManager
+                     rejoinedApplication:(BOOL)rejoinedApplication {
+  NSLog(@"Connection Resumed. App Rejoined: %@", rejoinedApplication ? @"YES" : @"NO");
 }
 
 #pragma mark - GCKDeviceScannerListener
 - (void)deviceDidComeOnline:(GCKDevice *)device {
-  NSLog(@"device found!! %@", device.friendlyName);
+  NSLog(@"device found - %@", device.friendlyName);
 
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
   NSString* lastDeviceID = [defaults objectForKey:@"lastDeviceID"];
@@ -321,26 +335,21 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
     self.isReconnecting = true;
     [self connectToDevice:device];
   }
-}
 
-- (void)deviceDidGoOffline:(GCKDevice *)device {
-    [self updateCastIconButtonStates];
-}
-
-#pragma mark - GCKDeviceFilterListener
-- (void)deviceDidComeOnline:(GCKDevice *)device forDeviceFilter:(GCKDeviceFilter *)deviceFilter {
-  NSLog(@"filtered device found!! %@", device.friendlyName);
-  [self updateCastIconButtonStates];
+  // Trigger an update in the next run loop so we pick up the updated devices array.
+  [self performSelector:@selector(updateCastIconButtonStates) withObject:nil afterDelay:0];
   if ([self.delegate respondsToSelector:@selector(didDiscoverDeviceOnNetwork)]) {
     [self.delegate didDiscoverDeviceOnNetwork];
   }
 }
 
-- (void)deviceDidGoOffline:(GCKDevice *)device forDeviceFilter:(GCKDeviceFilter *)deviceFilter {
-    [self updateCastIconButtonStates];
+- (void)deviceDidGoOffline:(GCKDevice *)device {
+  NSLog(@"device went offline - %@", device.friendlyName);
+  // Trigger an update in the next run loop so we pick up the updated devices array.
+  [self performSelector:@selector(updateCastIconButtonStates) withObject:nil afterDelay:0];
 }
 
-#pragma - GCKMediaControlChannelDelegate methods
+#pragma mark - GCKMediaControlChannelDelegate methods
 
 - (void)mediaControlChannel:(GCKMediaControlChannel *)mediaControlChannel
     didCompleteLoadWithSessionID:(NSInteger)sessionID {
@@ -422,8 +431,8 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 
 #pragma mark - implementation
 
-- (void)showError:(NSError *)error {
-  NSLog(@"Received error: %@", error.description);
+- (void)showError:(NSString *)errorDescription {
+  NSLog(@"Received error: %@", errorDescription);
   UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Cast Error", nil)
                                                   message:NSLocalizedString(@"An error occurred. Make sure your Chromecast is powered up and connected to the network.", nil)
                                                  delegate:nil
@@ -520,7 +529,7 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 - (void)updateCastIconButtonStates {
   // Hide the button if there are no devices found.
   UIButton *chromecastButton = (UIButton *)self.chromecastBarButton.customView;
-  if (self.deviceFilter.devices.count == 0) {
+  if (self.deviceScanner.devices.count == 0) {
     chromecastButton.hidden = YES;
   } else {
     chromecastButton.hidden = NO;

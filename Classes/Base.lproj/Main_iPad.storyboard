@@ -286,9 +286,7 @@
                             <outlet property="delegate" destination="GEU-G4-grz" id="9ga-Mv-Bse"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="Okr-Hw-xUN">
-                        <barButtonItem key="leftBarButtonItem" image="icon_settings_outline_black.png" id="hTt-Dk-r3a"/>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" id="Okr-Hw-xUN"/>
                     <connections>
                         <segue destination="Ueu-gF-PHW" kind="push" identifier="playMedia" id="uI3-gE-WRU"/>
                         <segue destination="3V5-WW-Hfa" kind="push" identifier="castMedia" id="jmc-QK-zd2"/>
@@ -475,7 +473,7 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="TZP-kR-lSf">
                         <rect key="frame" x="129" y="330" width="163" height="49"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
@@ -727,7 +725,6 @@
         <image name="cast_solid_white.png" width="27" height="21"/>
         <image name="cling.png" width="179" height="179"/>
         <image name="closed_caption_white.png" width="48" height="48"/>
-        <image name="icon_settings_outline_black.png" width="25" height="25"/>
         <image name="icon_volume0.png" width="30" height="30"/>
         <image name="icon_volume0_black.png" width="30" height="30"/>
         <image name="icon_volume3.png" width="30" height="30"/>
@@ -740,7 +737,7 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="3cu-ej-St3"/>
+        <segue reference="BQN-oa-CRg"/>
         <segue reference="jmc-QK-zd2"/>
     </inferredMetricsTieBreakers>
 </document>

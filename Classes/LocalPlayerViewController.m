@@ -77,21 +77,25 @@
   }
 }
 
+// Asynchronously load the table view image.
+- (void)loadMovieImage {
+  dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
+
+  dispatch_async(queue, ^{
+    UIImage *image = [UIImage
+                      imageWithData:[SimpleImageFetcher getDataFromImageURL:self.mediaToPlay.thumbnailURL]];
+
+    dispatch_sync(dispatch_get_main_queue(), ^{
+      _thumbnailView.image = image;
+      [_thumbnailView setNeedsLayout];
+    });
+  });
+}
+
 - (void)playMovieIfExists {
   if (self.mediaToPlay) {
     if (_chromecastController.isConnected) {
-      // Asynchronously load the table view image
-      dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
-
-      dispatch_async(queue, ^{
-        UIImage *image = [UIImage
-            imageWithData:[SimpleImageFetcher getDataFromImageURL:self.mediaToPlay.thumbnailURL]];
-
-        dispatch_sync(dispatch_get_main_queue(), ^{
-          _thumbnailView.image = image;
-          [_thumbnailView setNeedsLayout];
-        });
-      });
+      [self loadMovieImage];
     } else {
       NSURL *url = self.mediaToPlay.URL;
       NSLog(@"Playing movie %@", url);
@@ -144,18 +148,7 @@
              object:self.moviePlayer];
   }
   if (!_thumbnailView.image) {
-    // Asynchronously load the table view image
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
-
-    dispatch_async(queue, ^{
-      UIImage *image = [UIImage
-                        imageWithData:[SimpleImageFetcher getDataFromImageURL:self.mediaToPlay.thumbnailURL]];
-
-      dispatch_sync(dispatch_get_main_queue(), ^{
-        _thumbnailView.image = image;
-        [_thumbnailView setNeedsLayout];
-      });
-    });
+    [self loadMovieImage];
   }
 }
 
@@ -194,8 +187,11 @@
 
 - (void)viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
+  if (!_thumbnailView.image) {
+    [self loadMovieImage];
+  }
   // Hide the player, unless it is paused.
-  if (self.moviePlayer && !self.moviePlayer.playbackState == MPMoviePlaybackStatePaused) {
+  if (self.moviePlayer && self.moviePlayer.playbackState != MPMoviePlaybackStatePaused) {
     self.moviePlayer.view.frame = _thumbnailView.frame;
     self.moviePlayer.view.hidden = YES;
   }

@@ -38,7 +38,7 @@
   // Return the number of rows in the section.
   if (self.castDeviceController.isConnected == NO) {
     self.title = @"Connect to";
-    return self.castDeviceController.deviceFilter.devices.count;
+    return self.castDeviceController.deviceScanner.devices.count;
   } else {
     self.title =
         [NSString stringWithFormat:@"%@", self.castDeviceController.deviceName];
@@ -61,9 +61,9 @@
 
     // Configure the cell...
     GCKDevice *device =
-        [self.castDeviceController.deviceFilter.devices objectAtIndex:indexPath.row];
+        [self.castDeviceController.deviceScanner.devices objectAtIndex:indexPath.row];
     cell.textLabel.text = device.friendlyName;
-    cell.detailTextLabel.text = device.modelName;
+    cell.detailTextLabel.text = device.statusText ? device.statusText : device.modelName;
   } else {
     if (indexPath.row == 0) {
       if (self.castDeviceController.isPlayingMedia == NO) {
@@ -135,10 +135,9 @@
       cell = [tableView dequeueReusableCellWithIdentifier:CellIdForDisconnectButton
                                              forIndexPath:indexPath];
     }
+  }
 
-
-
-  }if (self.castDeviceController.isPlayingMedia == NO) {
+  if (self.castDeviceController.isPlayingMedia == NO) {
     if (indexPath.row == 0) {
       cell =
           [tableView dequeueReusableCellWithIdentifier:CellIdForReadyStatus forIndexPath:indexPath];
@@ -146,17 +145,15 @@
       cell = [tableView dequeueReusableCellWithIdentifier:CellIdForDisconnectButton
                                              forIndexPath:indexPath];
     }
-  } else {
-
   }
   return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   if (self.castDeviceController.isConnected == NO) {
-    if (indexPath.row < self.castDeviceController.deviceFilter.devices.count) {
+    if (indexPath.row < self.castDeviceController.deviceScanner.devices.count) {
       GCKDevice *device =
-          [self.castDeviceController.deviceFilter.devices objectAtIndex:indexPath.row];
+          [self.castDeviceController.deviceScanner.devices objectAtIndex:indexPath.row];
       NSLog(@"Selecting device:%@", device.friendlyName);
       [self.castDeviceController connectToDevice:device];
     }
