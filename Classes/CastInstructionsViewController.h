@@ -14,7 +14,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface CastInstructionsViewController : UIViewController<UIViewControllerTransitioningDelegate>
+@interface CastInstructionsViewController : UIViewController
 
 /** Helper class method for deciding whether to show instructions or not **/
 +(void)showIfFirstTimeOverViewController:(UIViewController *)viewController;

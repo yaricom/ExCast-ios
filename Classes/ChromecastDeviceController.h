@@ -145,4 +145,7 @@
 /** Update the actively used tracks to the selectedTrackByType. */
 - (void)updateActiveTracks;
 
+/** Prevent automatically reconnecting to the cast device if we see it again. */
+- (void)clearPreviousSession;
+
 @end

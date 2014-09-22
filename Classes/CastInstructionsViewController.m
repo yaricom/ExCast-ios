@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #import "CastInstructionsViewController.h"
-#import "SemiModalAnimatedTransition.h"
 
 @implementation CastInstructionsViewController
 
@@ -40,8 +39,9 @@ NSString *const kHasSeenChromecastOverlay = @"hasSeenChromecastOverlay";
                         [[NSBundle mainBundle].infoDictionary objectForKey:@"UIMainStoryboardFile"]
                                                  bundle:[NSBundle mainBundle]];
     self = [sb instantiateViewControllerWithIdentifier:@"CastInstructions"];
-    self.modalPresentationStyle = UIModalPresentationCustom;
-    self.transitioningDelegate = self;
+    self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    // This style is iOS 8.0 only, so on earlier versions we take the overlay without transparency.
+    self.modalPresentationStyle = UIModalPresentationOverFullScreen;
   }
   return self;
 }
@@ -52,21 +52,6 @@ NSString *const kHasSeenChromecastOverlay = @"hasSeenChromecastOverlay";
 
 -(IBAction)dismissOverlay:(id)sender {
   [self dismissViewControllerAnimated:YES completion:nil];
-}
-
-- (id <UIViewControllerAnimatedTransitioning>)animationControllerForPresentedController:(UIViewController *)presented
-                                                                   presentingController:(UIViewController *)presenting
-                                                                       sourceController:(UIViewController *)source
-{
-  SemiModalAnimatedTransition *semiModalAnimatedTransition = [[SemiModalAnimatedTransition alloc] init];
-  semiModalAnimatedTransition.presenting = YES;
-  return semiModalAnimatedTransition;
-}
-
-- (id <UIViewControllerAnimatedTransitioning>)animationControllerForDismissedController:(UIViewController *)dismissed
-{
-  SemiModalAnimatedTransition *semiModalAnimatedTransition = [[SemiModalAnimatedTransition alloc] init];
-  return semiModalAnimatedTransition;
 }
 
 @end

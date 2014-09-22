@@ -103,7 +103,6 @@
 		CCE5BD43196F037300016BAB /* MediaAccessibility.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE5BD42196F037300016BAB /* MediaAccessibility.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		CCE5BD45196F038400016BAB /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE5BD44196F038400016BAB /* CoreText.framework */; };
 		CCE5BD48196F0AC000016BAB /* GoogleCast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE5BD46196F03BB00016BAB /* GoogleCast.framework */; };
-		EF110FAE197590DE0009410F /* SemiModalAnimatedTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = EF110FAD197590DE0009410F /* SemiModalAnimatedTransition.m */; };
 		EF110FB119759BB30009410F /* CastInstructionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EF110FB019759BB30009410F /* CastInstructionsViewController.m */; };
 		EF110FB41976AA2C0009410F /* cling.png in Resources */ = {isa = PBXBuildFile; fileRef = EF110FB21976AA2C0009410F /* cling.png */; };
 		EF110FB51976AA2C0009410F /* cling@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EF110FB31976AA2C0009410F /* cling@2x.png */; };
@@ -241,8 +240,6 @@
 		CCE5BD42196F037300016BAB /* MediaAccessibility.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaAccessibility.framework; path = System/Library/Frameworks/MediaAccessibility.framework; sourceTree = SDKROOT; };
 		CCE5BD44196F038400016BAB /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		CCE5BD46196F03BB00016BAB /* GoogleCast.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleCast.framework; sourceTree = "<group>"; };
-		EF110FAC197590DE0009410F /* SemiModalAnimatedTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SemiModalAnimatedTransition.h; sourceTree = "<group>"; };
-		EF110FAD197590DE0009410F /* SemiModalAnimatedTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SemiModalAnimatedTransition.m; sourceTree = "<group>"; };
 		EF110FAF19759BB30009410F /* CastInstructionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CastInstructionsViewController.h; sourceTree = "<group>"; };
 		EF110FB019759BB30009410F /* CastInstructionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CastInstructionsViewController.m; sourceTree = "<group>"; };
 		EF110FB21976AA2C0009410F /* cling.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cling.png; sourceTree = "<group>"; };
@@ -330,8 +327,6 @@
 			children = (
 				EF110FAF19759BB30009410F /* CastInstructionsViewController.h */,
 				EF110FB019759BB30009410F /* CastInstructionsViewController.m */,
-				EF110FAC197590DE0009410F /* SemiModalAnimatedTransition.h */,
-				EF110FAD197590DE0009410F /* SemiModalAnimatedTransition.m */,
 				496D46FC182DBE9100343F72 /* Media.h */,
 				496D46FD182DBE9100343F72 /* Media.m */,
 				496D46FF182DBE9C00343F72 /* MediaListModel.h */,
@@ -648,7 +643,6 @@
 				284CBD9F182ADC2D007F65F9 /* MediaTableViewController.m in Sources */,
 				284CC035182C3396007F65F9 /* CastViewController.m in Sources */,
 				284CBD92182ADC2D007F65F9 /* main.m in Sources */,
-				EF110FAE197590DE0009410F /* SemiModalAnimatedTransition.m in Sources */,
 				124377D0187CC2B500ADF736 /* DeviceTableViewController.m in Sources */,
 				491627AF184FBF9C00351397 /* SimpleImageFetcher.m in Sources */,
 				EF23DBAD19C0FF2F00DA5ABB /* TracksTableViewController.m in Sources */,
@@ -777,7 +771,7 @@
 				GCC_PREFIX_HEADER = "Classes/CastVideos-Prefix.pch";
 				INFOPLIST_FILE = "Classes/CastVideos-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = CastVideos;

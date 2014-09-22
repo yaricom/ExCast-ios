@@ -285,12 +285,14 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
   }
 
   if (clear) {
-    // Remove previously stored deviceID if we need to. This will prevent automatically
-    // reconnecting to the cast device if we see it again.
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults removeObjectForKey:@"lastDeviceID"];
-    [defaults synchronize];
+    [self clearPreviousSession];
   }
+}
+
+- (void)clearPreviousSession {
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  [defaults removeObjectForKey:@"lastDeviceID"];
+  [defaults synchronize];
 }
 
 - (void)deviceManager:(GCKDeviceManager *)deviceManager
@@ -314,15 +316,18 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
   if (reason == GCKConnectionSuspendReasonAppBackgrounded) {
     NSLog(@"Connection Suspended: App Backgrounded");
   } else {
-    [self deviceDisconnectedForgetDevice:NO];
-    [self updateCastIconButtonStates];
     [self showError:@"Connection Suspended: Network"];
+    [self deviceDisconnectedForgetDevice:NO];
+    // Update cast icons on next runloop so all cast objects have time to update.
+    [self performSelector:@selector(updateCastIconButtonStates) withObject:nil afterDelay:0];
   }
 }
 
 - (void)deviceManagerDidResumeConnection:(GCKDeviceManager *)deviceManager
                      rejoinedApplication:(BOOL)rejoinedApplication {
   NSLog(@"Connection Resumed. App Rejoined: %@", rejoinedApplication ? @"YES" : @"NO");
+  // Update cast icons on next runloop so all cast objects have time to update.
+  [self performSelector:@selector(updateCastIconButtonStates) withObject:nil afterDelay:0];
 }
 
 #pragma mark - GCKDeviceScannerListener

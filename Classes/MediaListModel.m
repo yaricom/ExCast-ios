@@ -75,4 +75,14 @@
   return (Media *)[_medias objectAtIndex:index];
 }
 
+- (int)indexOfMediaByTitle:(NSString *)title {
+  for (int i = 0; i < self.numberOfMediaLoaded; i++) {
+    Media *media = [self mediaAtIndex:i];
+    if ([media.title isEqualToString:title]) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 @end

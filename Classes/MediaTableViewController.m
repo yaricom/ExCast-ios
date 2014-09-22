@@ -45,8 +45,9 @@
     [self showCastIcon];
   }
 
-  // Asynchronously load the media json
-  self.mediaList = [[MediaListModel alloc] init];
+  // Asynchronously load the media json.
+  delegate.mediaList = [[MediaListModel alloc] init];
+  self.mediaList = delegate.mediaList;
   [self.mediaList loadMedia:^{
     self.title = self.mediaList.mediaTitle;
     [self.tableView reloadData];
@@ -173,18 +174,15 @@
   // associated Media object.
   NSString *title =
       [_chromecastController.mediaInformation.metadata stringForKey:kGCKMetadataKeyTitle];
-  for (int i = 0; i < self.mediaList.numberOfMediaLoaded; i++) {
-    Media *media = [self.mediaList mediaAtIndex:i];
-    if ([media.title isEqualToString:title]) {
-      NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:0];
-      [self.tableView selectRowAtIndexPath:indexPath
-                                  animated:YES
-                            scrollPosition:UITableViewScrollPositionNone];
-      [self performSegueWithIdentifier:@"castMedia" sender:self];
-      break;
-    }
+  int index = [self.mediaList indexOfMediaByTitle:title];
+  if (index >= 0) {
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
+    [self.tableView selectRowAtIndexPath:indexPath
+                                animated:YES
+                          scrollPosition:UITableViewScrollPositionNone];
+    [self performSegueWithIdentifier:@"castMedia" sender:self];
+
   }
-  ;
 }
 
 @end

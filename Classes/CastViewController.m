@@ -75,10 +75,13 @@
                                              object:_chromecastController];
 
   UIButton *transparencyButton = [[UIButton alloc] initWithFrame:self.view.bounds];
-  transparencyButton.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+  transparencyButton.autoresizingMask =
+      (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
   transparencyButton.backgroundColor = [UIColor clearColor];
   [self.view insertSubview:transparencyButton aboveSubview:self.thumbnailImage];
-  [transparencyButton addTarget:self action:@selector(showVolumeSlider:) forControlEvents:UIControlEventTouchUpInside];
+  [transparencyButton addTarget:self
+                         action:@selector(showVolumeSlider:)
+               forControlEvents:UIControlEventTouchUpInside];
   [self initControls];
 
 }
@@ -142,14 +145,9 @@
 }
 
 - (void)setMediaToPlay:(Media*)newMedia withStartingTime:(NSTimeInterval)startTime {
-  // Ensure we have a local reference to the chromecast controller.
-  [self syncChromeCastController];
   _mediaStartTime = startTime;
   if (_mediaToPlay != newMedia) {
     _mediaToPlay = newMedia;
-
-    // Update the view.
-    [self configureView];
   }
 }
 
@@ -186,8 +184,6 @@
                                                                  target:self
                                                                selector:@selector(fadeVolumeSlider:)
                                                                userInfo:nil repeats:NO];
-
-
 }
 
 - (void)fadeVolumeSlider:(NSTimer *)timer {
@@ -315,10 +311,6 @@
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
 
-  if (!_chromecastController.isConnected) {
-    return;
-  }
-
   // Assign ourselves as delegate ONLY in viewWillAppear of a view controller.
   _chromecastController.delegate = self;
 
@@ -343,14 +335,6 @@
   }
 
   [self configureView];
-}
-
-- (void)viewDidDisappear:(BOOL)animated {
-  [super viewDidDisappear:animated];
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-  [super viewDidAppear:animated];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -378,7 +362,7 @@
   [self performSegueWithIdentifier:@"listTracks" sender:self];
 }
 
-// Unsed, but if you wanted a stop, as opposed to a pause button, this is probably
+// Unused, but if you wanted a stop, as opposed to a pause button, this is probably
 // what you would call
 - (IBAction)stopButtonClicked:(id)sender {
   [_chromecastController stopCastMedia];
@@ -429,6 +413,11 @@
  * Called when the playback state of media on the device changes.
  */
 - (void)didReceiveMediaStateChange {
+  if (![self.mediaToPlay.title isEqualToString:[_chromecastController.mediaInformation.metadata
+                                                stringForKey:kGCKMetadataKeyTitle]]) {
+    // The state change is related to old media, so ignore it.
+    return;
+  }
   _readyToShowInterface = YES;
   if ([self isViewLoaded] && self.view.window) {
     // Display toolbar if we are current view.

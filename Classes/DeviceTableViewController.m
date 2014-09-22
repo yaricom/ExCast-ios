@@ -31,10 +31,13 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
   // Return the number of sections.
-  return 1;
+  return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+  if (section == 1) {
+    return 1;
+  }
   // Return the number of rows in the section.
   if (self.castDeviceController.isConnected == NO) {
     self.title = @"Connect to";
@@ -53,9 +56,17 @@
   static NSString *CellIdForDisconnectButton = @"disconnectButton";
   static NSString *CellIdForPlayerController = @"playerController";
   static NSString *CellIdForVolumeControl = @"volumeController";
+  static NSString *CellIdForVersion = @"version";
   static int TagForVolumeSlider = 201;
 
   UITableViewCell *cell;
+
+  if (indexPath.section == 1) {
+    cell = [tableView dequeueReusableCellWithIdentifier:CellIdForVersion forIndexPath:indexPath];
+    NSString *ver = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+    [cell.textLabel setText:[NSString stringWithFormat:@"CastVideos-iOS version %@", ver]];
+  }
+
   if (self.castDeviceController.isConnected == NO) {
     cell = [tableView dequeueReusableCellWithIdentifier:CellIdForDeviceName forIndexPath:indexPath];
 
