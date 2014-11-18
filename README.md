@@ -1,6 +1,13 @@
-# CastVideos-ios
+# CastVideos-ios (reference iOS sender app)
 
-CastVideos-ios application shows how to cast videos from an iOS device in a way that is fully compliant with the UX Checklist. 
+CastVideos-ios application shows how to cast videos from an iOS device in a way that is fully compliant with the Cast Design Checklist. 
+
+**This is a reference sender app to be used as the starting point for your iOS sender app**
+
+Here is the list of other reference apps:
+* [Android Sender: CastVideos-android](https://github.com/googlecast/CastVideos-android)
+* [Chrome Sender: CastVideos-chrome](https://github.com/googlecast/CastVideos-chrome)
+* [Receiver: Cast-Player-Sample](https://github.com/googlecast/Cast-Player-Sample)
 
 ## Dependencies
 * iOS Sender API library : can be downloaded here at: [https://developers.google.com/cast/docs/downloads/](https://developers.google.com/cast/docs/downloads/ "iOS Sender API library")
