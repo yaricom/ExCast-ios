@@ -109,6 +109,9 @@
 		EF23DBA919C0EF7F00DA5ABB /* closed_caption_white.png in Resources */ = {isa = PBXBuildFile; fileRef = EF23DBA719C0EF7F00DA5ABB /* closed_caption_white.png */; };
 		EF23DBAA19C0EF7F00DA5ABB /* closed_caption_white@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EF23DBA819C0EF7F00DA5ABB /* closed_caption_white@2x.png */; };
 		EF23DBAD19C0FF2F00DA5ABB /* TracksTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EF23DBAC19C0FF2F00DA5ABB /* TracksTableViewController.m */; };
+		EF775C5E1A49FE9E00995266 /* thumb.png in Resources */ = {isa = PBXBuildFile; fileRef = EF775C5B1A49FE9E00995266 /* thumb.png */; };
+		EF775C5F1A49FE9E00995266 /* thumb@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EF775C5C1A49FE9E00995266 /* thumb@2x.png */; };
+		EF775C601A49FE9E00995266 /* thumb@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = EF775C5D1A49FE9E00995266 /* thumb@3x.png */; };
 		EFCC0D9A199A24560078166E /* icon_cast_on_filled@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EFCC0D98199A24560078166E /* icon_cast_on_filled@2x.png */; };
 		EFCC0D9B199A24560078166E /* icon_cast_on_filled.png in Resources */ = {isa = PBXBuildFile; fileRef = EFCC0D99199A24560078166E /* icon_cast_on_filled.png */; };
 		EFCC0DA0199D32E20078166E /* icon_volume0@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EFCC0D9C199D32E20078166E /* icon_volume0@2x.png */; };
@@ -127,6 +130,7 @@
 		EFCC0DB9199DF2880078166E /* icon_volume1_black.png in Resources */ = {isa = PBXBuildFile; fileRef = EFCC0DB5199DF2880078166E /* icon_volume1_black.png */; };
 		EFCC0DBA199DF2880078166E /* icon_volume2_black.png in Resources */ = {isa = PBXBuildFile; fileRef = EFCC0DB6199DF2880078166E /* icon_volume2_black.png */; };
 		EFCC0DBB199DF2880078166E /* icon_volume3_black.png in Resources */ = {isa = PBXBuildFile; fileRef = EFCC0DB7199DF2880078166E /* icon_volume3_black.png */; };
+		EFD7C20319FE71AF00082842 /* LocalPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = EFD7C20219FE71AF00082842 /* LocalPlayerView.m */; };
 		EFE3184819C7D97B00C053EE /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EFE3184719C7D97B00C053EE /* SystemConfiguration.framework */; };
 /* End PBXBuildFile section */
 
@@ -248,6 +252,9 @@
 		EF23DBA819C0EF7F00DA5ABB /* closed_caption_white@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "closed_caption_white@2x.png"; sourceTree = "<group>"; };
 		EF23DBAB19C0FF2F00DA5ABB /* TracksTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TracksTableViewController.h; sourceTree = "<group>"; };
 		EF23DBAC19C0FF2F00DA5ABB /* TracksTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TracksTableViewController.m; sourceTree = "<group>"; };
+		EF775C5B1A49FE9E00995266 /* thumb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = thumb.png; sourceTree = "<group>"; };
+		EF775C5C1A49FE9E00995266 /* thumb@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "thumb@2x.png"; sourceTree = "<group>"; };
+		EF775C5D1A49FE9E00995266 /* thumb@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "thumb@3x.png"; sourceTree = "<group>"; };
 		EFCC0D98199A24560078166E /* icon_cast_on_filled@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_cast_on_filled@2x.png"; sourceTree = "<group>"; };
 		EFCC0D99199A24560078166E /* icon_cast_on_filled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_cast_on_filled.png; sourceTree = "<group>"; };
 		EFCC0D9C199D32E20078166E /* icon_volume0@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_volume0@2x.png"; sourceTree = "<group>"; };
@@ -266,6 +273,8 @@
 		EFCC0DB5199DF2880078166E /* icon_volume1_black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_volume1_black.png; sourceTree = "<group>"; };
 		EFCC0DB6199DF2880078166E /* icon_volume2_black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_volume2_black.png; sourceTree = "<group>"; };
 		EFCC0DB7199DF2880078166E /* icon_volume3_black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_volume3_black.png; sourceTree = "<group>"; };
+		EFD7C20119FE71AF00082842 /* LocalPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalPlayerView.h; sourceTree = "<group>"; };
+		EFD7C20219FE71AF00082842 /* LocalPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalPlayerView.m; sourceTree = "<group>"; };
 		EFE3184719C7D97B00C053EE /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -333,8 +342,8 @@
 				496D4700182DBE9C00343F72 /* MediaListModel.m */,
 				284CBD94182ADC2D007F65F9 /* AppDelegate.h */,
 				284CBD95182ADC2D007F65F9 /* AppDelegate.m */,
-				284CBD97182ADC2D007F65F9 /* Main_iPhone.storyboard */,
 				284CBD9A182ADC2D007F65F9 /* Main_iPad.storyboard */,
+				284CBD97182ADC2D007F65F9 /* Main_iPhone.storyboard */,
 				284CBD9D182ADC2D007F65F9 /* MediaTableViewController.h */,
 				284CBD9E182ADC2D007F65F9 /* MediaTableViewController.m */,
 				284CC033182C3396007F65F9 /* CastViewController.h */,
@@ -343,6 +352,8 @@
 				124377CF187CC2B500ADF736 /* DeviceTableViewController.m */,
 				EF23DBAB19C0FF2F00DA5ABB /* TracksTableViewController.h */,
 				EF23DBAC19C0FF2F00DA5ABB /* TracksTableViewController.m */,
+				EFD7C20119FE71AF00082842 /* LocalPlayerView.h */,
+				EFD7C20219FE71AF00082842 /* LocalPlayerView.m */,
 				284CBDA0182ADC2D007F65F9 /* LocalPlayerViewController.h */,
 				284CBDA1182ADC2D007F65F9 /* LocalPlayerViewController.m */,
 				284CC030182B1891007F65F9 /* ChromecastDeviceController.h */,
@@ -369,6 +380,9 @@
 		284CC025182B0F9B007F65F9 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				EF775C5B1A49FE9E00995266 /* thumb.png */,
+				EF775C5C1A49FE9E00995266 /* thumb@2x.png */,
+				EF775C5D1A49FE9E00995266 /* thumb@3x.png */,
 				EF23DBA719C0EF7F00DA5ABB /* closed_caption_white.png */,
 				EF23DBA819C0EF7F00DA5ABB /* closed_caption_white@2x.png */,
 				EFCC0DB4199DF2880078166E /* icon_volume0_black.png */,
@@ -529,6 +543,7 @@
 			files = (
 				12E0CD2218550A0700447896 /* play_black@2x.png in Resources */,
 				12E66C2018AC29F6004CF45B /* icon_cast_on1@2x.png in Resources */,
+				EF775C601A49FE9E00995266 /* thumb@3x.png in Resources */,
 				EF110FB51976AA2C0009410F /* cling@2x.png in Resources */,
 				12E0CD0218550A0700447896 /* cast_outline_white@2x.png in Resources */,
 				12E0CCFE18550A0700447896 /* cast_outline_black@2x.png in Resources */,
@@ -549,6 +564,7 @@
 				12E0CD1B18550A0700447896 /* list_outline.png in Resources */,
 				12E0CD1618550A0700447896 /* icon_settings_black@2x.png in Resources */,
 				4945BD8A1851041900619BF8 /* play_light@2x.png in Resources */,
+				EF775C5F1A49FE9E00995266 /* thumb@2x.png in Resources */,
 				12E66C2718AC2A31004CF45B /* icon_cast_off.png in Resources */,
 				12E0CD1418550A0700447896 /* icon_photos_black@2x.png in Resources */,
 				EFCC0DBB199DF2880078166E /* icon_volume3_black.png in Resources */,
@@ -583,6 +599,7 @@
 				EFCC0D9B199A24560078166E /* icon_cast_on_filled.png in Resources */,
 				EFCC0D9A199A24560078166E /* icon_cast_on_filled@2x.png in Resources */,
 				12E0CCD118513C9D00447896 /* icon-ios_democast_152.png in Resources */,
+				EF775C5E1A49FE9E00995266 /* thumb.png in Resources */,
 				EFCC0DB8199DF2880078166E /* icon_volume0_black.png in Resources */,
 				12E0CD0A18550A0700447896 /* cast_solid_white@2x.png in Resources */,
 				129886E31872348A00B013D2 /* video_thumb_mini.png in Resources */,
@@ -642,6 +659,7 @@
 				284CC032182B1891007F65F9 /* ChromecastDeviceController.m in Sources */,
 				284CBD9F182ADC2D007F65F9 /* MediaTableViewController.m in Sources */,
 				284CC035182C3396007F65F9 /* CastViewController.m in Sources */,
+				EFD7C20319FE71AF00082842 /* LocalPlayerView.m in Sources */,
 				284CBD92182ADC2D007F65F9 /* main.m in Sources */,
 				124377D0187CC2B500ADF736 /* DeviceTableViewController.m in Sources */,
 				491627AF184FBF9C00351397 /* SimpleImageFetcher.m in Sources */,

@@ -315,6 +315,7 @@
   _chromecastController.delegate = self;
 
   // Make the navigation bar transparent.
+  self.navigationController.navigationBar.translucent = YES;
   [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
                                                 forBarMetrics:UIBarMetricsDefault];
   self.navigationController.navigationBar.shadowImage = [UIImage new];

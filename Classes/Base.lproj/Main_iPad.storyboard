@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="vC3-pB-5Vb">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6250" systemVersion="13F34" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="vC3-pB-5Vb">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
     </dependencies>
     <scenes>
@@ -45,8 +46,8 @@
                             <imageView userInteractionEnabled="NO" alpha="0.59999999999999998" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Y0R-X2-KdV">
                                 <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                             </imageView>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Casting to Chromecast" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9s9-sS-e1e">
-                                <rect key="frame" x="245" y="927" width="279" height="27"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Casting to Chromecast" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9s9-sS-e1e">
+                                <rect key="frame" x="245" y="927" width="279" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="279" id="1xo-jx-z4X"/>
                                 </constraints>
@@ -54,8 +55,8 @@
                                 <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Waiting for Godot (2009)" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ngf-jI-Hf4">
-                                <rect key="frame" x="94" y="898" width="581" height="21"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Waiting for Godot (2009)" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ngf-jI-Hf4">
+                                <rect key="frame" x="289" y="898" width="191" height="21"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
@@ -152,73 +153,60 @@
                         <viewControllerLayoutGuide type="bottom" id="n4z-vd-vgc"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="LhM-na-hqu">
-                        <rect key="frame" x="0.0" y="64" width="768" height="960"/>
+                        <rect key="frame" x="0.0" y="64" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="aQ2-NA-Fje">
-                                <rect key="frame" x="0.0" y="0.0" width="768" height="321"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="321" id="2Hd-ZR-U8u"/>
-                                </constraints>
-                            </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="bottom" buttonType="roundedRect" showsTouchWhenHighlighted="YES" adjustsImageWhenHighlighted="NO" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2we-QB-AXS">
-                                <rect key="frame" x="0.0" y="0.0" width="768" height="321"/>
-                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <state key="normal" image="play_black.png"/>
-                                <connections>
-                                    <action selector="playPauseButtonPressed:" destination="Ueu-gF-PHW" eventType="touchUpInside" id="QJV-Tc-jFw"/>
-                                </connections>
-                            </button>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title (2013)" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Im-a3-7nM">
-                                <rect key="frame" x="25" y="334" width="658" height="21"/>
+                                <rect key="frame" x="25" y="398" width="658" height="21"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Subtitle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qBD-vt-tQK">
-                                <rect key="frame" x="25" y="354" width="658" height="18"/>
+                                <rect key="frame" x="25" y="418" width="658" height="18"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gJj-yC-iiB">
-                                <rect key="frame" x="20" y="384" width="728" height="576"/>
+                                <rect key="frame" x="20" y="448" width="728" height="576"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iDJ-O4-7pz" customClass="LocalPlayerView">
+                                <rect key="frame" x="0.0" y="64" width="768" height="321"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="321" id="V1a-UZ-oOT"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="4Im-a3-7nM" firstAttribute="leading" secondItem="LhM-na-hqu" secondAttribute="leading" constant="25" id="1QO-a2-VED"/>
                             <constraint firstItem="qBD-vt-tQK" firstAttribute="leading" secondItem="LhM-na-hqu" secondAttribute="leading" constant="25" id="4sn-Li-7pG"/>
                             <constraint firstAttribute="trailing" secondItem="4Im-a3-7nM" secondAttribute="trailing" constant="85" id="6of-fM-UZw"/>
-                            <constraint firstItem="aQ2-NA-Fje" firstAttribute="top" secondItem="2we-QB-AXS" secondAttribute="top" id="IWf-tB-BN8"/>
-                            <constraint firstItem="aQ2-NA-Fje" firstAttribute="trailing" secondItem="2we-QB-AXS" secondAttribute="trailing" id="Lip-TE-BBi"/>
-                            <constraint firstItem="aQ2-NA-Fje" firstAttribute="top" secondItem="LhM-na-hqu" secondAttribute="top" id="Luj-uR-HhG"/>
+                            <constraint firstItem="iDJ-O4-7pz" firstAttribute="leading" secondItem="LhM-na-hqu" secondAttribute="leading" id="78P-AE-n6n"/>
+                            <constraint firstItem="iDJ-O4-7pz" firstAttribute="top" secondItem="Dec-7T-tod" secondAttribute="bottom" id="Je6-cB-TKG"/>
+                            <constraint firstItem="qBD-vt-tQK" firstAttribute="top" secondItem="4Im-a3-7nM" secondAttribute="bottom" constant="-1" id="ODV-17-pX9"/>
+                            <constraint firstItem="4Im-a3-7nM" firstAttribute="top" secondItem="iDJ-O4-7pz" secondAttribute="bottom" constant="13" id="Qtf-wv-jAy"/>
                             <constraint firstAttribute="trailing" secondItem="qBD-vt-tQK" secondAttribute="trailing" constant="85" id="SSx-q7-tHh"/>
-                            <constraint firstAttribute="trailing" secondItem="aQ2-NA-Fje" secondAttribute="trailing" id="Uzi-Gu-kyo"/>
                             <constraint firstAttribute="bottom" secondItem="gJj-yC-iiB" secondAttribute="bottom" id="VFl-Sr-XM0"/>
                             <constraint firstItem="gJj-yC-iiB" firstAttribute="top" secondItem="qBD-vt-tQK" secondAttribute="bottom" constant="12" id="bon-hA-twE"/>
-                            <constraint firstItem="aQ2-NA-Fje" firstAttribute="bottom" secondItem="2we-QB-AXS" secondAttribute="bottom" id="d0F-6i-LQF"/>
-                            <constraint firstItem="4Im-a3-7nM" firstAttribute="top" secondItem="2we-QB-AXS" secondAttribute="bottom" constant="13" id="e09-cv-PwO"/>
+                            <constraint firstAttribute="trailing" secondItem="iDJ-O4-7pz" secondAttribute="trailing" id="d8I-nw-iC5"/>
                             <constraint firstAttribute="trailing" secondItem="gJj-yC-iiB" secondAttribute="trailing" constant="20" id="lUD-CB-1Nv"/>
-                            <constraint firstItem="qBD-vt-tQK" firstAttribute="top" secondItem="2we-QB-AXS" secondAttribute="bottom" constant="33" id="lsc-Rs-4Tj"/>
-                            <constraint firstItem="aQ2-NA-Fje" firstAttribute="leading" secondItem="LhM-na-hqu" secondAttribute="leading" id="vIz-NB-8Kw"/>
                             <constraint firstItem="gJj-yC-iiB" firstAttribute="leading" secondItem="LhM-na-hqu" secondAttribute="leading" constant="20" symbolic="YES" id="wmo-I6-wfD"/>
-                            <constraint firstItem="aQ2-NA-Fje" firstAttribute="leading" secondItem="2we-QB-AXS" secondAttribute="leading" id="xju-q3-E9f"/>
                         </constraints>
                     </view>
-                    <extendedEdge key="edgesForExtendedLayout" bottom="YES"/>
                     <navigationItem key="navigationItem" id="KAm-oq-wMd"/>
                     <connections>
-                        <outlet property="_thumbnailView" destination="aQ2-NA-Fje" id="4LO-wf-nvO"/>
                         <outlet property="mediaDescription" destination="gJj-yC-iiB" id="s91-wf-8Hh"/>
                         <outlet property="mediaSubtitle" destination="qBD-vt-tQK" id="lzF-f2-hmI"/>
                         <outlet property="mediaTitle" destination="4Im-a3-7nM" id="hfS-qJ-SVI"/>
-                        <outlet property="playPauseButton" destination="2we-QB-AXS" id="Hvs-ai-SiD"/>
+                        <outlet property="playerView" destination="iDJ-O4-7pz" id="OlU-84-Gu7"/>
                         <segue destination="3V5-WW-Hfa" kind="push" identifier="castMedia" id="cwu-Wa-FY8"/>
                         <segue destination="o3F-oB-aD8" kind="modal" identifier="listDevices" modalPresentationStyle="formSheet" id="QLF-76-pa5"/>
                     </connections>
@@ -716,7 +704,6 @@
         <image name="icon_volume0_black.png" width="30" height="30"/>
         <image name="icon_volume3.png" width="30" height="30"/>
         <image name="icon_volume3_black.png" width="30" height="30"/>
-        <image name="play_black.png" width="49" height="49"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackOpaque"/>
@@ -724,7 +711,7 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="jmc-QK-zd2"/>
-        <segue reference="3cu-ej-St3"/>
+        <segue reference="QLF-76-pa5"/>
+        <segue reference="cwu-Wa-FY8"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import <UIKit/UIKit.h>
-#import <MediaPlayer/MediaPlayer.h>
 #import "ChromecastDeviceController.h"
+#import "LocalPlayerView.h"
 #import "Media.h"
+#import <MediaPlayer/MediaPlayer.h>
+#import <UIKit/UIKit.h>
 
 @protocol RemotePlayerDelegate <NSObject>
 
@@ -28,11 +29,15 @@
  */
 @interface LocalPlayerViewController : UIViewController<
   ChromecastControllerDelegate,
+  LocalPlayerDelegate,
   RemotePlayerDelegate
 >
 
 /** The media object being played on Chromecast device. Set this before presenting the view. */
 @property(strong, nonatomic) Media *mediaToPlay;
+
+/** The local player view used for displaying thumbnail and in-app video. */
+@property(weak, nonatomic) IBOutlet LocalPlayerView *playerView;
 
 /** An outlet to bind to media description. */
 @property(weak, nonatomic) IBOutlet UITextView *mediaDescription;

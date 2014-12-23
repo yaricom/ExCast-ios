@@ -15,22 +15,18 @@
 #import "AppDelegate.h"
 #import "LocalPlayerViewController.h"
 #import "CastViewController.h"
-#import "SimpleImageFetcher.h"
 #import "CastInstructionsViewController.h"
-
-#define MOVIE_CONTAINER_TAG 1
 
 static NSString *kCastSegueIdentifier = @"castMedia";
 
 @interface LocalPlayerViewController () {
+  /* The latest playback time sourced either from local player or the Cast metadata. */
   NSTimeInterval _lastKnownPlaybackTime;
+  /* Whether we want to go to the media defined in this controller or the mini controller. */
   BOOL _goToMiniControllerCast;
-  __weak IBOutlet UIImageView *_thumbnailView;
+  /* Reference to our main Cast managment class. */
   __weak ChromecastDeviceController *_chromecastController;
 }
-@property(weak, nonatomic) IBOutlet UIButton *playPauseButton;
-
-@property MPMoviePlayerController *moviePlayer;
 
 @end
 
@@ -38,12 +34,12 @@ static NSString *kCastSegueIdentifier = @"castMedia";
 
 #pragma mark State management
 
-// Retrieve the current media based on the central MediaList and the currently
-// playing media metadata.
+/* Retrieve the current media based on the central MediaList as the currently 
+ * playing media metadata. */
 - (Media *)currentlyPlayingMedia {
   AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
   NSString *title =
-    [_chromecastController.mediaInformation.metadata stringForKey:kGCKMetadataKeyTitle];
+  [_chromecastController.mediaInformation.metadata stringForKey:kGCKMetadataKeyTitle];
   int index = [delegate.mediaList indexOfMediaByTitle:title];
   if (index >= 0) {
     return [delegate.mediaList mediaAtIndex:index];
@@ -51,16 +47,17 @@ static NSString *kCastSegueIdentifier = @"castMedia";
   return nil;
 }
 
+/* Configure the CastViewController if we are casting a video. */
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
   if ([[segue identifier] isEqualToString:kCastSegueIdentifier]) {
     if ( _goToMiniControllerCast) {
       _goToMiniControllerCast = NO;
       [(CastViewController *)[segue destinationViewController]
-          setMediaToPlay:[self currentlyPlayingMedia]];
+       setMediaToPlay:[self currentlyPlayingMedia]];
     } else {
       [(CastViewController *)[segue destinationViewController]
-          setMediaToPlay:self.mediaToPlay
-        withStartingTime:_lastKnownPlaybackTime];
+       setMediaToPlay:self.mediaToPlay
+       withStartingTime:_lastKnownPlaybackTime];
       [(CastViewController *)[segue destinationViewController] setLocalPlayer:self];
     }
   }
@@ -76,18 +73,6 @@ static NSString *kCastSegueIdentifier = @"castMedia";
     }
   }
   return YES;
-
-}
-
-- (IBAction)playPauseButtonPressed:(id)sender {
-  if (_chromecastController.isConnected) {
-    if (self.playPauseButton.selected == NO) {
-      [_chromecastController pauseCastMedia:NO];
-    }
-    [self performSegueWithIdentifier:kCastSegueIdentifier sender:self];
-  } else {
-    [self playMovieIfExists];
-  }
 }
 
 #pragma mark - Managing the detail item
@@ -95,97 +80,17 @@ static NSString *kCastSegueIdentifier = @"castMedia";
 - (void)setMediaToPlay:(id)newMediaToPlay {
   if (_mediaToPlay != newMediaToPlay) {
     _mediaToPlay = newMediaToPlay;
+    [self syncTextToMedia];
   }
 }
 
-- (void)moviePlayBackDidChange:(NSNotification *)notification {
-  NSLog(@"Movie playback state did change %d",(int) _moviePlayer.playbackState);
+- (void)syncTextToMedia {
+  self.mediaTitle.text = self.mediaToPlay.title;
+  self.mediaSubtitle.text = self.mediaToPlay.subtitle;
+  self.mediaDescription.text = self.mediaToPlay.descrip;
 }
 
-- (void)moviePlayBackDidFinish:(NSNotification *)notification {
-  NSLog(@"Looks like playback is over.");
-  int reason = [[[notification userInfo]
-      valueForKey:MPMoviePlayerPlaybackDidFinishReasonUserInfoKey] intValue];
-  if (reason == MPMovieFinishReasonPlaybackEnded) {
-    NSLog(@"Playback has ended normally!");
-  }
-}
-
-// Asynchronously load the table view image.
-- (void)loadMovieImage {
-  dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
-
-  dispatch_async(queue, ^{
-    UIImage *image = [UIImage
-                      imageWithData:[SimpleImageFetcher getDataFromImageURL:self.mediaToPlay.thumbnailURL]];
-
-    dispatch_sync(dispatch_get_main_queue(), ^{
-      _thumbnailView.image = image;
-      [_thumbnailView setNeedsLayout];
-    });
-  });
-}
-
-- (void)playMovieIfExists {
-  if (self.mediaToPlay) {
-    if (_chromecastController.isConnected) {
-      [self loadMovieImage];
-    } else {
-      // We are playing locally, so remove any existing session information.
-      [_chromecastController clearPreviousSession];
-      NSURL *url = self.mediaToPlay.URL;
-      NSLog(@"Playing movie %@", url);
-      self.moviePlayer.contentURL = url;
-      self.moviePlayer.allowsAirPlay = YES;
-      self.moviePlayer.controlStyle = MPMovieControlStyleEmbedded;
-      self.moviePlayer.repeatMode = MPMovieRepeatModeNone;
-      self.moviePlayer.scalingMode = MPMovieScalingModeAspectFit;
-      self.moviePlayer.shouldAutoplay = YES;
-
-      UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
-      if (UIInterfaceOrientationIsLandscape(orientation) &&
-          [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-        self.moviePlayer.fullscreen = YES;
-      } else {
-        self.moviePlayer.fullscreen = NO;
-      }
-
-      [self.moviePlayer prepareToPlay];
-      [self.moviePlayer play];
-    }
-    self.moviePlayer.view.hidden = _chromecastController.isConnected;
-
-    self.mediaTitle.text = self.mediaToPlay.title;
-    self.mediaSubtitle.text = self.mediaToPlay.subtitle;
-    self.mediaDescription.text = self.mediaToPlay.descrip;
-  }
-}
-
-- (void)createMoviePlayer {
-  //Create movie player controller and add it to the view
-  if (!self.moviePlayer) {
-    // Next create the movie player, on top of the thumbnail view.
-    self.moviePlayer = [[MPMoviePlayerController alloc] init];
-    self.moviePlayer.view.frame = _thumbnailView.frame;
-    //self.moviePlayer.view.hidden = _chromecastController.isConnected;
-    self.moviePlayer.view.hidden = YES;
-    [self.view addSubview:self.moviePlayer.view];
-
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(moviePlayBackDidFinish:)
-                                                 name:MPMoviePlayerPlaybackDidFinishNotification
-                                               object:self.moviePlayer];
-
-    [[NSNotificationCenter defaultCenter]
-        addObserver:self
-           selector:@selector(moviePlayBackDidChange:)
-               name:MPMoviePlayerPlaybackStateDidChangeNotification
-             object:self.moviePlayer];
-  }
-  if (!_thumbnailView.image) {
-    [self loadMovieImage];
-  }
-}
+#pragma mark - ViewController lifecycle
 
 - (void)viewDidLoad {
   [super viewDidLoad];
@@ -198,11 +103,11 @@ static NSString *kCastSegueIdentifier = @"castMedia";
   if (_chromecastController.deviceScanner.devices.count > 0) {
     [self showCastIcon];
   }
+}
 
-  // Set an empty image for selected ("pause") state.
-  [self.playPauseButton setImage:[UIImage new] forState:UIControlStateSelected];
-
-  [self createMoviePlayer];
+- (void)viewWillAppear:(BOOL)animated {
+  [super viewWillAppear:animated];
+  [self.playerView setMedia:_mediaToPlay];
 
   // Listen to orientation changes.
   [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
@@ -211,37 +116,28 @@ static NSString *kCastSegueIdentifier = @"castMedia";
                                                name:UIDeviceOrientationDidChangeNotification
                                              object:nil];
 
-  // Aspect scale the image, and clip it to the view bounds.
-  _thumbnailView.contentMode = UIViewContentModeScaleAspectFill;
-  _thumbnailView.clipsToBounds = YES;
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-  [super viewWillAppear:animated];
-
   // Assign ourselves as delegate ONLY in viewWillAppear of a view controller.
   _chromecastController.delegate = self;
+  _playerView.controller = self;
+  [self syncTextToMedia];
+  if (self.playerView.fullscreen) {
+    [self setNavigationBarStyle:LPVNavBarTransparent];
+    [self hideNavigationBar:YES];
+  }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
-  if (!_thumbnailView.image) {
-    [self loadMovieImage];
-  }
-  // Hide the player, unless it is paused.
-  if (self.moviePlayer && self.moviePlayer.playbackState == MPMoviePlaybackStateStopped) {
-    self.moviePlayer.view.frame = _thumbnailView.frame;
-    self.moviePlayer.view.hidden = YES;
-  }
   [self updateControls];
 }
 
-- (void)viewDidDisappear:(BOOL)animated {
-  [super viewDidDisappear:animated];
-  // TODO Pause the player if navigating to a different view other than fullscreen movie view.
-  if (self.moviePlayer && self.moviePlayer.fullscreen == NO) {
-    [self.moviePlayer pause];
+- (void)viewWillDisappear:(BOOL)animated {
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+  if (_playerView.playingLocally) {
+    [_playerView pause];
   }
+  [self setNavigationBarStyle:LPVNavBarDefault];
+  [super viewWillDisappear:animated];
 }
 
 - (void)deviceOrientationDidChange:(NSNotification *)notification {
@@ -249,21 +145,68 @@ static NSString *kCastSegueIdentifier = @"castMedia";
   if (_chromecastController.isConnected == YES) {
     return;
   }
-  //Obtaining the current device orientation
-  UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
-  if (self.moviePlayer.playbackState != MPMoviePlaybackStateStopped) {
-    if (UIInterfaceOrientationIsLandscape(orientation)) {
-      [self.moviePlayer setFullscreen:YES animated:YES];
-    } else {
-      [self.moviePlayer setFullscreen:NO animated:YES];
-    }
-  } else if (self.moviePlayer) {
-    self.moviePlayer.view.frame = _thumbnailView.frame;
+
+  [self.playerView orientationChanged];
+
+  UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+  if (!UIInterfaceOrientationIsLandscape(orientation) || !self.playerView.playingLocally) {
+    [self setNavigationBarStyle:LPVNavBarDefault];
   }
 }
 
+
+#pragma mark - LocalPlayerController
+
+/* Play has been pressed in the LocalPlayerView. */
+- (void)didTapPlayForCast {
+  [self performSegueWithIdentifier:kCastSegueIdentifier sender:self];
+}
+
+/* Pause has beeen pressed in the LocalPlayerView. */
+- (void)didTapPauseForCast {
+  [_chromecastController pauseCastMedia:YES];
+  _goToMiniControllerCast = YES;
+  [self performSegueWithIdentifier:kCastSegueIdentifier sender:self];
+}
+
+/* Signal the requested style for the view. */
+- (void)setNavigationBarStyle:(LPVNavBarStyle)style {
+  if (style == LPVNavBarDefault) {
+    self.edgesForExtendedLayout = UIRectEdgeAll;
+    self.navigationController.navigationBarHidden = NO;
+    [self.navigationController.navigationBar setBackgroundImage:nil
+                                                  forBarMetrics:UIBarMetricsDefault];
+    self.navigationController.navigationBar.shadowImage = nil;
+    [[UIApplication sharedApplication] setStatusBarHidden:NO
+                                            withAnimation:UIStatusBarAnimationFade];
+    self.navigationController.interactivePopGestureRecognizer.enabled = YES;
+  } else if(style == LPVNavBarTransparent) {
+    self.edgesForExtendedLayout = UIRectEdgeNone;
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
+                                                  forBarMetrics:UIBarMetricsDefault];
+    self.navigationController.navigationBar.shadowImage = [UIImage new];
+    [[UIApplication sharedApplication] setStatusBarHidden:YES
+                                            withAnimation:UIStatusBarAnimationFade];
+    // Disable the swipe gesture if we're fullscreen.
+    self.navigationController.interactivePopGestureRecognizer.enabled = NO;
+  }
+  [self setNeedsStatusBarAppearanceUpdate];
+}
+
+/* Prefer hiding the status bar if we're full screen. */
+- (BOOL)prefersStatusBarHidden {
+  return self.navigationController.navigationBar.shadowImage != nil;
+}
+
+/* Request the navigation bar to be hidden or shown. */
+- (void)hideNavigationBar:(BOOL)hide {
+  [self.navigationController.navigationBar setHidden:hide];
+}
+
+
 #pragma mark - RemotePlayerDelegate
 
+/* Update the local time from the Cast played time. */
 - (void)setLastKnownDuration: (NSTimeInterval)time {
   if (time > 0) {
     _lastKnownPlaybackTime = time;
@@ -272,8 +215,8 @@ static NSString *kCastSegueIdentifier = @"castMedia";
 
 #pragma mark - ChromecastControllerDelegate
 
+/* Trigger the icon to appear if a device is discovered. */
 - (void)didDiscoverDeviceOnNetwork {
-  // Add the chromecast icon if not present.
   [self showCastIcon];
 }
 
@@ -283,13 +226,15 @@ static NSString *kCastSegueIdentifier = @"castMedia";
  * @param device The device to which the connection was established.
  */
 - (void)didConnectToDevice:(GCKDevice *)device {
-  if (self.moviePlayer.playbackState == MPMoviePlaybackStatePlaying ||
-        self.moviePlayer.playbackState == MPMoviePlaybackStatePaused ) {
-    if (_lastKnownPlaybackTime == 0 && [self.moviePlayer currentPlaybackTime] != NAN) {
-      _lastKnownPlaybackTime = [self.moviePlayer currentPlaybackTime];
+  if (_playerView.playingLocally) {
+    [_playerView pause];
+    _playerView.castMode = LPVCastPlaying;
+    if (_lastKnownPlaybackTime == 0 && _playerView.playbackTime) {
+      _lastKnownPlaybackTime = _playerView.playbackTime;
     }
-    [self.moviePlayer stop];
     [self performSegueWithIdentifier:kCastSegueIdentifier sender:self];
+  } else {
+    _playerView.castMode = LPVCastConnected;
   }
 }
 
@@ -297,6 +242,9 @@ static NSString *kCastSegueIdentifier = @"castMedia";
  * Called when connection to the device was closed.
  */
 - (void)didDisconnect {
+  if (_lastKnownPlaybackTime) {
+    self.playerView.playbackTime = _lastKnownPlaybackTime;
+  }
   [self updateControls];
 }
 
@@ -311,6 +259,7 @@ static NSString *kCastSegueIdentifier = @"castMedia";
  * Called to display the modal device view controller from the cast icon.
  */
 - (void)shouldDisplayModalDeviceController {
+  [self.playerView pause];
   [self performSegueWithIdentifier:@"listDevices" sender:self];
 }
 
@@ -324,25 +273,35 @@ static NSString *kCastSegueIdentifier = @"castMedia";
 
 #pragma mark - Showing the overlay
 
-// Show cast icon. If this is the first time the cast icon is appearing, show an overlay with
-// instructions highlighting the cast icon.
+/* Show cast icon. If this is the first time the cast icon is appearing, show an overlay with
+ * instructions highlighting the cast icon. */
 - (void)showCastIcon {
   self.navigationItem.rightBarButtonItem = _chromecastController.chromecastBarButton;
+  [self updateControls];
   [CastInstructionsViewController showIfFirstTimeOverViewController:self];
 }
 
-#pragma mark - Implementation
+#pragma mark - Control management.
 
+/* Set the state for the LocalPlayerView based on the state of the Cast device. */
 - (void)updateControls {
-  // Check if the selected media is also playing on the screen. If so display the pause button.
   NSString *title =
       [_chromecastController.mediaInformation.metadata stringForKey:kGCKMetadataKeyTitle];
-  self.playPauseButton.selected = (_chromecastController.isConnected &&
-      ([title isEqualToString:self.mediaToPlay.title] &&
+  if (_chromecastController.isConnected) {
+      if ([title isEqualToString:self.mediaToPlay.title] &&
        (_chromecastController.playerState == GCKMediaPlayerStatePlaying ||
-        _chromecastController.playerState == GCKMediaPlayerStateBuffering)));
-  self.playPauseButton.highlighted = NO;
+        _chromecastController.playerState == GCKMediaPlayerStateBuffering)) {
+         _playerView.castMode = LPVCastPlaying;
+       } else {
+         _playerView.castMode = LPVCastConnected;
+       }
+  } else if (_chromecastController.deviceScanner.devices.count > 0) {
+    _playerView.castMode = LPVCastAvailable;
+  } else {
+    _playerView.castMode = LPVCastUnavailable;
+  }
 
   [_chromecastController updateToolbarForViewController:self];
 }
+
 @end

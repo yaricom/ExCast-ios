@@ -20,51 +20,57 @@
 
 - (void)loadMedia:(void (^)(void))callbackBlock {
   // Asynchronously load the media json
-  dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
+  NSOperationQueue *queue = [[NSOperationQueue alloc] init];
 
-  dispatch_async(queue, ^{
-    NSData *jsonData = [NSData dataWithContentsOfURL:[NSURL
-        URLWithString:[NSString stringWithFormat:@"%@%@", MEDIA_URL_BASE, MEDIA_URL_FILE]]];
+  NSURL *mediaURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", MEDIA_URL_BASE, MEDIA_URL_FILE]];
+  NSURLRequest *request = [NSURLRequest requestWithURL:mediaURL];
+  [NSURLConnection sendAsynchronousRequest:request
+                  queue:queue
+      completionHandler:^(NSURLResponse *response, NSData *jsonData, NSError *connectionError) {
+        if (connectionError) {
+          // Handle error here
+          NSLog(@"Media list fetch error! %@", [connectionError localizedDescription]);
+          return;
+        }
+        NSError *error;
+        NSDictionary *mediaData;
 
-    dispatch_sync(dispatch_get_main_queue(), ^{
-      NSError *error;
-      NSDictionary *mediaData;
-
-      NSMutableArray *mediaBuilder = [[NSMutableArray alloc] initWithCapacity:10];
-      if (jsonData) {
-        mediaData =
-            [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:&error];
-      } else {
-        NSLog(@"Media data was nil - maybe a problem contacting the server.");
-      }
-      if (error) {
-        // Handle error here
-        NSLog(@"Oh no! We got an error loading up our media data! %@",
-              [error localizedDescription]);
-      } else {
-        if (mediaData && [mediaData isKindOfClass:[NSDictionary class]]) {
-          NSArray *categories = [mediaData objectForKey:@"categories"];
-          if (categories && [categories isKindOfClass:[NSArray class]]) {
-            for (NSDictionary *category in categories) {
-              NSArray *mediaList = [category objectForKey:@"videos"];
-              if (mediaList && [mediaList isKindOfClass:[NSArray class]]) {
-                self.mediaTitle = [category objectForKey:@"name"];
-                for (NSDictionary *mediaObjectAsDict in mediaList) {
-                  Media *nextMedia = [Media mediaFromExternalJSON:mediaObjectAsDict];
-                  [mediaBuilder addObject:nextMedia];
+        NSMutableArray *mediaBuilder = [[NSMutableArray alloc] initWithCapacity:10];
+        if (jsonData) {
+          mediaData =
+          [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:&error];
+        } else {
+          NSLog(@"Media data was nil - maybe a problem contacting the server.");
+        }
+        if (error) {
+          // Handle error here
+          NSLog(@"Oh no! We got an error loading up our media data! %@",
+                [error localizedDescription]);
+        } else {
+          if (mediaData && [mediaData isKindOfClass:[NSDictionary class]]) {
+            NSArray *categories = [mediaData objectForKey:@"categories"];
+            if (categories && [categories isKindOfClass:[NSArray class]]) {
+              for (NSDictionary *category in categories) {
+                NSArray *mediaList = [category objectForKey:@"videos"];
+                if (mediaList && [mediaList isKindOfClass:[NSArray class]]) {
+                  self.mediaTitle = [category objectForKey:@"name"];
+                  for (NSDictionary *mediaObjectAsDict in mediaList) {
+                    Media *nextMedia = [Media mediaFromExternalJSON:mediaObjectAsDict];
+                    [mediaBuilder addObject:nextMedia];
+                  }
+                  break;
                 }
-                break;
               }
             }
           }
         }
-      }
-      _medias = [mediaBuilder copy];
+        _medias = [mediaBuilder copy];
 
-      // Call the callback!
-      callbackBlock();
-    });
-  });
+        // Call the callback!
+        dispatch_async(dispatch_get_main_queue(), ^{
+          callbackBlock();
+        });
+      }];
 }
 
 - (int)numberOfMediaLoaded {
