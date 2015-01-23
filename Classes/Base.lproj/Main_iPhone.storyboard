@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6250" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="rS3-R9-Ivy">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="rS3-R9-Ivy">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
@@ -44,16 +44,16 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Casting to Chromecast" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="139" translatesAutoresizingMaskIntoConstraints="NO" id="gJl-zs-Kw9">
-                                <rect key="frame" x="91" y="398" width="139" height="16"/>
+                                <rect key="frame" x="91" y="354" width="139" height="16"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                 <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="o7v-vW-Xai">
-                                <rect key="frame" x="63" y="396" width="20" height="20"/>
+                                <rect key="frame" x="63" y="352" width="20" height="20"/>
                             </activityIndicatorView>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Waiting for Godot (2009)" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cmh-ea-aVI">
-                                <rect key="frame" x="20" y="369" width="280" height="21"/>
+                                <rect key="frame" x="20" y="325" width="280" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
@@ -117,7 +117,7 @@
                             <constraint firstItem="sHE-7a-Ifx" firstAttribute="top" secondItem="cFL-7T-YrE" secondAttribute="bottom" constant="23" id="CWT-8f-OSZ"/>
                             <constraint firstItem="gJl-zs-Kw9" firstAttribute="leading" secondItem="o7v-vW-Xai" secondAttribute="trailing" constant="8" symbolic="YES" id="Em8-Yh-aD1"/>
                             <constraint firstItem="sHE-7a-Ifx" firstAttribute="top" secondItem="cFL-7T-YrE" secondAttribute="bottom" constant="23" id="F66-RB-AAC"/>
-                            <constraint firstItem="2mz-kJ-dwu" firstAttribute="top" secondItem="o7v-vW-Xai" secondAttribute="bottom" constant="20" id="Gcs-7Q-em5"/>
+                            <constraint firstItem="2mz-kJ-dwu" firstAttribute="top" secondItem="o7v-vW-Xai" secondAttribute="bottom" constant="64" id="Gcs-7Q-em5"/>
                             <constraint firstAttribute="trailing" secondItem="Cmh-ea-aVI" secondAttribute="trailing" constant="20" id="NxI-kF-yJr"/>
                             <constraint firstItem="gJl-zs-Kw9" firstAttribute="centerX" secondItem="ma0-x3-mBq" secondAttribute="centerX" id="ODe-VA-Ki9"/>
                             <constraint firstItem="Cmh-ea-aVI" firstAttribute="centerX" secondItem="gJl-zs-Kw9" secondAttribute="centerX" id="PoU-kd-rZz"/>
@@ -221,8 +221,8 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lc3-Or-tkM">
-                                <rect key="frame" x="4" y="302" width="297" height="178"/>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lc3-Or-tkM">
+                                <rect key="frame" x="5" y="302" width="297" height="178"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
@@ -287,7 +287,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="deviceName" textLabel="a83-Yw-2eq" detailTextLabel="QCV-1h-F0X" style="IBUITableViewCellStyleSubtitle" id="zjc-bL-Ml4">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="deviceName" textLabel="a83-Yw-2eq" detailTextLabel="QCV-1h-F0X" style="IBUITableViewCellStyleSubtitle" id="zjc-bL-Ml4">
                                 <rect key="frame" x="0.0" y="119" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="zjc-bL-Ml4" id="2NZ-B3-QHn">
@@ -355,8 +355,8 @@
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Kgk-Hg-KO2">
-                                            <rect key="frame" x="0.0" y="7" width="320" height="30"/>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Kgk-Hg-KO2">
+                                            <rect key="frame" x="8" y="7" width="304" height="30"/>
                                             <state key="normal" title="Disconnect">
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                             </state>
@@ -414,7 +414,7 @@
                                     </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="version" textLabel="h2v-AS-77j" style="IBUITableViewCellStyleDefault" id="Akf-es-FE7">
+                            <tableViewCell userInteractionEnabled="NO" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="version" textLabel="h2v-AS-77j" style="IBUITableViewCellStyleDefault" id="Akf-es-FE7">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Akf-es-FE7" id="Nl3-vF-8v7">
@@ -714,7 +714,7 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="90r-3M-ZWY"/>
         <segue reference="2aK-Vl-c3F"/>
+        <segue reference="BYP-uC-I0y"/>
     </inferredMetricsTieBreakers>
 </document>

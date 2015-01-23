@@ -51,6 +51,8 @@ static NSInteger kToolbarHeight = 44;
 @property(nonatomic) Float64 duration;
 /* Whether there has been a recent touch, for fading controls when playing. */
 @property(nonatomic) BOOL recentInteraction;
+/* The gesture recognizer used to register taps to bring up the controls. */
+@property(nonatomic) UIGestureRecognizer *singleFingerTap;
 
 
 /* Views dictionary used to the layout management. */
@@ -71,6 +73,8 @@ static NSInteger kToolbarHeight = 44;
 @property(nonatomic) UIImage *playImage;
 /* Pause image. */
 @property(nonatomic) UIImage *pauseImage;
+/* Loading indicator */
+@property(nonatomic) UIActivityIndicatorView *activityIndicator;
 
 @end
 
@@ -97,6 +101,7 @@ static NSInteger kToolbarHeight = 44;
   [self.playerLayer setFrame:frame];
   [self.controlView setFrame:frame];
   [self layoutToolbar:frame];
+  self.activityIndicator.center = self.controlView.center;
 }
 
 /* Update the frame for the toolbar. */
@@ -132,10 +137,10 @@ static NSInteger kToolbarHeight = 44;
   [self addSubview:_splashImage];
 
   _controlView = [[UIView alloc] init];
-  UITapGestureRecognizer *singleFingerTap =
-  [[UITapGestureRecognizer alloc] initWithTarget:self
-                                          action:@selector(didTouchControl:)];
-  [_controlView addGestureRecognizer:singleFingerTap];
+  self.singleFingerTap = [[UITapGestureRecognizer alloc]
+                            initWithTarget:self
+                                    action:@selector(didTouchControl:)];
+  [_controlView addGestureRecognizer:self.singleFingerTap];
   [self addSubview:_controlView];
 
   [self initialiseToolbarControls];
@@ -200,6 +205,7 @@ static NSInteger kToolbarHeight = 44;
       UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation);
 }
 
+
 /* If the orientation changes, display the controls. */
 - (void)orientationChanged {
   if ([self fullscreen]) {
@@ -209,10 +215,12 @@ static NSInteger kToolbarHeight = 44;
 }
 
 - (void)setFullscreen {
-  [self.controller hideNavigationBar:YES];
-  [self.controller setNavigationBarStyle:LPVNavBarTransparent];
   CGRect screenBounds = [UIScreen mainScreen].bounds;
-  [self setFrame:screenBounds];
+  if (!CGRectEqualToRect(screenBounds, self.frame)) {
+    [self.controller hideNavigationBar:YES];
+    [self.controller setNavigationBarStyle:LPVNavBarTransparent];
+    [self setFrame:screenBounds];
+  }
 }
 
 # pragma mark - video management
@@ -253,21 +261,23 @@ static NSInteger kToolbarHeight = 44;
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:AVPlayerItemDidPlayToEndTimeNotification
                                                   object:self.moviePlayer.currentItem];
+    [self.moviePlayer.currentItem removeObserver:self forKeyPath:@"playbackBufferEmpty"];
+    [self.moviePlayer.currentItem removeObserver:self forKeyPath:@"playbackLikelyToKeepUp"];
   }
 }
 
 /* Prefer the toolbar for touches when in control view. */
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
-  if ([self fullscreen] && point.y > self.frame.size.height - kToolbarHeight) {
+  if ([self fullscreen]) {
     if (self.controlView.hidden) {
       [self didTouchControl:nil];
       return nil;
-    } else {
+    } else if (point.y > self.frame.size.height - kToolbarHeight) {
       return [self.controlView hitTest:point withEvent:event];
     }
-  } else {
-    return [super hitTest:point withEvent:event];
   }
+
+  return [super hitTest:point withEvent:event];
 }
 
 /* Register observers for the movie time callbacks and for the end of movie notification. */
@@ -283,6 +293,14 @@ static NSInteger kToolbarHeight = 44;
                                            selector:@selector(movieDidFinish)
                                                name:AVPlayerItemDidPlayToEndTimeNotification
                                              object:self.moviePlayer.currentItem];
+  [self.moviePlayer.currentItem addObserver:self
+                                 forKeyPath:@"playbackBufferEmpty"
+                                    options:NSKeyValueObservingOptionNew
+                                    context:nil];
+  [self.moviePlayer.currentItem addObserver:self
+                                 forKeyPath:@"playbackLikelyToKeepUp"
+                                    options:NSKeyValueObservingOptionNew
+                                    context:nil];
 
 }
 
@@ -294,7 +312,9 @@ static NSInteger kToolbarHeight = 44;
   if (!self.duration) {
     self.slider.minimumValue = 0;
     self.duration = self.slider.maximumValue =
-    CMTimeGetSeconds(self.moviePlayer.currentItem.duration);
+        CMTimeGetSeconds(self.moviePlayer.currentItem.duration);
+    self.slider.enabled = YES;
+    [self.activityIndicator stopAnimating];
     NSInteger mins = floor(self.slider.maximumValue / 60);
     NSInteger secs = floor((int)self.slider.maximumValue % 60);
     self.totalTime.text = [NSString stringWithFormat:@"%02ld:%02ld", (long)mins, (long)secs];
@@ -323,6 +343,8 @@ static NSInteger kToolbarHeight = 44;
     }
     // Play the movie.
     [self.moviePlayer play];
+    self.slider.enabled = NO;
+    [self.activityIndicator startAnimating];
     _state = LpvPlaying;
   } else if (_state == LpvPlaying) {
     [self.moviePlayer pause];
@@ -358,6 +380,7 @@ static NSInteger kToolbarHeight = 44;
 - (IBAction)onSliderValueChanged:(id)sender {
   if (self.duration) {
     CMTime newTime = CMTimeMakeWithSeconds(self.slider.value, 1);
+    [self.activityIndicator startAnimating];
     [self.moviePlayer seekToTime:newTime];
   } else {
     self.slider.value = 0;
@@ -483,6 +506,11 @@ static NSInteger kToolbarHeight = 44;
   [self.toolbarView addSubview:self.slider];
   [self.controlView insertSubview:self.toolbarView atIndex:0];
 
+  self.activityIndicator = [[UIActivityIndicatorView alloc]
+                            initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+  self.activityIndicator.hidesWhenStopped = YES;
+  [self.controlView insertSubview:self.activityIndicator aboveSubview:self.toolbarView];
+
   // Layout.
   NSString *hlayout =
       @"|-[playButton(==40)]-5-[currTime(>=40)]-[slider(>=150)]-[totalTime(==currTime)]-|";
@@ -530,6 +558,20 @@ static NSInteger kToolbarHeight = 44;
   self.recentInteraction = YES;
   if (_state == LpvPlaying) {
     [self performSelector:@selector(hideToolBar) withObject:self afterDelay:kToolbarDelay];
+  }
+}
+
+/* Handle KVO for playback buffering */
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object
+                        change:(NSDictionary *)change context:(void *)context {
+  if (!self.moviePlayer.currentItem || object != self.moviePlayer.currentItem) {
+    return;
+  }
+
+  if ([keyPath isEqualToString:@"playbackLikelyToKeepUp"]) {
+    [self.activityIndicator stopAnimating];
+  } else if ([keyPath isEqualToString:@"playbackBufferEmpty"]) {
+    [self.activityIndicator startAnimating];
   }
 }
 

@@ -19,27 +19,56 @@
 
 @interface CastViewController () {
   NSTimeInterval _mediaStartTime;
+  /* Flag to indicate we are scrubbing - the play position is only updated at the end. */
   BOOL _currentlyDraggingSlider;
+  /* Flag to indicate whether we have status from the Cast device and can show the UI. */
   BOOL _readyToShowInterface;
+  /* Flag for whether we are reconnecting or playing from scratch. */
   BOOL _joinExistingSession;
+  /* The most recent playback time - used for syncing between local and remote playback. */
   NSTimeInterval _lastKnownTime;
   __weak id<RemotePlayerDelegate> _localPlayer;
   __weak ChromecastDeviceController* _chromecastController;
 }
-@property(strong, nonatomic) UIPopoverController* masterPopoverController;
+
+/* The image of the current media. */
 @property IBOutlet UIImageView* thumbnailImage;
+/* The label displaying the currently connected device. */
 @property IBOutlet UILabel* castingToLabel;
+/* The label displaying the currently playing media. */
 @property(weak, nonatomic) IBOutlet UILabel* mediaTitleLabel;
+/* An activity indicator while the cast is starting. */
 @property(weak, nonatomic) IBOutlet UIActivityIndicatorView* castActivityIndicator;
+/* A timer to trigger a callback to update the times/slider position. */
 @property(weak, nonatomic) NSTimer* updateStreamTimer;
+/* A timer to trigger removal of the volume control. */
 @property(weak, nonatomic) NSTimer* fadeVolumeControlTimer;
 
-@property(nonatomic) UIBarButtonItem* currTime;
-@property(nonatomic) UIBarButtonItem* totalTime;
-@property(nonatomic) UIBarButtonItem* cc;
+/* The time of the play head in the current video. */
+@property(nonatomic) UILabel* currTime;
+/* The total time of the video. */
+@property(nonatomic) UILabel* totalTime;
+/* The tracks selector button (for closed captions primarily in this sample). */
+@property(nonatomic) UIButton* cc;
+/* The button that brings up the volume control: Apple recommends not overriding the hardware
+   volume controls, so we use a separate on-screen UI. */
+@property(nonatomic) UIButton* volumeButton;
+/* The play icon button. */
+@property(nonatomic) UIButton* playButton;
+/* A slider for the progress/scrub bar. */
 @property(nonatomic) UISlider* slider;
-@property(nonatomic) NSArray* playToolbar;
-@property(nonatomic) NSArray* pauseToolbar;
+
+/* A containing view for the toolbar. */
+@property(nonatomic) UIView *toolbarView;
+/* Views dictionary used for the visual format layout management. */
+@property(nonatomic) NSDictionary *viewsDictionary;
+
+/* Play image. */
+@property(nonatomic) UIImage *playImage;
+/* Pause image. */
+@property(nonatomic) UIImage *pauseImage;
+
+/* Don't update the slider if we get a volume status message back related to our own change. */
 @property BOOL isManualVolumeChange;
 
 @end
@@ -152,12 +181,12 @@
 }
 
 - (void)resetInterfaceElements {
-  self.totalTime.title = @"";
-  self.currTime.title = @"";
+  self.totalTime.text = @"";
+  self.currTime.text = @"";
   [self.slider setValue:0];
   [self.castActivityIndicator startAnimating];
   _currentlyDraggingSlider = NO;
-  self.navigationController.toolbarHidden = YES;
+  self.toolbarView.hidden = YES;
   _readyToShowInterface = NO;
 }
 
@@ -202,7 +231,7 @@
 - (void)mediaNowPlaying {
   _readyToShowInterface = YES;
   [self updateInterfaceFromCast:nil];
-  self.navigationController.toolbarHidden = NO;
+  self.toolbarView.hidden = NO;
 }
 
 - (void)updateInterfaceFromCast:(NSTimer*)timer {
@@ -219,23 +248,27 @@
 
   if (_chromecastController.streamDuration > 0 && !_currentlyDraggingSlider) {
     _lastKnownTime = _chromecastController.streamPosition;
-    self.currTime.title = [self getFormattedTime:_chromecastController.streamPosition];
-    self.totalTime.title = [self getFormattedTime:_chromecastController.streamDuration];
+    self.currTime.text = [self getFormattedTime:_chromecastController.streamPosition];
+    self.totalTime.text = [self getFormattedTime:_chromecastController.streamDuration];
     [self.slider
         setValue:(_chromecastController.streamPosition / _chromecastController.streamDuration)
         animated:YES];
   }
+  [self updateToolbarControls];
+}
+
+
+- (void)updateToolbarControls {
   if (_chromecastController.playerState == GCKMediaPlayerStatePaused ||
       _chromecastController.playerState == GCKMediaPlayerStateIdle) {
-    self.toolbarItems = self.playToolbar;
+    [self.playButton setImage:self.playImage forState:UIControlStateNormal];
   } else if (_chromecastController.playerState == GCKMediaPlayerStatePlaying ||
              _chromecastController.playerState == GCKMediaPlayerStateBuffering) {
-    self.toolbarItems = self.pauseToolbar;
+    [self.playButton setImage:self.pauseImage forState:UIControlStateNormal];
   }
 }
 
 // Little formatting option here
-
 - (NSString*)getFormattedTime:(NSTimeInterval)timeInSeconds {
   int seconds = round(timeInSeconds);
   int hours = seconds / (60 * 60);
@@ -320,14 +353,8 @@
                                                 forBarMetrics:UIBarMetricsDefault];
   self.navigationController.navigationBar.shadowImage = [UIImage new];
 
-  // We want a transparent toolbar.
-  [self.navigationController.toolbar setBackgroundImage:[UIImage new]
-                                     forToolbarPosition:UIBarPositionBottom
-                                             barMetrics:UIBarMetricsDefault];
-  [self.navigationController.toolbar setShadowImage:[UIImage new]
-                                 forToolbarPosition:UIBarPositionBottom];
-  self.navigationController.toolbarHidden = YES;
-  self.toolbarItems = self.playToolbar;
+  self.toolbarView.hidden = YES;
+  [self.playButton setImage:self.playImage forState:UIControlStateNormal];
 
   [self resetInterfaceElements];
 
@@ -351,12 +378,12 @@
 }
 
 #pragma mark - On - screen UI elements
-- (IBAction)pauseButtonClicked:(id)sender {
-  [_chromecastController pauseCastMedia:YES];
-}
-
 - (IBAction)playButtonClicked:(id)sender {
-  [_chromecastController pauseCastMedia:NO];
+  if ([_chromecastController isPaused]) {
+    [_chromecastController pauseCastMedia:NO];
+  } else {
+    [_chromecastController pauseCastMedia:YES];
+  }
 }
 
 - (IBAction)subtitleButtonClicked:(id)sender {
@@ -378,7 +405,7 @@
 - (IBAction)onSliderValueChanged:(id)sender {
   float pctThrough = [self.slider value];
   if (_chromecastController.streamDuration > 0) {
-    self.currTime.title =
+    self.currTime.text =
         [self getFormattedTime:(pctThrough * _chromecastController.streamDuration)];
   }
 }
@@ -422,7 +449,7 @@
   _readyToShowInterface = YES;
   if ([self isViewLoaded] && self.view.window) {
     // Display toolbar if we are current view.
-    self.navigationController.toolbarHidden = NO;
+    self.toolbarView.hidden = NO;
   }
 
   if (_chromecastController.playerState == GCKMediaPlayerStateIdle) {
@@ -440,56 +467,101 @@
 
 #pragma mark - implementation.
 - (void)initControls {
-  UIBarButtonItem* playButton =
-      [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemPlay
-                                                    target:self
-                                                    action:@selector(playButtonClicked:)];
-  playButton.tintColor = [UIColor whiteColor];
-  UIBarButtonItem* pauseButton =
-      [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemPause
-                                                    target:self
-                                                    action:@selector(pauseButtonClicked:)];
-  pauseButton.tintColor = [UIColor whiteColor];
-  UIBarButtonItem *volumeButton =
-      [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_volume3.png"]
-                                       style:UIBarButtonItemStylePlain
-                                      target:self
-                                      action:@selector(showVolumeSlider:)];
-  volumeButton.tintColor = [UIColor whiteColor];
-  self.cc =
-    [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"closed_caption_white.png"]
-                                                    style:UIBarButtonItemStylePlain
-                                                    target:self
-                                                    action:@selector(subtitleButtonClicked:)];
-  self.cc.tintColor = [UIColor whiteColor];
-  self.currTime = [[UIBarButtonItem alloc] initWithTitle:@"00:00"
-                                                   style:UIBarButtonItemStylePlain
-                                                  target:nil
-                                                  action:nil];
-  self.currTime.tintColor = [UIColor whiteColor];
-  self.totalTime = [[UIBarButtonItem alloc] initWithTitle:@"100:00"
-                                                    style:UIBarButtonItemStylePlain
-                                                   target:nil
-                                                   action:nil];
-  self.totalTime.tintColor = [UIColor whiteColor];
-  UIBarButtonItem* flexibleSpace =
-      [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-                                                    target:nil
-                                                    action:nil];
-  UIBarButtonItem* flexibleSpace2 =
-      [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-                                                    target:nil
-                                                    action:nil];
-  UIBarButtonItem* flexibleSpace3 =
-      [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-                                                    target:nil
-                                                    action:nil];
-  UIBarButtonItem* flexibleSpace4 =
-      [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-                                                target:nil
-                                                action:nil];
 
+  // Play/Pause images.
+  self.playImage = [UIImage imageNamed:@"play_light.png"];
+  self.pauseImage = [UIImage imageNamed:@"pause_light.png"];
+
+  // Toolbar.
+  self.toolbarView = [[UIView alloc] initWithFrame:self.navigationController.toolbar.frame];
+  self.toolbarView.translatesAutoresizingMaskIntoConstraints = NO;
+  // Hide the nav controller toolbar - we are managing our own to get autolayout.
+  self.navigationController.toolbarHidden = YES;
+
+  // Play/Pause button.
+  self.playButton = [UIButton buttonWithType:UIButtonTypeSystem];
+  [self.playButton setFrame:CGRectMake(0, 0, 40, 40)];
+  if ([_chromecastController isPaused]) {
+    [self.playButton setImage:self.playImage forState:UIControlStateNormal];
+  } else {
+    [self.playButton setImage:self.pauseImage forState:UIControlStateNormal];
+  }
+  [self.playButton addTarget:self
+                      action:@selector(playButtonClicked:)
+            forControlEvents:UIControlEventTouchUpInside];
+  self.playButton.tintColor = [UIColor whiteColor];
+  NSLayoutConstraint *constraint =[NSLayoutConstraint
+                                   constraintWithItem:self.playButton
+                                   attribute:NSLayoutAttributeHeight
+                                   relatedBy:NSLayoutRelationEqual
+                                   toItem:self.playButton
+                                   attribute:NSLayoutAttributeWidth
+                                   multiplier:1.0
+                                   constant:0.0f];
+  [self.playButton addConstraint:constraint];
+  self.playButton.translatesAutoresizingMaskIntoConstraints = NO;
+
+  // Current time.
+  self.currTime = [[UILabel alloc] init];
+  self.currTime.clearsContextBeforeDrawing = YES;
+  self.currTime.text = @"00:00";
+  [self.currTime setFont:[UIFont fontWithName:@"Helvetica" size:14.0]];
+  [self.currTime setTextColor:[UIColor whiteColor]];
+  self.currTime.tintColor = [UIColor whiteColor];
+  self.currTime.translatesAutoresizingMaskIntoConstraints = NO;
+
+  // Total time.
+  self.totalTime = [[UILabel alloc] init];
+  self.totalTime.clearsContextBeforeDrawing = YES;
+  self.totalTime.text = @"00:00";
+  [self.totalTime setFont:[UIFont fontWithName:@"Helvetica" size:14.0]];
+  [self.totalTime setTextColor:[UIColor whiteColor]];
+  self.totalTime.tintColor = [UIColor whiteColor];
+  self.totalTime.translatesAutoresizingMaskIntoConstraints = NO;
+
+  // Volume control.
+  self.volumeButton = [UIButton buttonWithType:UIButtonTypeSystem];
+  [self.volumeButton setFrame:CGRectMake(0, 0, 40, 40)];
+  [self.volumeButton setImage:[UIImage imageNamed:@"icon_volume3.png"] forState:UIControlStateNormal];
+  [self.volumeButton addTarget:self
+                      action:@selector(showVolumeSlider:)
+            forControlEvents:UIControlEventTouchUpInside];
+  self.volumeButton.tintColor = [UIColor whiteColor];
+  constraint =[NSLayoutConstraint
+                                   constraintWithItem:self.volumeButton
+                                   attribute:NSLayoutAttributeHeight
+                                   relatedBy:NSLayoutRelationEqual
+                                   toItem:self.volumeButton
+                                   attribute:NSLayoutAttributeWidth
+                                   multiplier:1.0
+                                   constant:0.0f];
+  [self.volumeButton addConstraint:constraint];
+  self.volumeButton.translatesAutoresizingMaskIntoConstraints = NO;
+
+  // Tracks selector.
+  self.cc = [UIButton buttonWithType:UIButtonTypeSystem];
+  [self.cc setFrame:CGRectMake(0, 0, 40, 40)];
+  [self.cc setImage:[UIImage imageNamed:@"closed_caption_white.png.png"] forState:UIControlStateNormal];
+  [self.cc addTarget:self
+                        action:@selector(subtitleButtonClicked:)
+              forControlEvents:UIControlEventTouchUpInside];
+  self.cc.tintColor = [UIColor whiteColor];
+  constraint =[NSLayoutConstraint
+               constraintWithItem:self.cc
+               attribute:NSLayoutAttributeHeight
+               relatedBy:NSLayoutRelationEqual
+               toItem:self.cc
+               attribute:NSLayoutAttributeWidth
+               multiplier:1.0
+               constant:0.0f];
+  [self.cc addConstraint:constraint];
+  self.cc.translatesAutoresizingMaskIntoConstraints = NO;
+
+  // Slider.
   self.slider = [[UISlider alloc] init];
+  UIImage *thumb = [UIImage imageNamed:@"thumb.png"];
+  [self.slider setThumbImage:thumb forState:UIControlStateNormal];
+  [self.slider setThumbImage:thumb forState:UIControlStateHighlighted];
   [self.slider addTarget:self
                   action:@selector(onSliderValueChanged:)
         forControlEvents:UIControlEventValueChanged];
@@ -501,25 +573,58 @@
         forControlEvents:UIControlEventTouchUpInside];
   [self.slider addTarget:self
                   action:@selector(onTouchUpOutside:)
+        forControlEvents:UIControlEventTouchCancel];
+  [self.slider addTarget:self
+                  action:@selector(onTouchUpOutside:)
         forControlEvents:UIControlEventTouchUpOutside];
   self.slider.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-  UIBarButtonItem* sliderItem = [[UIBarButtonItem alloc] initWithCustomView:self.slider];
-  sliderItem.tintColor = [UIColor yellowColor];
-  if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-    sliderItem.width = 500;
-  }
+  self.slider.minimumValue = 0;
+  self.slider.minimumTrackTintColor = [UIColor yellowColor];
+  self.slider.translatesAutoresizingMaskIntoConstraints = NO;
+
+  [self.view addSubview:self.toolbarView];
+  [self.toolbarView addSubview:self.playButton];
+  [self.toolbarView addSubview:self.volumeButton];
+  [self.toolbarView addSubview:self.currTime];
+  [self.toolbarView addSubview:self.slider];
+  [self.toolbarView addSubview:self.totalTime];
+  [self.toolbarView addSubview:self.cc];
 
   // Round the corners on the volume pop up.
   self.volumeControls.layer.cornerRadius = 5;
   self.volumeControls.layer.masksToBounds = YES;
 
-  self.playToolbar = [NSArray arrayWithObjects:flexibleSpace,
-      playButton, flexibleSpace2, volumeButton, flexibleSpace3,
-      self.currTime, sliderItem, self.totalTime, flexibleSpace4,
-      self.cc, nil];
-  self.pauseToolbar = [NSArray arrayWithObjects:flexibleSpace,
-      pauseButton, flexibleSpace2, volumeButton, flexibleSpace3,
-      self.currTime, sliderItem, self.totalTime, flexibleSpace4,
-      self.cc, nil];
+  // Layout.
+  NSString *hlayout =
+  @"|-(<=5)-[playButton(==35)]-[volumeButton(==30)]-[currTime]-[slider(>=90)]-[totalTime]-[ccButton(==playButton)]-(<=5)-|";
+  self.viewsDictionary = @{ @"slider" : self.slider,
+                            @"currTime" : self.currTime,
+                            @"totalTime" :  self.totalTime,
+                            @"playButton" : self.playButton,
+                            @"volumeButton" : self.volumeButton,
+                            @"ccButton" : self.cc
+                            };
+  [self.toolbarView addConstraints:
+   [NSLayoutConstraint constraintsWithVisualFormat:hlayout
+                                           options:NSLayoutFormatAlignAllCenterY
+                                           metrics:nil views:self.viewsDictionary]];
+
+   NSString *vlayout = @"V:[slider(==35)]-|";
+  [self.toolbarView addConstraints:
+   [NSLayoutConstraint constraintsWithVisualFormat:vlayout
+                                           options:0
+                                           metrics:nil views:self.viewsDictionary]];
+
+  // Autolayout toolbar.
+  NSString *toolbarVLayout = @"V:[toolbar(==44)]|";
+  NSString *toolbarHLayout = @"|[toolbar]|";
+  [self.view addConstraints:
+   [NSLayoutConstraint constraintsWithVisualFormat:toolbarVLayout
+                                           options:0
+                                           metrics:nil views:@{@"toolbar" : self.toolbarView}]];
+  [self.view addConstraints:
+   [NSLayoutConstraint constraintsWithVisualFormat:toolbarHLayout
+                                           options:0
+                                           metrics:nil views:@{@"toolbar" : self.toolbarView}]];
 }
 @end
