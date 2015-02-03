@@ -71,14 +71,15 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 }
 
 - (BOOL)isConnected {
-  return self.deviceManager.isConnectedToApp;
+  return self.deviceManager.applicationConnectionState == GCKConnectionStateConnected;
 }
 
 - (BOOL)isPlayingMedia {
-  return self.deviceManager.isConnected && self.mediaControlChannel &&
-         self.mediaControlChannel.mediaStatus && (self.playerState == GCKMediaPlayerStatePlaying ||
-                                                  self.playerState == GCKMediaPlayerStatePaused ||
-                                                  self.playerState == GCKMediaPlayerStateBuffering);
+  return  self.deviceManager.connectionState == GCKConnectionStateConnected &&
+          self.mediaControlChannel && self.mediaControlChannel.mediaStatus &&
+          ( self.playerState == GCKMediaPlayerStatePlaying ||
+            self.playerState == GCKMediaPlayerStatePaused ||
+            self.playerState == GCKMediaPlayerStateBuffering);
 }
 
 - (void)performScan:(BOOL)start {
@@ -389,7 +390,7 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
            tracks:(NSArray *)tracks
         startTime:(NSTimeInterval)startTime
          autoPlay:(BOOL)autoPlay {
-  if (!self.deviceManager || !self.deviceManager.isConnected) {
+  if (!self.deviceManager || self.deviceManager.connectionState != GCKConnectionStateConnected ) {
     return NO;
   }
   // Reset selected tracks.
@@ -538,7 +539,8 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
     chromecastButton.hidden = YES;
   } else {
     chromecastButton.hidden = NO;
-    if (self.deviceManager && self.deviceManager.isConnectedToApp) {
+    if (self.deviceManager &&
+          self.deviceManager.applicationConnectionState == GCKConnectionStateConnected) {
       [chromecastButton.imageView stopAnimating];
       // Hilight with yellow tint color.
       [chromecastButton setTintColor:[UIColor yellowColor]];
