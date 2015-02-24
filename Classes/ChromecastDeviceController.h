@@ -127,6 +127,9 @@
 /** Returns true if media is loaded on the device. */
 - (BOOL)isPlayingMedia;
 
+/** Returns true if the media is currently loaded, but paused. */
+- (BOOL)isPaused;
+
 /** Pause or play the currently loaded media on the Chromecast device. */
 - (void)pauseCastMedia:(BOOL)shouldPause;
 

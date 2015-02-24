@@ -15,7 +15,6 @@
 #import "ChromecastDeviceController.h"
 #import "LocalPlayerView.h"
 #import "Media.h"
-#import <MediaPlayer/MediaPlayer.h>
 #import <UIKit/UIKit.h>
 
 @protocol RemotePlayerDelegate <NSObject>

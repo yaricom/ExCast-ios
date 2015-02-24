@@ -82,6 +82,11 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
             self.playerState == GCKMediaPlayerStateBuffering);
 }
 
+- (BOOL)isPaused {
+  return self.deviceManager.isConnected && self.mediaControlChannel &&
+  self.mediaControlChannel.mediaStatus && self.playerState == GCKMediaPlayerStatePaused;
+}
+
 - (void)performScan:(BOOL)start {
   if (start) {
     NSLog(@"Start Scan");
