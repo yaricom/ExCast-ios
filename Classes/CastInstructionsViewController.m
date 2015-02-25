@@ -18,12 +18,16 @@
 
 NSString *const kHasSeenChromecastOverlay = @"hasSeenChromecastOverlay";
 
-+(void)showIfFirstTimeOverViewController:(UIViewController *)viewController {
++ (BOOL)hasSeenInstructions {
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-  bool hasSeenChromecastOverlay = [defaults boolForKey:kHasSeenChromecastOverlay];
+  return [defaults boolForKey:kHasSeenChromecastOverlay];
+}
+
++ (void)showIfFirstTimeOverViewController:(UIViewController *)viewController {
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
   // Only show it if we haven't seen it before
-  if (!hasSeenChromecastOverlay) {
+  if (![self hasSeenInstructions]) {
     CastInstructionsViewController *cvc = [[CastInstructionsViewController alloc] init];
     [viewController presentViewController:cvc animated:YES completion:^() {
       // once viewDidAppear is successfully called, mark this preference as viewed
@@ -50,7 +54,7 @@ NSString *const kHasSeenChromecastOverlay = @"hasSeenChromecastOverlay";
   [super viewDidLoad];
 }
 
--(IBAction)dismissOverlay:(id)sender {
+- (IBAction)dismissOverlay:(id)sender {
   [self dismissViewControllerAnimated:YES completion:nil];
 }
 

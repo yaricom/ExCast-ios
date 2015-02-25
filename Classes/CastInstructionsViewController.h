@@ -19,6 +19,9 @@
 /** Helper class method for deciding whether to show instructions or not **/
 +(void)showIfFirstTimeOverViewController:(UIViewController *)viewController;
 
+/** YES if the user has previously seen the instruction cling. */
++(BOOL)hasSeenInstructions;
+
 /** Represents the entire overlay with instructions for first time Chromecast users **/
 @property(nonatomic, strong) IBOutlet UIView *overlayView;
 

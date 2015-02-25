@@ -28,8 +28,6 @@ static NSString *kCastSegueListDevices = @"listDevices";
   BOOL _goToMiniControllerCast;
   /* Whether to reset the edges on disappearing. */
   BOOL _resetEdgesOnDisappear;
-  /* Reference to our main Cast managment class. */
-  __weak ChromecastDeviceController *_chromecastController;
 }
 
 @end
@@ -42,8 +40,8 @@ static NSString *kCastSegueListDevices = @"listDevices";
  * playing media metadata. */
 - (Media *)currentlyPlayingMedia {
   AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
-  NSString *title =
-  [_chromecastController.mediaInformation.metadata stringForKey:kGCKMetadataKeyTitle];
+  NSString *title =[[ChromecastDeviceController sharedInstance].mediaInformation.metadata
+                            stringForKey:kGCKMetadataKeyTitle];
   int index = [delegate.mediaList indexOfMediaByTitle:title];
   if (index >= 0) {
     return [delegate.mediaList mediaAtIndex:index];
@@ -98,15 +96,6 @@ static NSString *kCastSegueListDevices = @"listDevices";
 
 - (void)viewDidLoad {
   [super viewDidLoad];
-
-  // Store a reference to the chromecast controller.
-  AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
-  _chromecastController = delegate.chromecastDeviceController;
-
-  //Add cast button
-  if (_chromecastController.deviceScanner.devices.count > 0) {
-    [self showCastIcon];
-  }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -122,7 +111,8 @@ static NSString *kCastSegueListDevices = @"listDevices";
                                              object:nil];
 
   // Assign ourselves as delegate ONLY in viewWillAppear of a view controller.
-  _chromecastController.delegate = self;
+  [ChromecastDeviceController sharedInstance].delegate = self;
+  [[ChromecastDeviceController sharedInstance] manageViewController:self icon:YES toolbar:YES];
   _playerView.controller = self;
   [self syncTextToMedia];
   if (self.playerView.fullscreen) {
@@ -132,8 +122,10 @@ static NSString *kCastSegueListDevices = @"listDevices";
 
 - (void)viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
-  // Do the control update in a separate runloop to ensure we don't bounce any toolbar.s
+  // Do the control update in a separate runloop to ensure we don't bounce any toolbars.
   [self performSelector:@selector(updateControls) withObject:self afterDelay:0];
+  // Force a toolbar update on appear.
+  [[ChromecastDeviceController sharedInstance] updateToolbarForViewController:self];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -149,7 +141,7 @@ static NSString *kCastSegueListDevices = @"listDevices";
 
 - (void)deviceOrientationDidChange:(NSNotification *)notification {
   // Respond to orientation only when not connected.
-  if (_chromecastController.isConnected == YES) {
+  if ([ChromecastDeviceController sharedInstance].isConnected == YES) {
     return;
   }
 
@@ -170,7 +162,7 @@ static NSString *kCastSegueListDevices = @"listDevices";
 
 /* Pause has beeen pressed in the LocalPlayerView. */
 - (void)didTapPauseForCast {
-  [_chromecastController pauseCastMedia:YES];
+  [[ChromecastDeviceController sharedInstance] pauseCastMedia:YES];
   _goToMiniControllerCast = YES;
   [self performSegueWithIdentifier:kCastSegueIdentifier sender:self];
 }
@@ -217,6 +209,7 @@ static NSString *kCastSegueListDevices = @"listDevices";
 - (void)setLastKnownDuration: (NSTimeInterval)time {
   if (time > 0) {
     _lastKnownPlaybackTime = time;
+    self.playerView.playbackTime = _lastKnownPlaybackTime;
   }
 }
 
@@ -224,7 +217,10 @@ static NSString *kCastSegueListDevices = @"listDevices";
 
 /* Trigger the icon to appear if a device is discovered. */
 - (void)didDiscoverDeviceOnNetwork {
-  [self showCastIcon];
+  if (![CastInstructionsViewController hasSeenInstructions]) {
+    [self hideNavigationBar:NO]; // Display the nav bar for the instructions.
+    _resetEdgesOnDisappear = NO;
+  }
 }
 
 /**
@@ -245,6 +241,14 @@ static NSString *kCastSegueListDevices = @"listDevices";
   }
 }
 
+
+/**
+ *  Ensure we update the controls whenever the media changes.
+ */
+- (void)didReceiveMediaStateChange {
+  [self updateControls];
+}
+
 /**
  * Called when connection to the device was closed.
  */
@@ -252,14 +256,6 @@ static NSString *kCastSegueListDevices = @"listDevices";
   if (_lastKnownPlaybackTime) {
     self.playerView.playbackTime = _lastKnownPlaybackTime;
   }
-  [self updateControls];
-}
-
-/**
- * Called when the playback state of media on the device changes.
- */
-- (void)didReceiveMediaStateChange {
-  [self updateControls];
 }
 
 /**
@@ -279,39 +275,26 @@ static NSString *kCastSegueListDevices = @"listDevices";
   [self performSegueWithIdentifier:kCastSegueIdentifier sender:self];
 }
 
-#pragma mark - Showing the overlay
-
-/* Show cast icon. If this is the first time the cast icon is appearing, show an overlay with
- * instructions highlighting the cast icon. */
-- (void)showCastIcon {
-  self.navigationItem.rightBarButtonItem = _chromecastController.chromecastBarButton;
-  [self updateControls];
-  [self hideNavigationBar:NO]; // Display the nav bar in case the cling is needed.
-  _resetEdgesOnDisappear = NO;
-  [CastInstructionsViewController showIfFirstTimeOverViewController:self];
-}
-
 #pragma mark - Control management.
 
 /* Set the state for the LocalPlayerView based on the state of the Cast device. */
 - (void)updateControls {
-  NSString *title =
-      [_chromecastController.mediaInformation.metadata stringForKey:kGCKMetadataKeyTitle];
-  if (_chromecastController.isConnected) {
-      if ([title isEqualToString:self.mediaToPlay.title] &&
-       (_chromecastController.playerState == GCKMediaPlayerStatePlaying ||
-        _chromecastController.playerState == GCKMediaPlayerStateBuffering)) {
-         _playerView.castMode = LPVCastPlaying;
-       } else {
-         _playerView.castMode = LPVCastConnected;
+  NSString *title = [[ChromecastDeviceController sharedInstance].mediaInformation.metadata
+                            stringForKey:kGCKMetadataKeyTitle];
+  if ([ChromecastDeviceController sharedInstance].isConnected) {
+    if ([title isEqualToString:self.mediaToPlay.title]) {
+      if([ChromecastDeviceController sharedInstance].playerState == GCKMediaPlayerStatePlaying ||
+         [ChromecastDeviceController sharedInstance].playerState == GCKMediaPlayerStateBuffering) {
+        _playerView.castMode = LPVCastPlaying;
+        return;
        }
-  } else if (_chromecastController.deviceScanner.devices.count > 0) {
+    }
+    _playerView.castMode = LPVCastConnected;
+  } else if ([ChromecastDeviceController sharedInstance].deviceScanner.devices.count > 0) {
     _playerView.castMode = LPVCastAvailable;
   } else {
     _playerView.castMode = LPVCastUnavailable;
   }
-
-  [_chromecastController updateToolbarForViewController:self];
 }
 
 @end

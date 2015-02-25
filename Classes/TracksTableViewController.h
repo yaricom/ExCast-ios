@@ -17,9 +17,11 @@
 #import <UIKit/UIKit.h>
 
 @interface TracksTableViewController : UITableViewController
+
 /** Configure the tracks view with the media information required and the device controller
  to signal track changes to. */
 - (void)setMedia:(Media *)media
          forType:(GCKMediaTrackType)type
     deviceController:(ChromecastDeviceController *)deviceController;
+
 @end

@@ -14,17 +14,15 @@
 
 #import "AppDelegate.h"
 #import "LocalPlayerViewController.h"
-#import "MediaTableViewController.h"
-#import "SimpleImageFetcher.h"
 #import "Media.h"
 #import "MediaListModel.h"
-#import "CastInstructionsViewController.h"
+#import "MediaTableViewController.h"
+#import "SimpleImageFetcher.h"
 
-@interface MediaTableViewController () {
-  __weak ChromecastDeviceController *_chromecastController;
-}
+@interface MediaTableViewController ()
 
 @property(nonatomic, strong) MediaListModel *mediaList;
+
 @end
 
 @implementation MediaTableViewController
@@ -32,20 +30,12 @@
 - (void)viewDidLoad {
   [super viewDidLoad];
 
-  // Store a reference to the chromecast controller.
-  AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
-  _chromecastController = delegate.chromecastDeviceController;
-
   // Show stylized application title in the titleview.
   self.navigationItem.titleView =
       [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo_castvideos.png"]];
 
-  // Display cast icon in the right nav bar button, if we have devices.
-  if (_chromecastController.deviceScanner.devices.count > 0) {
-    [self showCastIcon];
-  }
-
   // Asynchronously load the media json.
+  AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
   delegate.mediaList = [[MediaListModel alloc] init];
   self.mediaList = delegate.mediaList;
   [self.mediaList loadMedia:^{
@@ -55,22 +45,16 @@
 
 }
 
-// Show cast icon. If this is the first time the cast icon is appearing, show an overlay with
-// instructions highlighting the cast icon.
-- (void) showCastIcon {
-  self.navigationItem.rightBarButtonItem = _chromecastController.chromecastBarButton;
-  [CastInstructionsViewController showIfFirstTimeOverViewController:self];
-}
-
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
 
   // Assign ourselves as delegate ONLY in viewWillAppear of a view controller.
-  _chromecastController.delegate = self;
+  [ChromecastDeviceController sharedInstance].delegate = self;
+  [[ChromecastDeviceController sharedInstance] manageViewController:self icon:YES toolbar:YES];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
-  [_chromecastController updateToolbarForViewController:self];
+  [[ChromecastDeviceController sharedInstance] updateToolbarForViewController:self];
 }
 
 #pragma mark - Table View
@@ -122,42 +106,12 @@
       [[segue identifier] isEqualToString:@"playMedia"]) {
     NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
     Media *media = [self.mediaList mediaAtIndex:(int)indexPath.row];
+    // Pass the currently playing media to the next controller if it needs it.
     [[segue destinationViewController] setMediaToPlay:media];
   }
 }
 
 #pragma mark - ChromecastControllerDelegate
-
-/**
- * Called when chromecast devices are discoverd on the network.
- */
-- (void)didDiscoverDeviceOnNetwork {
-  // Add the chromecast icon if not present.
-  [self showCastIcon];
-}
-
-/**
- * Called when connection to the device was established.
- *
- * @param device The device to which the connection was established.
- */
-- (void)didConnectToDevice:(GCKDevice *)device {
-  [_chromecastController updateToolbarForViewController:self];
-}
-
-/**
- * Called when connection to the device was closed.
- */
-- (void)didDisconnect {
-  [_chromecastController updateToolbarForViewController:self];
-}
-
-/**
- * Called when the playback state of media on the device changes.
- */
-- (void)didReceiveMediaStateChange {
-  [_chromecastController updateToolbarForViewController:self];
-}
 
 /**
  * Called to display the modal device view controller from the cast icon.
@@ -173,7 +127,8 @@
   // Select the item being played in the table, so prepareForSegue can find the
   // associated Media object.
   NSString *title =
-      [_chromecastController.mediaInformation.metadata stringForKey:kGCKMetadataKeyTitle];
+      [[ChromecastDeviceController sharedInstance].mediaInformation.metadata
+          stringForKey:kGCKMetadataKeyTitle];
   int index = [self.mediaList indexOfMediaByTitle:title];
   if (index >= 0) {
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];

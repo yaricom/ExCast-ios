@@ -87,9 +87,6 @@
 /** The media information of the loaded media on the device. */
 @property(nonatomic, readonly) GCKMediaInformation* mediaInformation;
 
-/** The UIBarButtonItem denoting the chromecast device. */
-@property(nonatomic, readonly) UIBarButtonItem* chromecastBarButton;
-
 /** The delegate attached to this controller. */
 @property(nonatomic, assign) id<ChromecastControllerDelegate> delegate;
 
@@ -98,6 +95,9 @@
 
 /** Map of track identifier NSNumber to NSNumber boolean for enabled/disabled. */
 @property(nonatomic, strong) NSMutableDictionary *selectedTrackByIdentifier;
+
+/** Main access point for the class singleton. */
++ (instancetype)sharedInstance;
 
 /** Update the toolbar representing the playback state of media on the device. */
 - (void)updateToolbarForViewController:(UIViewController*)viewController;
@@ -120,6 +120,16 @@
            tracks:(NSArray *)tracks
         startTime:(NSTimeInterval)startTime
          autoPlay:(BOOL)autoPlay;
+
+/**
+ *  Manage the given view controller until told otherwise. Take a weak reference to the controller.
+ *  Optionally can also manage the CastIconButton and control toolbar.
+ *
+ *  @param controller The ViewController to manage.
+ *  @param icon       Whether to add and manage a Cast Icon to the navigation controller.
+ *  @param toolbar    Whether to update a toolbar.
+ */
+- (void)manageViewController:(UIViewController *)controller icon:(BOOL)icon toolbar:(BOOL)toolbar;
 
 /** Returns true if connected to a Chromecast device. */
 - (BOOL)isConnected;
@@ -150,5 +160,8 @@
 
 /** Prevent automatically reconnecting to the cast device if we see it again. */
 - (void)clearPreviousSession;
+
+/** Enable basic logging of all GCKLogger messages to the console. */
+- (void)enableLogging;
 
 @end

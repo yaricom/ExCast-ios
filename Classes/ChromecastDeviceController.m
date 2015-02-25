@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#import "CastIconButton.h"
+#import "CastInstructionsViewController.h"
 #import "ChromecastDeviceController.h"
 #import "SimpleImageFetcher.h"
 #import "TracksTableViewController.h"
 
 static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 
-@interface ChromecastDeviceController () {
-  UIImage *_btnImage;
-  UIImage *_btnImageConnected;
+@interface ChromecastDeviceController () <GCKLoggerDelegate> {
   dispatch_queue_t _queue;
 }
 
@@ -38,11 +38,32 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 @property(nonatomic) UILabel *toolbarTitleLabel;
 @property(nonatomic) UILabel *toolbarSubTitleLabel;
 @property(nonatomic) GCKMediaTextTrackStyle *textTrackStyle;
+@property(nonatomic) CastIconBarButtonItem *castIconButton;
+
+// TODO(ianbarber): We could have circular references here. Perhaps we should have an
+// optional method in the delegate that returns the view controller under control,
+// or we require that in the protocol some how.
+@property(nonatomic, weak) UIViewController *viewController;
+@property(nonatomic) BOOL manageToolbar;
+
 @end
 
 @implementation ChromecastDeviceController
 
-- (id)init {
++ (instancetype)sharedInstance {
+  static dispatch_once_t p = 0;
+  __strong static id _sharedDeviceController = nil;
+
+  dispatch_once(&p, ^{
+    _sharedDeviceController = [[self alloc] init];
+    // Always start a scan on creation.
+    [_sharedDeviceController performScan:YES];
+  });
+
+  return _sharedDeviceController;
+}
+
+- (instancetype)init {
   self = [super init];
   if (self) {
     self.isReconnecting = NO;
@@ -111,13 +132,7 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
   [self.deviceManager connect];
 
   // Start animating the cast connect images.
-  UIButton *chromecastButton = (UIButton *)self.chromecastBarButton.customView;
-  chromecastButton.tintColor = [UIColor whiteColor];
-  chromecastButton.imageView.animationImages =
-      @[ [UIImage imageNamed:@"icon_cast_on0.png"], [UIImage imageNamed:@"icon_cast_on1.png"],
-          [UIImage imageNamed:@"icon_cast_on2.png"], [UIImage imageNamed:@"icon_cast_on1.png"] ];
-  chromecastButton.imageView.animationDuration = 2;
-  [chromecastButton.imageView startAnimating];
+  self.castIconButton.status = CIBCastConnecting;
 }
 
 - (void)disconnectFromDevice {
@@ -183,6 +198,18 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
   }
 }
 
+- (void)manageViewController:(UIViewController *)controller icon:(BOOL)icon toolbar:(BOOL)toolbar {
+  self.viewController = controller;
+  self.manageToolbar = toolbar;
+  if (icon) {
+    controller.navigationItem.rightBarButtonItem = _castIconButton;
+  }
+}
+
+- (void)enableLogging {
+  [[GCKLogger sharedInstance] setDelegate:self];
+}
+
 #pragma mark - GCKDeviceManagerDelegate
 
 - (void)deviceManagerDidConnect:(GCKDeviceManager *)deviceManager {
@@ -213,6 +240,10 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 
   if ([self.delegate respondsToSelector:@selector(didConnectToDevice:)]) {
     [self.delegate didConnectToDevice:self.selectedDevice];
+  }
+
+  if (self.viewController && self.manageToolbar) {
+    [self updateToolbarForViewController:self.viewController];
   }
 
   // Store sessionID in case of restart
@@ -290,6 +321,11 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
     [self.delegate didDisconnect];
   }
 
+  // TODO(ianbarber): Maybe move these lines out to a separate function.
+  if (self.viewController && self.manageToolbar) {
+    [self updateToolbarForViewController:self.viewController];
+  }
+
   if (clear) {
     [self clearPreviousSession];
   }
@@ -324,16 +360,14 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
   } else {
     [self showError:@"Connection Suspended: Network"];
     [self deviceDisconnectedForgetDevice:NO];
-    // Update cast icons on next runloop so all cast objects have time to update.
-    [self performSelector:@selector(updateCastIconButtonStates) withObject:nil afterDelay:0];
+    [self updateCastIconButtonStates];
   }
 }
 
 - (void)deviceManagerDidResumeConnection:(GCKDeviceManager *)deviceManager
                      rejoinedApplication:(BOOL)rejoinedApplication {
   NSLog(@"Connection Resumed. App Rejoined: %@", rejoinedApplication ? @"YES" : @"NO");
-  // Update cast icons on next runloop so all cast objects have time to update.
-  [self performSelector:@selector(updateCastIconButtonStates) withObject:nil afterDelay:0];
+  [self updateCastIconButtonStates];
 }
 
 #pragma mark - GCKDeviceScannerListener
@@ -347,17 +381,17 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
     [self connectToDevice:device];
   }
 
-  // Trigger an update in the next run loop so we pick up the updated devices array.
-  [self performSelector:@selector(updateCastIconButtonStates) withObject:nil afterDelay:0];
   if ([self.delegate respondsToSelector:@selector(didDiscoverDeviceOnNetwork)]) {
     [self.delegate didDiscoverDeviceOnNetwork];
   }
+
+  // Always update after notifying the delegate.
+  [self updateCastIconButtonStates];
 }
 
 - (void)deviceDidGoOffline:(GCKDevice *)device {
   NSLog(@"device went offline - %@", device.friendlyName);
-  // Trigger an update in the next run loop so we pick up the updated devices array.
-  [self performSelector:@selector(updateCastIconButtonStates) withObject:nil afterDelay:0];
+  [self updateCastIconButtonStates];
 }
 
 #pragma mark - GCKMediaControlChannelDelegate methods
@@ -374,6 +408,9 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
   [self updateTrackSelectionFromActiveTracks:_mediaControlChannel.mediaStatus.activeTrackIDs];
   if ([self.delegate respondsToSelector:@selector(didReceiveMediaStateChange)]) {
     [self.delegate didReceiveMediaStateChange];
+  }
+  if (self.viewController && self.manageToolbar) {
+    [self updateToolbarForViewController:self.viewController];
   }
 }
 
@@ -459,19 +496,8 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 }
 
 - (void)initControls {
-  // Create chromecast bar button.
-  _btnImage = [UIImage imageNamed:@"icon_cast_off.png"];
-  _btnImageConnected = [UIImage imageNamed:@"icon_cast_on_filled.png"];
-
-  UIButton *chromecastButton = [UIButton buttonWithType:UIButtonTypeSystem];
-  [chromecastButton addTarget:self
-                       action:@selector(chooseDevice:)
-             forControlEvents:UIControlEventTouchDown];
-  chromecastButton.frame = CGRectMake(0, 0, _btnImage.size.width, _btnImage.size.height);
-  [chromecastButton setImage:_btnImage forState:UIControlStateNormal];
-  chromecastButton.hidden = YES;
-
-  _chromecastBarButton = [[UIBarButtonItem alloc] initWithCustomView:chromecastButton];
+  _castIconButton = [CastIconBarButtonItem barButtonItemWithTarget:self
+                                                          selector:@selector(chooseDevice:)];
 
   // Create toolbar buttons for the mini player.
   CGRect frame = CGRectMake(0, 0, 49, 37);
@@ -534,28 +560,6 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 - (void)chooseDevice:(id)sender {
   if ([self.delegate respondsToSelector:@selector(shouldDisplayModalDeviceController)]) {
     [_delegate shouldDisplayModalDeviceController];
-  }
-}
-
-- (void)updateCastIconButtonStates {
-  // Hide the button if there are no devices found.
-  UIButton *chromecastButton = (UIButton *)self.chromecastBarButton.customView;
-  if (self.deviceScanner.devices.count == 0) {
-    chromecastButton.hidden = YES;
-  } else {
-    chromecastButton.hidden = NO;
-    if (self.deviceManager &&
-          self.deviceManager.applicationConnectionState == GCKConnectionStateConnected) {
-      [chromecastButton.imageView stopAnimating];
-      // Hilight with yellow tint color.
-      [chromecastButton setTintColor:[UIColor yellowColor]];
-      [chromecastButton setImage:_btnImageConnected forState:UIControlStateNormal];
-
-    } else {
-      // Remove the highlight.
-      [chromecastButton setTintColor:nil];
-      [chromecastButton setImage:_btnImage forState:UIControlStateNormal];
-    }
   }
 }
 
@@ -622,6 +626,23 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
   }
 }
 
+- (void)updateCastIconButtonStates {
+  if (self.deviceScanner.devices.count == 0) {
+    _castIconButton.status = CIBCastUnavailable;
+  } else if (self.deviceManager.applicationConnectionState == GCKConnectionStateConnecting) {
+    _castIconButton.status = CIBCastConnecting;
+  } else if (self.deviceManager.applicationConnectionState == GCKConnectionStateConnected) {
+    _castIconButton.status = CIBCastConnected;
+  } else {
+    _castIconButton.status = CIBCastAvailable;
+    // Show cast icon. If this is the first time the cast icon is appearing, show an overlay with
+    // instructions highlighting the cast icon.
+    if (self.viewController) {
+      [CastInstructionsViewController showIfFirstTimeOverViewController:self.viewController];
+    }
+  }
+}
+
 # pragma mark - Tracks management
 
 - (void)updateActiveTracks {
@@ -659,6 +680,13 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
     [self.selectedTrackByIdentifier setObject:nope
                                        forKey:[NSNumber numberWithInteger:track.identifier]];
   }
+}
+
+#pragma mark - GCKLoggerDelegate implementation
+
+- (void)logFromFunction:(const char *)function message:(NSString *)message {
+  // Send SDK’s log messages directly to the console, as an example.
+  NSLog(@"%s  %@", function, message);
 }
 
 @end

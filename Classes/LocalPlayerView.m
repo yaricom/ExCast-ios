@@ -318,6 +318,8 @@ static NSInteger kToolbarHeight = 44;
     NSInteger mins = floor(self.slider.maximumValue / 60);
     NSInteger secs = floor((int)self.slider.maximumValue % 60);
     self.totalTime.text = [NSString stringWithFormat:@"%02ld:%02ld", (long)mins, (long)secs];
+    // Jump to last playback time if we have one.
+    [self syncToLastPlayback];
   }
   if (self.currTime) {
     self.playbackTime = CMTimeGetSeconds(time);
@@ -338,9 +340,7 @@ static NSInteger kToolbarHeight = 44;
     [self loadMoviePlayer];
     [self registerMovieStateObservers];
     // Set the current playback time to the stored time unless its almost the end.
-    if (_playbackTime > 0 && self.duration && _playbackTime < (self.duration - 20)) {
-      [self.moviePlayer seekToTime:CMTimeMake(_playbackTime, 1)];
-    }
+    [self syncToLastPlayback];
     // Play the movie.
     [self.moviePlayer play];
     self.slider.enabled = NO;
@@ -384,6 +384,15 @@ static NSInteger kToolbarHeight = 44;
     [self.moviePlayer seekToTime:newTime];
   } else {
     self.slider.value = 0;
+  }
+}
+
+/**
+ *  Update the play state to the last stored playback time.
+ */
+- (void)syncToLastPlayback {
+  if (_playbackTime > 0 && self.duration && _playbackTime < (self.duration - 20)) {
+    [self.moviePlayer seekToTime:CMTimeMake(_playbackTime, 1)];
   }
 }
 

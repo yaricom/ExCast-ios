@@ -22,11 +22,6 @@
   UISlider *_volumeSlider;
 }
 
-- (ChromecastDeviceController *)castDeviceController {
-  AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
-  return delegate.chromecastDeviceController;
-}
-
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -39,12 +34,12 @@
     return 1;
   }
   // Return the number of rows in the section.
-  if (self.castDeviceController.isConnected == NO) {
+  if ([ChromecastDeviceController sharedInstance].isConnected == NO) {
     self.title = @"Connect to";
-    return self.castDeviceController.deviceScanner.devices.count;
+    return [ChromecastDeviceController sharedInstance].deviceScanner.devices.count;
   } else {
     self.title =
-        [NSString stringWithFormat:@"%@", self.castDeviceController.deviceName];
+        [NSString stringWithFormat:@"%@", [ChromecastDeviceController sharedInstance].deviceName];
     return 3;
   }
 }
@@ -66,7 +61,8 @@
   static NSString *CellIdForDeviceName = @"deviceName";
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdForDeviceName
                                                           forIndexPath:indexPath];
-  GCKDevice *device = [self.castDeviceController.deviceScanner.devices objectAtIndex:indexPath.row];
+  GCKDevice *device = [[ChromecastDeviceController sharedInstance].deviceScanner.devices
+                          objectAtIndex:indexPath.row];
   cell.textLabel.text = device.friendlyName;
   cell.detailTextLabel.text = device.statusText ? device.statusText : device.modelName;
   return cell;
@@ -76,15 +72,15 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView
    mediaCellForRowAtIndexPath:(NSIndexPath *)indexPath {
   static NSString *CellIdForPlayerController = @"playerController";
+  ChromecastDeviceController *castControl = [ChromecastDeviceController sharedInstance];
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdForPlayerController
                                                           forIndexPath:indexPath];
-  cell.textLabel.text =
-  [self.castDeviceController.mediaInformation.metadata stringForKey:kGCKMetadataKeyTitle];
-  cell.detailTextLabel.text = [self.castDeviceController.mediaInformation.metadata
+  cell.textLabel.text = [castControl.mediaInformation.metadata stringForKey:kGCKMetadataKeyTitle];
+  cell.detailTextLabel.text = [castControl.mediaInformation.metadata
                                stringForKey:kGCKMetadataKeySubtitle];
 
   // Accessory is the play/pause button.
-  BOOL paused = self.castDeviceController.playerState == GCKMediaPlayerStatePaused;
+  BOOL paused = castControl.playerState == GCKMediaPlayerStatePaused;
   UIImage *playImage = (paused ? [UIImage imageNamed:@"play_black.png"]
                         : [UIImage imageNamed:@"pause_black.png"]);
   CGRect frame = CGRectMake(0, 0, playImage.size.width, playImage.size.height);
@@ -96,17 +92,16 @@
   cell.accessoryView = button;
 
   // Asynchronously load the table view image
-  if (self.castDeviceController.mediaInformation.metadata.images.count > 0) {
+  if (castControl.mediaInformation.metadata.images.count > 0) {
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
 
     dispatch_async(queue, ^{
-      GCKImage *mediaImage =
-      [self.castDeviceController.mediaInformation.metadata.images objectAtIndex:0];
+      GCKImage *mediaImage = [castControl.mediaInformation.metadata.images objectAtIndex:0];
       UIImage *image =
-      [UIImage imageWithData:[SimpleImageFetcher getDataFromImageURL:mediaImage.URL]];
+          [UIImage imageWithData:[SimpleImageFetcher getDataFromImageURL:mediaImage.URL]];
 
       CGSize itemSize = CGSizeMake(40, 40);
-      UIImage *thumbnailImage = [self scaleImage:image toSize:itemSize];
+      UIImage *thumbnailImage = [SimpleImageFetcher scaleImage:image toSize:itemSize];
 
       dispatch_sync(dispatch_get_main_queue(), ^{
         UIImageView *mediaThumb = cell.imageView;
@@ -129,7 +124,7 @@
   _volumeSlider = (UISlider *)[cell.contentView viewWithTag:TagForVolumeSlider];
   _volumeSlider.minimumValue = 0;
   _volumeSlider.maximumValue = 1.0;
-  _volumeSlider.value = [self castDeviceController].deviceVolume;
+  _volumeSlider.value = [ChromecastDeviceController sharedInstance].deviceVolume;
   _volumeSlider.continuous = NO;
   [_volumeSlider addTarget:self
                     action:@selector(sliderValueChanged:)
@@ -137,7 +132,7 @@
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(receivedVolumeChangedNotification:)
                                                name:@"Volume changed"
-                                             object:[self castDeviceController]];
+                                             object:[ChromecastDeviceController sharedInstance]];
   return cell;
 }
 
@@ -152,13 +147,13 @@
   if (indexPath.section == 1) {
     // Version string.
     cell = [self tableView:tableView versionCellForRowAtIndexPath:indexPath];
-  } else if (self.castDeviceController.isConnected == NO) {
+  } else if ([ChromecastDeviceController sharedInstance].isConnected == NO) {
     // Device chooser.
     cell = [self tableView:tableView deviceCellForRowAtIndexPath:indexPath];
   } else {
     // Connection manager.
     if (indexPath.row == 0) {
-      if (self.castDeviceController.isPlayingMedia == NO) {
+      if ([ChromecastDeviceController sharedInstance].isPlayingMedia == NO) {
         // Display the ready status message.
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdForReadyStatus
                                                forIndexPath:indexPath];
@@ -180,17 +175,16 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-  if (self.castDeviceController.isConnected == NO) {
-    if (indexPath.row < self.castDeviceController.deviceScanner.devices.count) {
-      GCKDevice *device =
-          [self.castDeviceController.deviceScanner.devices objectAtIndex:indexPath.row];
+  ChromecastDeviceController *castControl = [ChromecastDeviceController sharedInstance];
+  if (castControl.isConnected == NO) {
+    if (indexPath.row < castControl.deviceScanner.devices.count) {
+      GCKDevice *device = [castControl.deviceScanner.devices objectAtIndex:indexPath.row];
       NSLog(@"Selecting device:%@", device.friendlyName);
-      [self.castDeviceController connectToDevice:device];
+      [castControl connectToDevice:device];
     }
-  } else if (self.castDeviceController.isPlayingMedia == YES && indexPath.row == 0) {
-    if ([self.castDeviceController.delegate
-            respondsToSelector:@selector(shouldPresentPlaybackController)]) {
-      [self.castDeviceController.delegate shouldPresentPlaybackController];
+  } else if (castControl.isPlayingMedia == YES && indexPath.row == 0) {
+    if ([castControl.delegate respondsToSelector:@selector(shouldPresentPlaybackController)]) {
+      [castControl.delegate shouldPresentPlaybackController];
     }
   }
   // Dismiss the view.
@@ -203,7 +197,7 @@
 }
 
 - (IBAction)disconnectDevice:(id)sender {
-  [self.castDeviceController disconnectFromDevice];
+  [[ChromecastDeviceController sharedInstance] disconnectFromDevice];
 
   // Dismiss the view.
   [self dismissViewControllerAnimated:YES completion:nil];
@@ -214,37 +208,15 @@
 }
 
 - (void)playPausePressed:(id)sender {
-  BOOL paused = self.castDeviceController.playerState == GCKMediaPlayerStatePaused;
-  [self.castDeviceController pauseCastMedia:!paused];
+  ChromecastDeviceController *castControl = [ChromecastDeviceController sharedInstance];
+  BOOL paused = castControl.playerState == GCKMediaPlayerStatePaused;
+  [castControl pauseCastMedia:!paused];
 
   // change the icon.
   UIButton *button = sender;
   UIImage *playImage =
       (paused ? [UIImage imageNamed:@"play_black.png"] : [UIImage imageNamed:@"pause_black.png"]);
   [button setBackgroundImage:playImage forState:UIControlStateNormal];
-}
-
-#pragma mark - implementation
-- (UIImage *)scaleImage:(UIImage *)image toSize:(CGSize)newSize {
-  CGSize scaledSize = newSize;
-  float scaleFactor = 1.0;
-  if (image.size.width > image.size.height) {
-    scaleFactor = image.size.width / image.size.height;
-    scaledSize.width = newSize.width;
-    scaledSize.height = newSize.height / scaleFactor;
-  } else {
-    scaleFactor = image.size.height / image.size.width;
-    scaledSize.height = newSize.height;
-    scaledSize.width = newSize.width / scaleFactor;
-  }
-
-  UIGraphicsBeginImageContextWithOptions(scaledSize, NO, 0.0);
-  CGRect scaledImageRect = CGRectMake(0.0, 0.0, scaledSize.width, scaledSize.height);
-  [image drawInRect:scaledImageRect];
-  UIImage *scaledImage = UIGraphicsGetImageFromCurrentImageContext();
-  UIGraphicsEndImageContext();
-
-  return scaledImage;
 }
 
 # pragma mark - volume
@@ -260,7 +232,7 @@
   UISlider *slider = (UISlider *) sender;
   _isManualVolumeChange = YES;
   NSLog(@"Got new slider value: %.2f", slider.value);
-  [self castDeviceController].deviceVolume = slider.value;
+  [ChromecastDeviceController sharedInstance].deviceVolume = slider.value;
   _isManualVolumeChange = NO;
 }
 

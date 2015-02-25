@@ -16,6 +16,23 @@
 
 @interface SimpleImageFetcher : NSObject
 
+/**
+ *  Retrieve an image from the network or local cache.
+ *
+ *  @param urlToFetch URL of an image.
+ *
+ *  @return The bytes ready for decoding into a UIImage.
+ */
 + (NSData *)getDataFromImageURL:(NSURL *)urlToFetch;
+
+/**
+ *  Resize a given image to the desired width and height.
+ *
+ *  @param image   the image to resize
+ *  @param newSize the width and height of the new image
+ *
+ *  @return a separate resized version of the image.
+ */
++ (UIImage *)scaleImage:(UIImage *)image toSize:(CGSize)newSize;
 
 @end

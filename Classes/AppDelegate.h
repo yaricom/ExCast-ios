@@ -12,15 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import <GoogleCast/GoogleCast.h>
 #import "MediaListModel.h"
 #import <UIKit/UIKit.h>
 
-#import "ChromecastDeviceController.h"
-
-@interface AppDelegate : UIResponder<UIApplicationDelegate, GCKLoggerDelegate>
+@interface AppDelegate : UIResponder<UIApplicationDelegate>
 
 @property(strong, nonatomic) UIWindow* window;
-@property(nonatomic) ChromecastDeviceController* chromecastDeviceController;
 @property(nonatomic,strong) MediaListModel *mediaList;
 @end

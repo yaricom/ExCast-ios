@@ -13,6 +13,8 @@
 // limitations under the License.
 
 #import "AppDelegate.h"
+#import "ChromecastDeviceController.h"
+#import <AVFoundation/AVFoundation.h>
 
 @implementation AppDelegate
 
@@ -21,14 +23,17 @@
 
   [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 
-  // Hook up the logger.
-  [GCKLogger sharedInstance].delegate = self;
+  // Turn on the Cast logging for debug purposes.
+  [[ChromecastDeviceController sharedInstance] enableLogging];
 
-  // Initialize the chromecast device controller.
-  self.chromecastDeviceController = [[ChromecastDeviceController alloc] init];
-
-  // Scan for devices.
-  [self.chromecastDeviceController performScan:YES];
+  // Set playback category mode.
+  NSError *setCategoryError;
+  BOOL success = [[AVAudioSession sharedInstance]
+                  setCategory:AVAudioSessionCategoryPlayback
+                  error: &setCategoryError];
+  if (!success) {
+    NSLog(@"Error setting audio category: %@", setCategoryError.localizedDescription);
+  }
 
   return YES;
 }
@@ -53,13 +58,6 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application {
   // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-}
-
-#pragma mark - GCKLoggerDelegate implementation
-
-- (void)logFromFunction:(const char *)function message:(NSString *)message {
-  // Send SDK’s log messages directly to the console, as an example.
-  NSLog(@"%s  %@", function, message);
 }
 
 @end

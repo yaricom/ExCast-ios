@@ -71,6 +71,9 @@
 /* Don't update the slider if we get a volume status message back related to our own change. */
 @property BOOL isManualVolumeChange;
 
+/* Whether the viewcontroller is currently visible. */
+@property BOOL visible;
+
 @end
 
 @implementation CastViewController
@@ -78,9 +81,9 @@
 - (void)viewDidLoad {
   [super viewDidLoad];
 
-  [self syncChromeCastController];
+  self.visible = false;
 
-  self.navigationItem.rightBarButtonItem = _chromecastController.chromecastBarButton;
+  _chromecastController = [ChromecastDeviceController sharedInstance];
 
   self.castingToLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Casting to %@", nil),
       _chromecastController.deviceName];
@@ -112,14 +115,55 @@
                          action:@selector(showVolumeSlider:)
                forControlEvents:UIControlEventTouchUpInside];
   [self initControls];
-
 }
 
-- (ChromecastDeviceController *)syncChromeCastController {
-  // Store a reference to the chromecast controller.
-  AppDelegate* delegate = (AppDelegate*)[UIApplication sharedApplication].delegate;
-  _chromecastController = delegate.chromecastDeviceController;
-  return _chromecastController;
+- (void)viewWillAppear:(BOOL)animated {
+  [super viewWillAppear:animated];
+
+  // Assign ourselves as delegate ONLY in viewWillAppear of a view controller.
+  _chromecastController.delegate = self;
+
+  // Add the cast icon to our nav bar.
+  [[ChromecastDeviceController sharedInstance] manageViewController:self icon:YES toolbar:NO];
+
+  // Make the navigation bar transparent.
+  self.navigationController.navigationBar.translucent = YES;
+  [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
+                                                forBarMetrics:UIBarMetricsDefault];
+  self.navigationController.navigationBar.shadowImage = [UIImage new];
+
+  self.toolbarView.hidden = YES;
+  [self.playButton setImage:self.playImage forState:UIControlStateNormal];
+
+  [self resetInterfaceElements];
+
+  if (_joinExistingSession == YES) {
+    [self mediaNowPlaying];
+  }
+
+  [self configureView];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+  [super viewDidAppear:animated];
+  self.visible = true;
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+  // I think we can safely stop the timer here
+  [self.updateStreamTimer invalidate];
+  self.updateStreamTimer = nil;
+
+  // We no longer want to be delegate.
+  _chromecastController.delegate = nil;
+
+  [self.navigationController.navigationBar setBackgroundImage:nil
+                                                forBarMetrics:UIBarMetricsDefault];
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+  self.visible = false;
+  [super viewDidDisappear:animated];
 }
 
 - (void)receivedVolumeChangedNotification:(NSNotification *) notification {
@@ -144,7 +188,7 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
   if ([[segue identifier] isEqualToString:@"listTracks"]) {
-    [self syncChromeCastController];
+    _chromecastController = [ChromecastDeviceController sharedInstance];
     UITabBarController *controller;
     if ([[segue destinationViewController] class] == [UITabBarController class]) {
        controller = (UITabBarController *)[segue destinationViewController];
@@ -341,42 +385,6 @@
   }
 }
 
-- (void)viewWillAppear:(BOOL)animated {
-  [super viewWillAppear:animated];
-
-  // Assign ourselves as delegate ONLY in viewWillAppear of a view controller.
-  _chromecastController.delegate = self;
-
-  // Make the navigation bar transparent.
-  self.navigationController.navigationBar.translucent = YES;
-  [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
-                                                forBarMetrics:UIBarMetricsDefault];
-  self.navigationController.navigationBar.shadowImage = [UIImage new];
-
-  self.toolbarView.hidden = YES;
-  [self.playButton setImage:self.playImage forState:UIControlStateNormal];
-
-  [self resetInterfaceElements];
-
-  if (_joinExistingSession == YES) {
-    [self mediaNowPlaying];
-  }
-
-  [self configureView];
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
-  // I think we can safely stop the timer here
-  [self.updateStreamTimer invalidate];
-  self.updateStreamTimer = nil;
-
-  [self.navigationController.navigationBar setBackgroundImage:nil
-                                                forBarMetrics:UIBarMetricsDefault];
-  [self.navigationController.toolbar setBackgroundImage:nil
-                                     forToolbarPosition:UIBarPositionBottom
-                                             barMetrics:UIBarMetricsDefault];
-}
-
 #pragma mark - On - screen UI elements
 - (IBAction)playButtonClicked:(id)sender {
   if ([_chromecastController isPaused]) {
@@ -388,13 +396,6 @@
 
 - (IBAction)subtitleButtonClicked:(id)sender {
   [self performSegueWithIdentifier:@"listTracks" sender:self];
-}
-
-// Unused, but if you wanted a stop, as opposed to a pause button, this is probably
-// what you would call
-- (IBAction)stopButtonClicked:(id)sender {
-  [_chromecastController stopCastMedia];
-  [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 - (IBAction)onTouchDown:(id)sender {
@@ -434,27 +435,40 @@
   if (_localPlayer) {
     [_localPlayer setLastKnownDuration:_lastKnownTime];
   }
-  [self.navigationController popViewControllerAnimated:YES];
+  [self maybePopController];
+}
+
+- (void)maybePopController {
+  // Only take action if we're visible.
+  if (self.visible) {
+    self.mediaToPlay = nil; // Forget media.
+    [self.navigationController popViewControllerAnimated:YES];
+  }
 }
 
 /**
  * Called when the playback state of media on the device changes.
  */
 - (void)didReceiveMediaStateChange {
-  if (![self.mediaToPlay.title isEqualToString:[_chromecastController.mediaInformation.metadata
-                                                stringForKey:kGCKMetadataKeyTitle]]) {
+  NSString *currentlyPlayingMediaTitle = [_chromecastController.mediaInformation.metadata
+                                          stringForKey:kGCKMetadataKeyTitle];
+
+  if (currentlyPlayingMediaTitle &&
+      ![_mediaToPlay.title isEqualToString:currentlyPlayingMediaTitle]) {
     // The state change is related to old media, so ignore it.
+    NSLog(@"Got message for media %@ while on %@", currentlyPlayingMediaTitle, _mediaToPlay.title);
     return;
   }
+
+  if (_chromecastController.playerState == GCKMediaPlayerStateIdle && _mediaToPlay) {
+    [self maybePopController];
+    return;
+  }
+
   _readyToShowInterface = YES;
   if ([self isViewLoaded] && self.view.window) {
     // Display toolbar if we are current view.
     self.toolbarView.hidden = NO;
-  }
-
-  if (_chromecastController.playerState == GCKMediaPlayerStateIdle) {
-    _mediaToPlay = nil; // Forget media.
-    [self.navigationController popViewControllerAnimated:YES];
   }
 }
 
