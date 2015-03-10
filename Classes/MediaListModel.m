@@ -15,6 +15,7 @@
 #import "MediaListModel.h"
 
 @implementation MediaListModel {
+  /** Storage for the list of Media objects. */
   NSArray *_medias;
 }
 
@@ -28,7 +29,7 @@
                   queue:queue
       completionHandler:^(NSURLResponse *response, NSData *jsonData, NSError *connectionError) {
         if (connectionError) {
-          // Handle error here
+          // Handle error here.
           NSLog(@"Media list fetch error! %@", [connectionError localizedDescription]);
           return;
         }

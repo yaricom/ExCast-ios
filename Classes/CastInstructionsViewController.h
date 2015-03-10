@@ -14,18 +14,36 @@
 
 #import <UIKit/UIKit.h>
 
+/**
+ *  A overlay "cling" that describes how to use Cast for new users.
+ *  Generally shown the first time the Cast icon appears in the application.
+ */
 @interface CastInstructionsViewController : UIViewController
 
-/** Helper class method for deciding whether to show instructions or not **/
+/**
+ *  Helper class method for deciding whether to show instructions or not
+ *
+ *  @param viewController The UIViewController to overlay.
+ */
 +(void)showIfFirstTimeOverViewController:(UIViewController *)viewController;
 
-/** YES if the user has previously seen the instruction cling. */
+/**
+ *  Whether the instructions cling will appear or not.
+ *
+ *  @return YES if the user has seen the cling.
+ */
 +(BOOL)hasSeenInstructions;
 
-/** Represents the entire overlay with instructions for first time Chromecast users **/
+/**
+ *  Represents the entire overlay with instructions for first time Cast users.
+ */
 @property(nonatomic, strong) IBOutlet UIView *overlayView;
 
-/** Dismisses the entire overlay **/
+/**
+ *  Dismisses the entire overlay
+ *
+ *  @param sender Message sender
+ */
 - (IBAction)dismissOverlay:(id)sender;
 
 @end

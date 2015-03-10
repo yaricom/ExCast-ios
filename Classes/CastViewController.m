@@ -17,6 +17,9 @@
 #import "SimpleImageFetcher.h"
 #import "TracksTableViewController.h"
 
+static NSString * const kListTracks = @"listTracks";
+static NSString * const kListTracksPopover = @"listTracksPopover";
+
 @interface CastViewController () {
   NSTimeInterval _mediaStartTime;
   /* Flag to indicate we are scrubbing - the play position is only updated at the end. */
@@ -27,7 +30,6 @@
   BOOL _joinExistingSession;
   /* The most recent playback time - used for syncing between local and remote playback. */
   NSTimeInterval _lastKnownTime;
-  __weak id<RemotePlayerDelegate> _localPlayer;
   __weak ChromecastDeviceController* _chromecastController;
 }
 
@@ -87,7 +89,7 @@
 
   self.castingToLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Casting to %@", nil),
       _chromecastController.deviceName];
-  self.mediaTitleLabel.text = self.mediaToPlay.title;
+  self.mediaTitleLabel.text = [self.mediaToPlay.metadata stringForKey:kGCKMetadataKeyTitle];
 
   self.volumeControlLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%@ Volume", nil),
                               _chromecastController.deviceName];
@@ -147,6 +149,10 @@
 - (void)viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
   self.visible = true;
+  if (!_chromecastController.isConnected) {
+    // If we're not connected, exit.
+    [self maybePopController];
+  }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -187,15 +193,11 @@
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-  if ([[segue identifier] isEqualToString:@"listTracks"]) {
+  if ([segue.identifier isEqualToString:kListTracks] ||
+      [segue.identifier isEqualToString:kListTracksPopover]) {
     _chromecastController = [ChromecastDeviceController sharedInstance];
     UITabBarController *controller;
-    if ([[segue destinationViewController] class] == [UITabBarController class]) {
-       controller = (UITabBarController *)[segue destinationViewController];
-    } else {
-      // iPad has an extra navigation controller.
-      controller = (UITabBarController *)[(UINavigationController *)[segue destinationViewController] visibleViewController];
-    }
+    controller = (UITabBarController *)[(UINavigationController *)[segue destinationViewController] visibleViewController];
     TracksTableViewController *trackController  = controller.viewControllers[0];
     [trackController setMedia:self.mediaToPlay forType:GCKMediaTrackTypeText deviceController:_chromecastController];
     TracksTableViewController *audioTrackController  = controller.viewControllers[1];
@@ -204,20 +206,26 @@
 }
 
 - (IBAction)unwindToCastView:(UIStoryboardSegue *)segue; {
-  [self dismissViewControllerAnimated:true completion:nil];
+  if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+    [self dismissViewControllerAnimated:YES completion:nil];
+  }
+}
+
+- (void)maybePopController {
+  // Only take action if we're visible.
+  if (self.visible) {
+    self.mediaToPlay = nil; // Forget media.
+    [self.navigationController popViewControllerAnimated:YES];
+  }
 }
 
 #pragma mark - Managing the detail item
 
-- (void)setLocalPlayer:(id<RemotePlayerDelegate>)delegate {
-  _localPlayer = delegate;
-}
-
-- (void)setMediaToPlay:(Media*)newDetailItem {
+- (void)setMediaToPlay:(GCKMediaInformation *)newDetailItem {
   [self setMediaToPlay:newDetailItem withStartingTime:0];
 }
 
-- (void)setMediaToPlay:(Media*)newMedia withStartingTime:(NSTimeInterval)startTime {
+- (void)setMediaToPlay:(GCKMediaInformation *)newMedia withStartingTime:(NSTimeInterval)startTime {
   _mediaStartTime = startTime;
   if (_mediaToPlay != newMedia) {
     _mediaToPlay = newMedia;
@@ -330,37 +338,38 @@
 
 - (void)configureView {
   if (self.mediaToPlay && _chromecastController.isConnected) {
-    NSURL* url = self.mediaToPlay.URL;
+    NSURL* url = self.mediaToPlay.customData;
+    NSString *title = [_mediaToPlay.metadata stringForKey:kGCKMetadataKeyTitle];
     self.castingToLabel.text =
         [NSString stringWithFormat:@"Casting to %@", _chromecastController.deviceName];
-    self.mediaTitleLabel.text = self.mediaToPlay.title;
+    self.mediaTitleLabel.text = title;
+
     NSLog(@"Casting movie %@ at starting time %f", url, _mediaStartTime);
 
     //Loading thumbnail async
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-      UIImage* image = [UIImage
-          imageWithData:[SimpleImageFetcher getDataFromImageURL:self.mediaToPlay.posterURL]];
+      NSString *posterURL = [_mediaToPlay.metadata stringForKey:kCastComponentPosterURL];
+      if (posterURL) {
+        UIImage* image = [UIImage
+            imageWithData:[SimpleImageFetcher getDataFromImageURL:[NSURL URLWithString:posterURL]]];
 
-      dispatch_async(dispatch_get_main_queue(), ^{
-        NSLog(@"Loaded thumbnail image");
-        self.thumbnailImage.image = image;
-        [self.view setNeedsLayout];
-      });
+        dispatch_async(dispatch_get_main_queue(), ^{
+          NSLog(@"Loaded thumbnail image");
+          self.thumbnailImage.image = image;
+          [self.view setNeedsLayout];
+        });
+      }
     });
 
-    self.cc.enabled = [self.mediaToPlay.tracks count] > 0;
+    self.cc.enabled = [self.mediaToPlay.mediaTracks count] > 0;
 
+    NSString *cur = [_chromecastController.mediaInformation.metadata
+                        stringForKey:kGCKMetadataKeyTitle];
     // If the newMedia is already playing, join the existing session.
-    if (![self.mediaToPlay.title isEqualToString:[_chromecastController.mediaInformation.metadata
-            stringForKey:kGCKMetadataKeyTitle]] ||
+    if (![title isEqualToString:cur] ||
           _chromecastController.playerState == GCKMediaPlayerStateIdle) {
-      //Cast the movie!!
-      [_chromecastController loadMedia:url
-                          thumbnailURL:self.mediaToPlay.thumbnailURL
-                                 title:self.mediaToPlay.title
-                              subtitle:self.mediaToPlay.subtitle
-                              mimeType:self.mediaToPlay.mimeType
-                                tracks:self.mediaToPlay.tracks
+      //Cast the movie!
+      [_chromecastController loadMedia:self.mediaToPlay
                              startTime:_mediaStartTime
                               autoPlay:YES];
       _joinExistingSession = NO;
@@ -395,7 +404,11 @@
 }
 
 - (IBAction)subtitleButtonClicked:(id)sender {
-  [self performSegueWithIdentifier:@"listTracks" sender:self];
+  if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+    [self performSegueWithIdentifier:kListTracksPopover sender:self];
+  } else {
+    [self performSegueWithIdentifier:kListTracks sender:self];
+  }
 }
 
 - (IBAction)onTouchDown:(id)sender {
@@ -432,18 +445,7 @@
  * Called when connection to the device was closed.
  */
 - (void)didDisconnect {
-  if (_localPlayer) {
-    [_localPlayer setLastKnownDuration:_lastKnownTime];
-  }
   [self maybePopController];
-}
-
-- (void)maybePopController {
-  // Only take action if we're visible.
-  if (self.visible) {
-    self.mediaToPlay = nil; // Forget media.
-    [self.navigationController popViewControllerAnimated:YES];
-  }
 }
 
 /**
@@ -452,11 +454,12 @@
 - (void)didReceiveMediaStateChange {
   NSString *currentlyPlayingMediaTitle = [_chromecastController.mediaInformation.metadata
                                           stringForKey:kGCKMetadataKeyTitle];
+  NSString *title = [_mediaToPlay.metadata stringForKey:kGCKMetadataKeyTitle];
 
   if (currentlyPlayingMediaTitle &&
-      ![_mediaToPlay.title isEqualToString:currentlyPlayingMediaTitle]) {
+      ![title isEqualToString:currentlyPlayingMediaTitle]) {
     // The state change is related to old media, so ignore it.
-    NSLog(@"Got message for media %@ while on %@", currentlyPlayingMediaTitle, _mediaToPlay.title);
+    NSLog(@"Got message for media %@ while on %@", currentlyPlayingMediaTitle, title);
     return;
   }
 
@@ -472,19 +475,12 @@
   }
 }
 
-/**
- * Called to display the modal device view controller from the cast icon.
- */
-- (void)shouldDisplayModalDeviceController {
-  [self performSegueWithIdentifier:@"listDevices" sender:self];
-}
-
 #pragma mark - implementation.
 - (void)initControls {
 
   // Play/Pause images.
-  self.playImage = [UIImage imageNamed:@"play_light.png"];
-  self.pauseImage = [UIImage imageNamed:@"pause_light.png"];
+  self.playImage = [UIImage imageNamed:@"media_play"];
+  self.pauseImage = [UIImage imageNamed:@"media_pause"];
 
   // Toolbar.
   self.toolbarView = [[UIView alloc] initWithFrame:self.navigationController.toolbar.frame];
@@ -536,7 +532,7 @@
   // Volume control.
   self.volumeButton = [UIButton buttonWithType:UIButtonTypeSystem];
   [self.volumeButton setFrame:CGRectMake(0, 0, 40, 40)];
-  [self.volumeButton setImage:[UIImage imageNamed:@"icon_volume3.png"] forState:UIControlStateNormal];
+  [self.volumeButton setImage:[UIImage imageNamed:@"icon_volume3"] forState:UIControlStateNormal];
   [self.volumeButton addTarget:self
                       action:@selector(showVolumeSlider:)
             forControlEvents:UIControlEventTouchUpInside];

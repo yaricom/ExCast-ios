@@ -13,8 +13,6 @@
 // limitations under the License.
 
 #import "ChromecastDeviceController.h"
-#import "LocalPlayerViewController.h"
-#import "Media.h"
 #import <UIKit/UIKit.h>
 
 /**
@@ -23,25 +21,39 @@
  */
 @interface CastViewController : UIViewController<ChromecastControllerDelegate>
 
-/** The media object being played on Chromecast device. Set this before presenting the view. */
-@property(strong, nonatomic) Media* mediaToPlay;
+/**
+ *  The media object being played on Chromecast device. Set this before presenting the view.
+ */
+@property(strong, nonatomic) GCKMediaInformation* mediaToPlay;
 
-/** The volume slider control **/
+/**
+ *  The volume slider control.
+ */
 @property(strong, nonatomic) IBOutlet UISlider *volumeSlider;
 
-/** The label in the volume control container. **/
+/**
+ *  The label in the volume control container.
+ */
 @property (weak, nonatomic) IBOutlet UILabel *volumeControlLabel;
 
-/** The entire volume control container, including the label **/
+/**
+ *  The entire volume control container, including the label.
+ */
 @property(strong, nonatomic) IBOutlet UIView *volumeControls;
 
-/** The media object and when to start playing on Chromecast device. Set this before presenting the view. */
-- (void)setMediaToPlay:(Media*)newMedia withStartingTime:(NSTimeInterval)startTime;
+/**
+ *  Set the media object and the start time. This should be called before presenting the view.
+ *
+ *  @param newMedia  The media to play, contentID should be set to the URL.
+ *  @param startTime The start time of the media if casting new content.
+ */
+- (void)setMediaToPlay:(GCKMediaInformation *)newMedia withStartingTime:(NSTimeInterval)startTime;
 
-/** Shows the slider for a few seconds if touched **/
+/**
+ *  Show the slider for a few sections if touched.
+ *
+ *  @param sender
+ */
 - (IBAction)showVolumeSlider:(id)sender;
-
-/** The local player can be notified with duration updates from the cast for syncing between states. */
-- (void)setLocalPlayer:(id<RemotePlayerDelegate>)delegate;
 
 @end

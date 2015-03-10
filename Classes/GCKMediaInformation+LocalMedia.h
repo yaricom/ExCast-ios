@@ -1,4 +1,4 @@
-// Copyright 2014 Google Inc. All Rights Reserved.
+// Copyright 2015 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,18 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import <UIKit/UIKit.h>
+#import <GoogleCast/GCKMediaInformation.h>
+#import "Media.h"
 
 /**
- * A popup view to display list of chromecast devices to connect. When connected,
- * offers button to disconnect. When playing media, displays a mini playback
- * controller.
+ * Category to convert the Media objects we are using for local storage to a
+ * GCKMediaInformation object suitable for use elsewhere.
  */
-@interface DeviceTableViewController : UITableViewController
+@interface GCKMediaInformation (LocalMedia)
 
-/**
- *  The view controller the device picker was presented from.
- */
-@property(nonatomic,weak) UIViewController *viewController;
++ (GCKMediaInformation *)mediaInformationFromLocalMedia:(Media *)media;
 
 @end

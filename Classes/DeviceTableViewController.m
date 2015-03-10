@@ -17,10 +17,33 @@
 #import "ChromecastDeviceController.h"
 #import "SimpleImageFetcher.h"
 
+static NSString * const kVersionFooter = @"CastVideos-iOS version";
+
 @implementation DeviceTableViewController {
   BOOL _isManualVolumeChange;
   UISlider *_volumeSlider;
+  UIStatusBarStyle _statusBarStyle;
 }
+
+- (void)viewDidLoad {
+  [super viewDidLoad];
+  if ([ChromecastDeviceController sharedInstance].applicationID) {
+    // Disable passive scan when we appear to get latest updates.
+    [ChromecastDeviceController sharedInstance].deviceScanner.passiveScan = NO;
+  }
+  _statusBarStyle = [UIApplication sharedApplication].statusBarStyle;
+  [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+  [super viewWillDisappear:animated];
+  if ([ChromecastDeviceController sharedInstance].applicationID) {
+    // Enable passive scan after the user has finished interacting.
+    [ChromecastDeviceController sharedInstance].deviceScanner.passiveScan = YES;
+  }
+  [[UIApplication sharedApplication] setStatusBarStyle:_statusBarStyle];
+}
+
 
 #pragma mark - Table view data source
 
@@ -51,7 +74,7 @@
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdForVersion
                                                           forIndexPath:indexPath];
   NSString *ver = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
-  [cell.textLabel setText:[NSString stringWithFormat:@"CastVideos-iOS version %@", ver]];
+  [cell.textLabel setText:[NSString stringWithFormat:@"%@ %@", kVersionFooter, ver]];
   return cell;
 }
 
@@ -81,8 +104,8 @@
 
   // Accessory is the play/pause button.
   BOOL paused = castControl.playerState == GCKMediaPlayerStatePaused;
-  UIImage *playImage = (paused ? [UIImage imageNamed:@"play_black.png"]
-                        : [UIImage imageNamed:@"pause_black.png"]);
+  UIImage *playImage = (paused ? [UIImage imageNamed:@"media_play"]
+                        : [UIImage imageNamed:@"media_pause"]);
   CGRect frame = CGRectMake(0, 0, playImage.size.width, playImage.size.height);
   UIButton *button = [[UIButton alloc] initWithFrame:frame];
   [button setBackgroundImage:playImage forState:UIControlStateNormal];
@@ -183,12 +206,10 @@
       [castControl connectToDevice:device];
     }
   } else if (castControl.isPlayingMedia == YES && indexPath.row == 0) {
-    if ([castControl.delegate respondsToSelector:@selector(shouldPresentPlaybackController)]) {
-      [castControl.delegate shouldPresentPlaybackController];
-    }
+    [castControl displayCurrentlyPlayingMedia];
   }
   // Dismiss the view.
-  [self dismissViewControllerAnimated:YES completion:nil];
+  [self dismiss];
 }
 
 - (void)tableView:(UITableView *)tableView
@@ -200,22 +221,31 @@
   [[ChromecastDeviceController sharedInstance] disconnectFromDevice];
 
   // Dismiss the view.
-  [self dismissViewControllerAnimated:YES completion:nil];
+  [self dismiss];
 }
 
 - (IBAction)dismissView:(id)sender {
-  [self dismissViewControllerAnimated:YES completion:nil];
+  [self dismiss];
+}
+
+- (void)dismiss {
+  if (self.viewController) {
+    [self.viewController dismissViewControllerAnimated:YES completion:nil];
+  } else {
+    [self dismissViewControllerAnimated:YES completion:nil];
+  }
 }
 
 - (void)playPausePressed:(id)sender {
   ChromecastDeviceController *castControl = [ChromecastDeviceController sharedInstance];
   BOOL paused = castControl.playerState == GCKMediaPlayerStatePaused;
-  [castControl pauseCastMedia:!paused];
+  paused = !paused; // Flip the state from current.
+  [castControl pauseCastMedia:paused];
 
   // change the icon.
   UIButton *button = sender;
   UIImage *playImage =
-      (paused ? [UIImage imageNamed:@"play_black.png"] : [UIImage imageNamed:@"pause_black.png"]);
+      (paused ? [UIImage imageNamed:@"media_play"] : [UIImage imageNamed:@"media_pause"]);
   [button setBackgroundImage:playImage forState:UIControlStateNormal];
 }
 

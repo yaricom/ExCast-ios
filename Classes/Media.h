@@ -31,7 +31,13 @@
 @property(nonatomic, strong) NSURL *posterURL;
 @property(nonatomic, strong) NSArray *tracks;
 
-/// Creates a Media object given a JSON dictionary.
+/**
+ *  Creates a Media object given a JSON dictionary.
+ *
+ *  @param jsonAsDict The media JSON response as an NSDictionary
+ *
+ *  @return Media
+ */
 + (id)mediaFromExternalJSON:(NSDictionary *)jsonAsDict;
 
 @end

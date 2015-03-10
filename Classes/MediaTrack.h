@@ -1,4 +1,4 @@
-// Copyright 2014 Google Inc. All Rights Reserved.
+// Copyright 2015 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,18 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
-/**
- * A popup view to display list of chromecast devices to connect. When connected,
- * offers button to disconnect. When playing media, displays a mini playback
- * controller.
- */
-@interface DeviceTableViewController : UITableViewController
+@interface MediaTrack : NSObject
 
-/**
- *  The view controller the device picker was presented from.
- */
-@property(nonatomic,weak) UIViewController *viewController;
+@property(nonatomic, assign) NSInteger identifier;
+@property(nonatomic, copy) NSString *type;
+@property(nonatomic, copy) NSString *subtype;
+@property(nonatomic, copy) NSString *language;
+@property(nonatomic, copy) NSString *name;
+@property(nonatomic, copy) NSURL *url;
+
++ (id)trackFromExternalJSON:(NSDictionary *)jsonAsDict;
 
 @end

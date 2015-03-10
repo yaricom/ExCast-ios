@@ -16,14 +16,6 @@
 #import "Media.h"
 #import <UIKit/UIKit.h>
 
-/* Available options for the Cast status the player should respect. */
-typedef NS_ENUM(NSUInteger, LPVCastMode) {
-  LPVCastUnavailable,
-  LPVCastAvailable,
-  LPVCastConnected,
-  LPVCastPlaying
-};
-
 /* Navigation Bar styles/ */
 typedef NS_ENUM(NSUInteger, LPVNavBarStyle) {
   LPVNavBarTransparent,
@@ -31,24 +23,30 @@ typedef NS_ENUM(NSUInteger, LPVNavBarStyle) {
 };
 
 /* Protocol for callbacks from the LocalPlayerView. */
-@protocol LocalPlayerDelegate
-/* Play has beeen pressed in the LocalPlayerView. */
-- (void)didTapPlayForCast;
-/* Pause has beeen pressed in the LocalPlayerView. */
-- (void)didTapPauseForCast;
+@protocol LocalPlayerDelegate <NSObject>
 /* Signal the requested style for the view. */
 - (void)setNavigationBarStyle:(LPVNavBarStyle)style;
 /* Request the navigation bar to be hidden or shown. */
 - (void)hideNavigationBar:(BOOL)hide;
+
+@optional
+
+/* Play has beeen pressed in the LocalPlayerView.
+ * Return NO to halt default actions, YES to continue as normal.
+ */
+- (BOOL)continueAfterPlayButtonClicked;
+
+/* Play has beeen pressed in the LocalPlayerView.
+ * Return NO to halt default actions, YES to continue as normal.
+ */
+- (BOOL)continueAfterPauseButtonClicked;
 @end
 
 /* UIView for displaying a local player or splash screen. */
 @interface LocalPlayerView : UIView
 
 /* Delegate to use for callbacks for play/pause presses while in Cast mode. */
-@property(nonatomic) id<LocalPlayerDelegate> controller;
-/* Status of the Cast connection, if any. */
-@property(nonatomic) LPVCastMode castMode;
+@property(nonatomic) id<LocalPlayerDelegate> delegate;
 /* Local player elapsed time. */
 @property(nonatomic) NSInteger playbackTime;
 /* YES if the video is playing or paused in the local player. */
@@ -64,5 +62,8 @@ typedef NS_ENUM(NSUInteger, LPVNavBarStyle) {
 
 /* Pause local playback. */
 - (void)pause;
+
+/* Reset the state of the player to show the splash screen. */
+- (void)showSplashScreen;
 
 @end

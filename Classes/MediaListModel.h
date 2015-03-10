@@ -19,17 +19,18 @@
 @interface MediaListModel : NSObject
 
 /* Top level title of the list of media: ex: Videos. */
-@property(strong, nonatomic) NSString* mediaTitle;
+@property(nonatomic, strong) NSString* mediaTitle;
+
+/* The number of media objects in the array. */
+@property(nonatomic, readonly) int numberOfMediaLoaded;
 
 /* Loads all media from static URL and calls the supplied callback on completion. */
 - (void)loadMedia:(void (^)(void))callbackBlock;
-
-/* The number of media objects in the array. */
-- (int)numberOfMediaLoaded;
 
 /* Returns the media object at index. */
 - (Media *)mediaAtIndex:(int)index;
 
 /* Return the index of the first media object with matching title. */
 - (int)indexOfMediaByTitle:(NSString *)title;
+
 @end

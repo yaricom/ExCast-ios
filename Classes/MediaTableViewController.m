@@ -13,14 +13,16 @@
 // limitations under the License.
 
 #import "AppDelegate.h"
+#import "ChromecastDeviceController.h"
 #import "LocalPlayerViewController.h"
 #import "Media.h"
 #import "MediaListModel.h"
 #import "MediaTableViewController.h"
 #import "SimpleImageFetcher.h"
 
-@interface MediaTableViewController ()
+@interface MediaTableViewController () <ChromecastControllerDelegate>
 
+/** The media to be displayed. */
 @property(nonatomic, strong) MediaListModel *mediaList;
 
 @end
@@ -42,7 +44,6 @@
     self.title = self.mediaList.mediaTitle;
     [self.tableView reloadData];
   }];
-
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -50,11 +51,11 @@
 
   // Assign ourselves as delegate ONLY in viewWillAppear of a view controller.
   [ChromecastDeviceController sharedInstance].delegate = self;
-  [[ChromecastDeviceController sharedInstance] manageViewController:self icon:YES toolbar:YES];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
-  [[ChromecastDeviceController sharedInstance] updateToolbarForViewController:self];
+  [super viewDidAppear:animated];
+  [[ChromecastDeviceController sharedInstance] manageViewController:self icon:YES toolbar:YES];
 }
 
 #pragma mark - Table View
@@ -102,41 +103,11 @@
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-  if ([[segue identifier] isEqualToString:@"castMedia"] ||
-      [[segue identifier] isEqualToString:@"playMedia"]) {
+  if ([[segue identifier] isEqualToString:@"playMedia"]) {
     NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
     Media *media = [self.mediaList mediaAtIndex:(int)indexPath.row];
-    // Pass the currently playing media to the next controller if it needs it.
+    // Pass the currently selected media to the next controller if it needs it.
     [[segue destinationViewController] setMediaToPlay:media];
-  }
-}
-
-#pragma mark - ChromecastControllerDelegate
-
-/**
- * Called to display the modal device view controller from the cast icon.
- */
-- (void)shouldDisplayModalDeviceController {
-  [self performSegueWithIdentifier:@"listDevices" sender:self];
-}
-
-/**
- * Called to display the remote media playback view controller.
- */
-- (void)shouldPresentPlaybackController {
-  // Select the item being played in the table, so prepareForSegue can find the
-  // associated Media object.
-  NSString *title =
-      [[ChromecastDeviceController sharedInstance].mediaInformation.metadata
-          stringForKey:kGCKMetadataKeyTitle];
-  int index = [self.mediaList indexOfMediaByTitle:title];
-  if (index >= 0) {
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
-    [self.tableView selectRowAtIndexPath:indexPath
-                                animated:YES
-                          scrollPosition:UITableViewScrollPositionNone];
-    [self performSegueWithIdentifier:@"castMedia" sender:self];
-
   }
 }
 

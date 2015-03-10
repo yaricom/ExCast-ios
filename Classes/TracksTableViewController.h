@@ -16,11 +16,20 @@
 #import <GoogleCast/GCKMediaTrack.h>
 #import <UIKit/UIKit.h>
 
+/**
+ *  A simple picker for captions or alternate audio tracks.
+ */
 @interface TracksTableViewController : UITableViewController
 
-/** Configure the tracks view with the media information required and the device controller
- to signal track changes to. */
-- (void)setMedia:(Media *)media
+/**
+ *  Configure the tracks view with the GCKMediaInformation required and the device controller to
+ *  call back to.
+ *
+ *  @param media            The current media
+ *  @param type             The type of tracks to display
+ *  @param deviceController The central device controller.
+ */
+- (void)setMedia:(GCKMediaInformation *)media
          forType:(GCKMediaTrackType)type
     deviceController:(ChromecastDeviceController *)deviceController;
 

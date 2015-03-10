@@ -12,25 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "ChromecastDeviceController.h"
 #import "LocalPlayerView.h"
 #import "Media.h"
 #import <UIKit/UIKit.h>
 
-@protocol RemotePlayerDelegate <NSObject>
-
-- (void)setLastKnownDuration: (NSTimeInterval)time;
-
-@end
-
 /**
  * A view to play media locally, when not connected to the Chromecast device.
  */
-@interface LocalPlayerViewController : UIViewController<
-  ChromecastControllerDelegate,
-  LocalPlayerDelegate,
-  RemotePlayerDelegate
->
+@interface LocalPlayerViewController : UIViewController<LocalPlayerDelegate>
 
 /** The media object being played on Chromecast device. Set this before presenting the view. */
 @property(strong, nonatomic) Media *mediaToPlay;

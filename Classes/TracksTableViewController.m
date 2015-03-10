@@ -13,12 +13,13 @@
 // limitations under the License.
 
 #import "ChromecastDeviceController.h"
-#import "Media.h"
 #import "TracksTableViewController.h"
 
 @interface TracksTableViewController ()
+
+@property(nonatomic) UIStatusBarStyle statusBarStyle;
 @property(weak, nonatomic) ChromecastDeviceController *deviceController;
-@property(weak, nonatomic) Media * media;
+@property(weak, nonatomic) GCKMediaInformation* media;
 @property(strong, nonatomic) NSMutableArray* tracks;
 @property(nonatomic) GCKMediaTrackType type;
 @property(nonatomic) BOOL toolbarWasShowing;
@@ -28,28 +29,33 @@
 @implementation TracksTableViewController
 
 - (void)viewWillAppear:(BOOL)animated {
+  [super viewWillAppear:animated];
   if (!self.navigationController.toolbarHidden) {
     self.toolbarWasShowing = true;
     [self.navigationController setToolbarHidden:YES animated:animated];
   }
   NSString *title = self.type == GCKMediaTrackTypeAudio ? @"Audio Tracks" : @"Subtitles";
   [self.tabBarController.navigationItem setTitle:title];
+  self.statusBarStyle = [UIApplication sharedApplication].statusBarStyle;
+  [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+  [super viewWillDisappear:animated];
   if (self.toolbarWasShowing) {
     [self.navigationController setToolbarHidden:NO animated:animated];
   }
+  [[UIApplication sharedApplication] setStatusBarStyle:_statusBarStyle];
 }
 
-- (void)setMedia:(Media *)media
+- (void)setMedia:(GCKMediaInformation *)media
          forType:(GCKMediaTrackType)type
     deviceController:(ChromecastDeviceController *)deviceController {
   self.tracks = [[NSMutableArray alloc] init];
   self.type = type;
   self.deviceController = deviceController;
   NSInteger selected = 0, i = 1;
-  for(GCKMediaTrack *track in media.tracks) {
+  for(GCKMediaTrack *track in media.mediaTracks) {
     if (track.type == type) {
       NSNumber *trackId = [NSNumber numberWithInteger:track.identifier];
       if ([[deviceController.selectedTrackByIdentifier objectForKey:trackId] boolValue]) {

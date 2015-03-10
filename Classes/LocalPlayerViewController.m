@@ -13,68 +13,71 @@
 // limitations under the License.
 
 #import "AppDelegate.h"
-#import "CastViewController.h"
 #import "CastInstructionsViewController.h"
-
+#import "ChromecastDeviceController.h"
+#import "GCKMediaInformation+LocalMedia.h"
 #import "LocalPlayerViewController.h"
 
-static NSString *kCastSegueIdentifier = @"castMedia";
-static NSString *kCastSegueListDevices = @"listDevices";
+@interface LocalPlayerViewController () <ChromecastControllerDelegate>
 
-@interface LocalPlayerViewController () {
-  /* The latest playback time sourced either from local player or the Cast metadata. */
-  NSTimeInterval _lastKnownPlaybackTime;
-  /* Whether we want to go to the media defined in this controller or the mini controller. */
-  BOOL _goToMiniControllerCast;
-  /* Whether to reset the edges on disappearing. */
-  BOOL _resetEdgesOnDisappear;
-}
+/* Whether to reset the edges on disappearing. */
+@property(nonatomic) BOOL resetEdgesOnDisappear;
 
 @end
 
 @implementation LocalPlayerViewController
 
-#pragma mark State management
+#pragma mark - ViewController lifecycle
 
-/* Retrieve the current media based on the central MediaList as the currently 
- * playing media metadata. */
-- (Media *)currentlyPlayingMedia {
-  AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
-  NSString *title =[[ChromecastDeviceController sharedInstance].mediaInformation.metadata
-                            stringForKey:kGCKMetadataKeyTitle];
-  int index = [delegate.mediaList indexOfMediaByTitle:title];
-  if (index >= 0) {
-    return [delegate.mediaList mediaAtIndex:index];
+- (void)viewWillAppear:(BOOL)animated {
+  [super viewWillAppear:animated];
+  [self.playerView setMedia:_mediaToPlay];
+  _resetEdgesOnDisappear = YES;
+
+  // Listen to orientation changes.
+  [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(deviceOrientationDidChange:)
+                                               name:UIDeviceOrientationDidChangeNotification
+                                             object:nil];
+  _playerView.delegate = self;
+  [self syncTextToMedia];
+  if (self.playerView.fullscreen) {
+    [self hideNavigationBar:YES];
   }
-  return nil;
+
+  // Assign ourselves as delegate ONLY in viewWillAppear of a view controller.
+  [ChromecastDeviceController sharedInstance].delegate = self;
 }
 
-/* Configure the CastViewController if we are casting a video. */
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-  if ([segue.identifier isEqualToString:kCastSegueIdentifier]) {
-    if ( _goToMiniControllerCast) {
-      _goToMiniControllerCast = NO;
-      [(CastViewController *)[segue destinationViewController]
-       setMediaToPlay:[self currentlyPlayingMedia]];
-    } else {
-      [(CastViewController *)[segue destinationViewController]
-       setMediaToPlay:self.mediaToPlay
-       withStartingTime:_lastKnownPlaybackTime];
-      [(CastViewController *)[segue destinationViewController] setLocalPlayer:self];
-    }
+- (void)viewWillDisappear:(BOOL)animated {
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+  if (_playerView.playingLocally) {
+    [_playerView pause];
+  }
+  if (_resetEdgesOnDisappear) {
+    [self setNavigationBarStyle:LPVNavBarDefault];
+  }
+  [super viewWillDisappear:animated];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+  [super viewDidAppear:animated];
+  [[ChromecastDeviceController sharedInstance] manageViewController:self icon:YES toolbar:YES];
+}
+
+- (void)deviceOrientationDidChange:(NSNotification *)notification {
+  [self.playerView orientationChanged];
+
+  UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+  if (!UIInterfaceOrientationIsLandscape(orientation) || !self.playerView.playingLocally) {
+    [self setNavigationBarStyle:LPVNavBarDefault];
   }
 }
 
-- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
-  if ([identifier isEqualToString:kCastSegueIdentifier]) {
-    if (_goToMiniControllerCast) {
-      if (![self currentlyPlayingMedia]) {
-        // If we don't have media to cast, don't allow the segue.
-        return NO;
-      }
-    }
-  }
-  return YES;
+/* Prefer hiding the status bar if we're full screen. */
+- (BOOL)prefersStatusBarHidden {
+  return self.playerView.fullscreen;
 }
 
 #pragma mark - Managing the detail item
@@ -92,80 +95,7 @@ static NSString *kCastSegueListDevices = @"listDevices";
   self.mediaDescription.text = self.mediaToPlay.descrip;
 }
 
-#pragma mark - ViewController lifecycle
-
-- (void)viewDidLoad {
-  [super viewDidLoad];
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-  [super viewWillAppear:animated];
-  [self.playerView setMedia:_mediaToPlay];
-  _resetEdgesOnDisappear = YES;
-
-  // Listen to orientation changes.
-  [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-  [[NSNotificationCenter defaultCenter] addObserver:self
-                                           selector:@selector(deviceOrientationDidChange:)
-                                               name:UIDeviceOrientationDidChangeNotification
-                                             object:nil];
-
-  // Assign ourselves as delegate ONLY in viewWillAppear of a view controller.
-  [ChromecastDeviceController sharedInstance].delegate = self;
-  [[ChromecastDeviceController sharedInstance] manageViewController:self icon:YES toolbar:YES];
-  _playerView.controller = self;
-  [self syncTextToMedia];
-  if (self.playerView.fullscreen) {
-    [self hideNavigationBar:YES];
-  }
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-  [super viewDidAppear:animated];
-  // Do the control update in a separate runloop to ensure we don't bounce any toolbars.
-  [self performSelector:@selector(updateControls) withObject:self afterDelay:0];
-  // Force a toolbar update on appear.
-  [[ChromecastDeviceController sharedInstance] updateToolbarForViewController:self];
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
-  [[NSNotificationCenter defaultCenter] removeObserver:self];
-  if (_playerView.playingLocally) {
-    [_playerView pause];
-  }
-  if (_resetEdgesOnDisappear) {
-    [self setNavigationBarStyle:LPVNavBarDefault];
-  }
-  [super viewWillDisappear:animated];
-}
-
-- (void)deviceOrientationDidChange:(NSNotification *)notification {
-  // Respond to orientation only when not connected.
-  if ([ChromecastDeviceController sharedInstance].isConnected == YES) {
-    return;
-  }
-
-  [self.playerView orientationChanged];
-
-  UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
-  if (!UIInterfaceOrientationIsLandscape(orientation) || !self.playerView.playingLocally) {
-    [self setNavigationBarStyle:LPVNavBarDefault];
-  }
-}
-
 #pragma mark - LocalPlayerController
-
-/* Play has been pressed in the LocalPlayerView. */
-- (void)didTapPlayForCast {
-  [self performSegueWithIdentifier:kCastSegueIdentifier sender:self];
-}
-
-/* Pause has beeen pressed in the LocalPlayerView. */
-- (void)didTapPauseForCast {
-  [[ChromecastDeviceController sharedInstance] pauseCastMedia:YES];
-  _goToMiniControllerCast = YES;
-  [self performSegueWithIdentifier:kCastSegueIdentifier sender:self];
-}
 
 /* Signal the requested style for the view. */
 - (void)setNavigationBarStyle:(LPVNavBarStyle)style {
@@ -192,36 +122,41 @@ static NSString *kCastSegueListDevices = @"listDevices";
   }
 }
 
-/* Prefer hiding the status bar if we're full screen. */
-- (BOOL)prefersStatusBarHidden {
-  return self.playerView.fullscreen;
-}
-
 /* Request the navigation bar to be hidden or shown. */
 - (void)hideNavigationBar:(BOOL)hide {
   [self.navigationController.navigationBar setHidden:hide];
 }
 
-
-#pragma mark - RemotePlayerDelegate
-
-/* Update the local time from the Cast played time. */
-- (void)setLastKnownDuration: (NSTimeInterval)time {
-  if (time > 0) {
-    _lastKnownPlaybackTime = time;
-    self.playerView.playbackTime = _lastKnownPlaybackTime;
+/* Play has been pressed in the LocalPlayerView. */
+- (BOOL)continueAfterPlayButtonClicked {
+  ChromecastDeviceController *controller = [ChromecastDeviceController sharedInstance];
+  if (controller.isConnected) {
+    [self castCurrentMedia:0];
+    return NO;
   }
+  NSTimeInterval pos =
+      [controller streamPositionForPreviouslyCastMedia:[self.mediaToPlay.URL absoluteString]];
+  if (pos > 0) {
+    _playerView.playbackTime = pos;
+    // We are playing locally, so don't try and reconnect.
+    [controller clearPreviousSession];
+  }
+  return YES;
+}
+
+- (void)castCurrentMedia:(NSTimeInterval)from {
+  if (from < 0) {
+    from = 0;
+  }
+  ChromecastDeviceController *controller = [ChromecastDeviceController sharedInstance];
+  GCKMediaInformation *media =
+      [GCKMediaInformation mediaInformationFromLocalMedia:self.mediaToPlay];
+  UIViewController *cvc = [controller castViewControllerForMedia:media
+                                                withStartingTime:from];
+  [self.navigationController pushViewController:cvc animated:YES];
 }
 
 #pragma mark - ChromecastControllerDelegate
-
-/* Trigger the icon to appear if a device is discovered. */
-- (void)didDiscoverDeviceOnNetwork {
-  if (![CastInstructionsViewController hasSeenInstructions]) {
-    [self hideNavigationBar:NO]; // Display the nav bar for the instructions.
-    _resetEdgesOnDisappear = NO;
-  }
-}
 
 /**
  * Called when connection to the device was established.
@@ -231,69 +166,32 @@ static NSString *kCastSegueListDevices = @"listDevices";
 - (void)didConnectToDevice:(GCKDevice *)device {
   if (_playerView.playingLocally) {
     [_playerView pause];
-    _playerView.castMode = LPVCastPlaying;
-    if (_lastKnownPlaybackTime == 0 && _playerView.playbackTime) {
-      _lastKnownPlaybackTime = _playerView.playbackTime;
-    }
-    [self performSegueWithIdentifier:kCastSegueIdentifier sender:self];
-  } else {
-    _playerView.castMode = LPVCastConnected;
+    [self castCurrentMedia:_playerView.playbackTime];
   }
-}
 
-
-/**
- *  Ensure we update the controls whenever the media changes.
- */
-- (void)didReceiveMediaStateChange {
-  [self updateControls];
-}
-
-/**
- * Called when connection to the device was closed.
- */
-- (void)didDisconnect {
-  if (_lastKnownPlaybackTime) {
-    self.playerView.playbackTime = _lastKnownPlaybackTime;
-  }
+  [_playerView showSplashScreen];
 }
 
 /**
  * Called to display the modal device view controller from the cast icon.
  */
-- (void)shouldDisplayModalDeviceController {
+- (BOOL)shouldDisplayModalDeviceController {
   [self.playerView pause];
-  _resetEdgesOnDisappear = NO;
-  [self performSegueWithIdentifier:@"listDevices" sender:self];
+  if (UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPad) {
+    // If we are likely to have a fullscreen display, don't reset our edges
+    // to avoid issues on iOS 7.
+    _resetEdgesOnDisappear = NO;
+  }
+  return YES;
 }
 
 /**
- * Called to display the remote media playback view controller.
+ *  Trigger the icon to appear if a device is discovered. 
  */
-- (void)shouldPresentPlaybackController {
-  _goToMiniControllerCast = YES;
-  [self performSegueWithIdentifier:kCastSegueIdentifier sender:self];
-}
-
-#pragma mark - Control management.
-
-/* Set the state for the LocalPlayerView based on the state of the Cast device. */
-- (void)updateControls {
-  NSString *title = [[ChromecastDeviceController sharedInstance].mediaInformation.metadata
-                            stringForKey:kGCKMetadataKeyTitle];
-  if ([ChromecastDeviceController sharedInstance].isConnected) {
-    if ([title isEqualToString:self.mediaToPlay.title]) {
-      if([ChromecastDeviceController sharedInstance].playerState == GCKMediaPlayerStatePlaying ||
-         [ChromecastDeviceController sharedInstance].playerState == GCKMediaPlayerStateBuffering) {
-        _playerView.castMode = LPVCastPlaying;
-        return;
-       }
-    }
-    _playerView.castMode = LPVCastConnected;
-  } else if ([ChromecastDeviceController sharedInstance].deviceScanner.devices.count > 0) {
-    _playerView.castMode = LPVCastAvailable;
-  } else {
-    _playerView.castMode = LPVCastUnavailable;
+- (void)didDiscoverDeviceOnNetwork {
+  if (![CastInstructionsViewController hasSeenInstructions]) {
+    [self hideNavigationBar:NO]; // Display the nav bar for the instructions.
+    _resetEdgesOnDisappear = NO;
   }
 }
 

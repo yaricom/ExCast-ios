@@ -18,12 +18,10 @@
 #import "SimpleImageFetcher.h"
 
 /* Internal state of the view. */
-typedef NS_ENUM(NSInteger, LpvState) {
-  LpvSplash,
-  LpvPlaying,
-  LpvPaused,
-  LpvCastingOther,
-  LpvCastingCurrentMedia
+typedef NS_ENUM(NSInteger, LPVState) {
+  LPVSplash,
+  LPVPlaying,
+  LPVPaused
 };
 
 /* Time to wait before hiding the toolbar. UX is that this number is effectively doubled. */
@@ -31,10 +29,12 @@ static NSInteger kToolbarDelay = 3;
 /* The height of the toolbar view. */
 static NSInteger kToolbarHeight = 44;
 
-@interface LocalPlayerView() {
-  LpvState _state;
-}
+@interface LocalPlayerView()
 
+/* The aspect ratio constraint for the view. */
+@property(nonatomic,weak) IBOutlet NSLayoutConstraint* viewAspectRatio;
+/* The current state of the view. */
+@property(nonatomic) LPVState state;
 /* The splash image to display before playback or while casting. */
 @property UIImageView *splashImage;
 /* AVPlayer used to play locally. */
@@ -47,13 +47,14 @@ static NSInteger kToolbarHeight = 44;
 @property(nonatomic) Media *mediaToPlay;
 /* Opaque observer reference for the played duration observer. */
 @property(nonatomic) id playerObserver;
+/* Flag for whether we observing the playback buffers. */
+@property(nonatomic) BOOL observingBuffers;
 /* Time played. */
 @property(nonatomic) Float64 duration;
 /* Whether there has been a recent touch, for fading controls when playing. */
 @property(nonatomic) BOOL recentInteraction;
 /* The gesture recognizer used to register taps to bring up the controls. */
 @property(nonatomic) UIGestureRecognizer *singleFingerTap;
-
 
 /* Views dictionary used to the layout management. */
 @property(nonatomic) NSDictionary *viewsDictionary;
@@ -83,6 +84,7 @@ static NSInteger kToolbarHeight = 44;
 # pragma mark - Lifecycle
 
 - (void)dealloc {
+  [self clearMovie];
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -118,6 +120,14 @@ static NSInteger kToolbarHeight = 44;
   return CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
 }
 
+- (void)updateConstraints {
+  [super updateConstraints];
+  // Active is iOS 8 only, so only do this if available.
+  if ([self.viewAspectRatio respondsToSelector:@selector(setActive:)]) {
+    self.viewAspectRatio.active = ![self fullscreen];
+  }
+}
+
 # pragma mark - Interface
 
 /* If given a new media, allocate a media player and the various layers needed. */
@@ -128,10 +138,9 @@ static NSInteger kToolbarHeight = 44;
   }
   self.translatesAutoresizingMaskIntoConstraints = NO;
   _mediaToPlay = media;
-  _state = LpvSplash;
+  _state = LPVSplash;
 
   _splashImage = [[UIImageView alloc] initWithFrame:[self fullFrame]];
-  [_splashImage setBackgroundColor:[UIColor yellowColor]];
   _splashImage.contentMode = UIViewContentModeScaleAspectFill;
   _splashImage.clipsToBounds = YES;
   [self addSubview:_splashImage];
@@ -149,62 +158,23 @@ static NSInteger kToolbarHeight = 44;
   [self configureControls];
 }
 
-- (void)loadMoviePlayer {
-  if (!self. moviePlayer) {
-    self.moviePlayer = [AVPlayer playerWithURL:self.mediaToPlay.URL];
-    _playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.moviePlayer];
-    [_playerLayer setFrame:[self fullFrame]];
-    [_playerLayer setBackgroundColor:[[UIColor blackColor] CGColor]];
-    [self.layer insertSublayer:_playerLayer above:_splashImage.layer];
-  }
-
-}
-
 /* YES if we the local media is playing or paused, NO if casting or on the splash screen. */
 - (BOOL)playingLocally {
-  return _state == LpvPlaying || _state == LpvPaused;
+  return _state == LPVPlaying || _state == LPVPaused;
 }
 
 /* Pause local media if playing. */
 - (void)pause {
-  if (_state == LpvPlaying) {
+  if (_state == LPVPlaying) {
     [self playButtonClicked:self];
   }
 }
 
-/* Update the local state based on the Cast connection. */
-- (void)setCastMode:(LPVCastMode)castMode {
-  switch(castMode) {
-    case LPVCastUnavailable:
-      _castMode = LPVCastUnavailable;
-      if (_state == LpvCastingOther || _state == LpvCastingCurrentMedia) {
-        _state = LpvSplash;
-      }
-      break;
-    case LPVCastAvailable:
-      if (_state == LpvCastingOther || _state == LpvCastingCurrentMedia) {
-        _state = LpvSplash;
-      }
-      _castMode = LPVCastAvailable;
-      break;
-    case LPVCastConnected:
-      _state = LpvCastingOther;
-      _castMode = LPVCastAvailable;
-      break;
-    case LPVCastPlaying:
-      _state = LpvCastingCurrentMedia;
-      _castMode = LPVCastAvailable;
-      break;
-  }
-  [self configureControls];
-}
-
 /* Returns YES if we should be in fullscreen. */
 - (BOOL)fullscreen {
-  return (_state == LpvPlaying || _state == LpvPaused) &&
+  return (_state == LPVPlaying || _state == LPVPaused) &&
       UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation);
 }
-
 
 /* If the orientation changes, display the controls. */
 - (void)orientationChanged {
@@ -217,13 +187,18 @@ static NSInteger kToolbarHeight = 44;
 - (void)setFullscreen {
   CGRect screenBounds = [UIScreen mainScreen].bounds;
   if (!CGRectEqualToRect(screenBounds, self.frame)) {
-    [self.controller hideNavigationBar:YES];
-    [self.controller setNavigationBarStyle:LPVNavBarTransparent];
+    [_delegate hideNavigationBar:YES];
+    [_delegate setNavigationBarStyle:LPVNavBarTransparent];
     [self setFrame:screenBounds];
   }
 }
 
-# pragma mark - video management
+- (void)showSplashScreen {
+  // Treat movie as finished to reset.
+  [self movieDidFinish];
+}
+
+# pragma mark - Video management
 
 /* Asynchronously load the splash screen image. */
 - (void)loadMovieImage {
@@ -240,19 +215,37 @@ static NSInteger kToolbarHeight = 44;
   });
 }
 
+- (void)loadMoviePlayer {
+  if (!self.moviePlayer) {
+    self.moviePlayer = [AVPlayer playerWithURL:self.mediaToPlay.URL];
+    _playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.moviePlayer];
+    [_playerLayer setFrame:[self fullFrame]];
+    [_playerLayer setBackgroundColor:[[UIColor blackColor] CGColor]];
+    [self.layer insertSublayer:_playerLayer above:_splashImage.layer];
+  }
+}
+
 /* Callback registered for when the AVPlayer completes playing of the media. */
 - (void)movieDidFinish {
-  _state = LpvSplash;
+  _state = LPVSplash;
   _duration = 0;
   _playbackTime = 0;
+  [self clearMovie];
+  [_delegate setNavigationBarStyle:LPVNavBarDefault];
+  [self.moviePlayer seekToTime:CMTimeMake(0, 1)];
+  [self configureControls];
+}
+
+- (void)clearMovie {
+  [self removeEndMovieObserver];
   if (self.moviePlayer && self.playerObserver) {
     [self.moviePlayer removeTimeObserver:self.playerObserver];
     self.playerObserver = nil;
   }
   [self removeEndMovieObserver];
-  [self.controller setNavigationBarStyle:LPVNavBarDefault];
-  [self.moviePlayer seekToTime:CMTimeMake(0, 1)];
-  [self configureControls];
+  [_playerLayer removeFromSuperlayer];
+  _playerLayer = nil;
+  self.moviePlayer = nil;
 }
 
 /* Remove the AVPLayer movie ending observer. */
@@ -261,23 +254,17 @@ static NSInteger kToolbarHeight = 44;
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:AVPlayerItemDidPlayToEndTimeNotification
                                                   object:self.moviePlayer.currentItem];
-    [self.moviePlayer.currentItem removeObserver:self forKeyPath:@"playbackBufferEmpty"];
-    [self.moviePlayer.currentItem removeObserver:self forKeyPath:@"playbackLikelyToKeepUp"];
   }
+  [self clearBufferObservers];
 }
 
-/* Prefer the toolbar for touches when in control view. */
-- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
-  if ([self fullscreen]) {
-    if (self.controlView.hidden) {
-      [self didTouchControl:nil];
-      return nil;
-    } else if (point.y > self.frame.size.height - kToolbarHeight) {
-      return [self.controlView hitTest:point withEvent:event];
-    }
+- (void)clearBufferObservers {
+  if (self.observingBuffers) {
+    [self.moviePlayer.currentItem removeObserver:self forKeyPath:@"playbackBufferEmpty"];
+    [self.moviePlayer.currentItem removeObserver:self forKeyPath:@"playbackLikelyToKeepUp"];
+    [self.moviePlayer.currentItem removeObserver:self forKeyPath:@"status"];
+    self.observingBuffers = NO;
   }
-
-  return [super hitTest:point withEvent:event];
 }
 
 /* Register observers for the movie time callbacks and for the end of movie notification. */
@@ -301,6 +288,11 @@ static NSInteger kToolbarHeight = 44;
                                  forKeyPath:@"playbackLikelyToKeepUp"
                                     options:NSKeyValueObservingOptionNew
                                     context:nil];
+  [self.moviePlayer.currentItem addObserver:self
+                                 forKeyPath:@"status"
+                                    options:NSKeyValueObservingOptionNew
+                                    context:nil];
+  self.observingBuffers = YES;
 
 }
 
@@ -308,18 +300,6 @@ static NSInteger kToolbarHeight = 44;
 - (void)updateTimersForTime:(CMTime)time {
   if (self.moviePlayer.currentItem.status != AVPlayerItemStatusReadyToPlay) {
     return;
-  }
-  if (!self.duration) {
-    self.slider.minimumValue = 0;
-    self.duration = self.slider.maximumValue =
-        CMTimeGetSeconds(self.moviePlayer.currentItem.duration);
-    self.slider.enabled = YES;
-    [self.activityIndicator stopAnimating];
-    NSInteger mins = floor(self.slider.maximumValue / 60);
-    NSInteger secs = floor((int)self.slider.maximumValue % 60);
-    self.totalTime.text = [NSString stringWithFormat:@"%02ld:%02ld", (long)mins, (long)secs];
-    // Jump to last playback time if we have one.
-    [self syncToLastPlayback];
   }
   if (self.currTime) {
     self.playbackTime = CMTimeGetSeconds(time);
@@ -330,35 +310,67 @@ static NSInteger kToolbarHeight = 44;
   }
 }
 
+
+/**
+ *  Update the play state to the last stored playback time.
+ */
+- (void)syncToLastPlayback {
+  if (self.duration) {
+    if (_playbackTime > 0 && _playbackTime < (self.duration - 20)) {
+      [self.moviePlayer seekToTime:CMTimeMake(_playbackTime, 1)];
+      if (self.moviePlayer.status != AVPlayerStatusReadyToPlay) {
+        [self.activityIndicator startAnimating];
+      }
+    }
+    [self.moviePlayer play];
+  }
+}
+
 # pragma mark - Controls
+
+/* Prefer the toolbar for touches when in control view. */
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+  if ([self fullscreen]) {
+    if (self.controlView.hidden) {
+      [self didTouchControl:nil];
+      return nil;
+    } else if (point.y > self.frame.size.height - kToolbarHeight) {
+      return [self.controlView hitTest:point withEvent:event];
+    }
+  }
+
+  return [super hitTest:point withEvent:event];
+}
 
 /* Take the appropriate action when the play/pause button is clicked - depending on the state this
  * may start the movie, pause the movie, or start or pause casting. */
 - (IBAction)playButtonClicked:(id)sender {
+  if (_state == LPVSplash &&
+      _delegate &&
+      [_delegate respondsToSelector:@selector(continueAfterPlayButtonClicked)]) {
+    if (![_delegate continueAfterPlayButtonClicked]) {
+      return;
+    }
+  }
   self.recentInteraction = YES;
-  if (_state == LpvSplash) {
+  if (_state == LPVSplash) {
     [self loadMoviePlayer];
     [self registerMovieStateObservers];
-    // Set the current playback time to the stored time unless its almost the end.
-    [self syncToLastPlayback];
-    // Play the movie.
-    [self.moviePlayer play];
     self.slider.enabled = NO;
     [self.activityIndicator startAnimating];
-    _state = LpvPlaying;
-  } else if (_state == LpvPlaying) {
+    if (self.moviePlayer.currentItem
+        && !CMTIME_IS_INDEFINITE(self.moviePlayer.currentItem.duration)) {
+      [self prepareForMovieStart];
+    }
+    _state = LPVPlaying;
+  } else if (_state == LPVPlaying) {
     [self.moviePlayer pause];
-    _state = LpvPaused;
-  } else if (_state == LpvPaused) {
+    _state = LPVPaused;
+  } else if (_state == LPVPaused) {
     [self.moviePlayer play];
-    _state = LpvPlaying;
-  } else if (_state == LpvCastingOther) {
-    [self.controller didTapPlayForCast];
-    _state = LpvCastingCurrentMedia;
-  } else if (_state == LpvCastingCurrentMedia) {
-    [self.controller didTapPauseForCast];
-    _state = LpvCastingOther;
+    _state = LPVPlaying;
   }
+
   if ([self fullscreen]) {
     [self setFullscreen];
   }
@@ -387,18 +399,9 @@ static NSInteger kToolbarHeight = 44;
   }
 }
 
-/**
- *  Update the play state to the last stored playback time.
- */
-- (void)syncToLastPlayback {
-  if (_playbackTime > 0 && self.duration && _playbackTime < (self.duration - 20)) {
-    [self.moviePlayer seekToTime:CMTimeMake(_playbackTime, 1)];
-  }
-}
-
 /* Config the UIView controls container based on the state of the view. */
 - (void)configureControls {
-  if (_state == LpvSplash || _state == LpvCastingOther) {
+  if (_state == LPVSplash) {
     [self.playButton setImage:self.playImage forState:UIControlStateNormal];
     self.playButton.hidden = NO;
     self.splashImage.layer.hidden = NO;
@@ -408,9 +411,9 @@ static NSInteger kToolbarHeight = 44;
     self.slider.hidden = YES;
 
     [self didTouchControl:nil];
-  } else if (_state == LpvPlaying || _state == LpvPaused) {
+  } else if (_state == LPVPlaying || _state == LPVPaused) {
     // Play or Pause button based on state.
-    UIImage *image = _state == LpvPaused ? self.playImage : self.pauseImage;
+    UIImage *image = _state == LPVPaused ? self.playImage : self.pauseImage;
     [self.playButton setImage:image forState:UIControlStateNormal];
 
     self.playerLayer.hidden = NO;
@@ -420,16 +423,6 @@ static NSInteger kToolbarHeight = 44;
     self.totalTime.hidden = NO;
     self.slider.hidden = NO;
 
-    [self didTouchControl:nil];
-  } else if (_state == LpvCastingCurrentMedia) {
-    [self.playButton setImage:self.pauseImage forState:UIControlStateNormal];
-
-    self.playerLayer.hidden = YES;
-    self.splashImage.layer.hidden = NO;
-    self.playButton.hidden = NO;
-    self.currTime.hidden = YES;
-    self.totalTime.hidden = YES;
-    self.slider.hidden = YES;
     [self didTouchControl:nil];
   }
   [self setNeedsLayout];
@@ -442,15 +435,15 @@ static NSInteger kToolbarHeight = 44;
 - (void)hideControls {
   self.toolbarView.hidden = YES;
   if ([self fullscreen]) {
-    [self.controller hideNavigationBar:YES];
+    [_delegate hideNavigationBar:YES];
   }
 }
 
 /* Initial setup of the controls in the toolbar. */
 - (void)initialiseToolbarControls {
   // Play/Pause images.
-  self.playImage = [UIImage imageNamed:@"play_light.png"];
-  self.pauseImage = [UIImage imageNamed:@"pause_light.png"];
+  self.playImage = [UIImage imageNamed:@"media_play"];
+  self.pauseImage = [UIImage imageNamed:@"media_pause"];
 
   // Toolbar.
   self.toolbarView = [[UIView alloc] init];
@@ -516,13 +509,13 @@ static NSInteger kToolbarHeight = 44;
   [self.controlView insertSubview:self.toolbarView atIndex:0];
 
   self.activityIndicator = [[UIActivityIndicatorView alloc]
-                            initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+                            initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
   self.activityIndicator.hidesWhenStopped = YES;
   [self.controlView insertSubview:self.activityIndicator aboveSubview:self.toolbarView];
 
   // Layout.
   NSString *hlayout =
-      @"|-[playButton(==40)]-5-[currTime(>=40)]-[slider(>=150)]-[totalTime(==currTime)]-|";
+      @"|-[playButton(==40)]-5-[currTime(>=40)]-[slider(>=120)]-[totalTime(==currTime)]-|";
   NSString *vlayout =
       @"V:|[playButton(==40)]";
   self.viewsDictionary = @{ @"slider" : self.slider,
@@ -543,7 +536,7 @@ static NSInteger kToolbarHeight = 44;
 /* Hide the tool bar, and the navigation controller if in the appropriate state. If there has been
  * a recent interaction, retry in kToolbarDelay seconds. */
 - (void)hideToolBar {
-  if (_state != LpvPlaying) {
+  if (_state != LPVPlaying) {
     return;
   }
   if (self.recentInteraction) {
@@ -563,9 +556,9 @@ static NSInteger kToolbarHeight = 44;
  * set a timeout to hide them again. */
 - (void)didTouchControl:(id)sender {
   [self showControls];
-  [self.controller hideNavigationBar:NO];
+  [_delegate hideNavigationBar:NO];
   self.recentInteraction = YES;
-  if (_state == LpvPlaying) {
+  if (_state == LPVPlaying) {
     [self performSelector:@selector(hideToolBar) withObject:self afterDelay:kToolbarDelay];
   }
 }
@@ -581,6 +574,33 @@ static NSInteger kToolbarHeight = 44;
     [self.activityIndicator stopAnimating];
   } else if ([keyPath isEqualToString:@"playbackBufferEmpty"]) {
     [self.activityIndicator startAnimating];
+  } else if ([keyPath isEqualToString:@"status"]) {
+    if (self.moviePlayer.status == AVPlayerStatusReadyToPlay) {
+      [self prepareForMovieStart];
+    }
+  }
+}
+
+- (void)prepareForMovieStart {
+  if (CMTIME_IS_INDEFINITE(self.moviePlayer.currentItem.duration)) {
+    // Loading has failed, try it again.
+    [self clearMovie];
+    [self loadMoviePlayer];
+    [self registerMovieStateObservers];
+    return;
+  }
+
+  if (!self.duration) {
+    self.slider.minimumValue = 0;
+    self.duration = self.slider.maximumValue =
+        CMTimeGetSeconds(self.moviePlayer.currentItem.duration);
+    self.slider.enabled = YES;
+    [self.activityIndicator stopAnimating];
+    NSInteger mins = floor(self.slider.maximumValue / 60);
+    NSInteger secs = floor((int)self.slider.maximumValue % 60);
+    self.totalTime.text = [NSString stringWithFormat:@"%02ld:%02ld", (long)mins, (long)secs];
+    // Jump to last playback time if we have one.
+    [self syncToLastPlayback];
   }
 }
 

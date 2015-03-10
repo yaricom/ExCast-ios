@@ -59,18 +59,18 @@ static const int kCastIconButtonAnimationDuration = 2;
 - (instancetype)initWithFrame:(CGRect)frame{
   self = [super initWithFrame:frame];
   if (self) {
-    self.castOff = [[UIImage imageNamed:@"icon_cast_off.png"]
+    self.castOff = [[UIImage imageNamed:@"cast_off"]
                     imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-    self.castOn = [[UIImage imageNamed:@"icon_cast_on_filled.png"]
+    self.castOn = [[UIImage imageNamed:@"cast_on"]
                    imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     self.castConnecting = @[
-                              [[UIImage imageNamed:@"icon_cast_on0.png"]
+                              [[UIImage imageNamed:@"cast_on0"]
                                 imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate],
-                              [[UIImage imageNamed:@"icon_cast_on1.png"]
+                              [[UIImage imageNamed:@"cast_on1"]
                                  imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate],
-                              [[UIImage imageNamed:@"icon_cast_on2.png"]
+                              [[UIImage imageNamed:@"cast_on2"]
                                  imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate],
-                              [[UIImage imageNamed:@"icon_cast_on1.png"]
+                              [[UIImage imageNamed:@"cast_on1"]
                                  imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
     self.imageView.animationImages = self.castConnecting;
     self.imageView.animationDuration = kCastIconButtonAnimationDuration;
@@ -134,7 +134,6 @@ static const int kCastIconButtonAnimationDuration = 2;
  */
 + (CastIconBarButtonItem *)barButtonItemWithTarget:(id)target
                                     selector:(SEL)selector {
-  // TODO(ianbarber): Is there a better way of inferring these numbers?
   CastIconButton *button = [CastIconButton buttonWithFrame:CGRectMake(0, 0, 29, 22)];
   [button addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
   CastIconBarButtonItem *barButton = [[self alloc] initWithCustomView:button];

@@ -12,15 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#import "CastMiniController.h"
 #import "CastIconButton.h"
 #import "CastInstructionsViewController.h"
+#import "CastViewController.h"
 #import "ChromecastDeviceController.h"
+#import "DeviceTableViewController.h"
 #import "SimpleImageFetcher.h"
 #import "TracksTableViewController.h"
 
-static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
+NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
+static NSString * const kDeviceTableViewController = @"deviceTableViewController";
+static NSString * const kCastViewController = @"castViewController";
 
-@interface ChromecastDeviceController () <GCKLoggerDelegate> {
+@interface ChromecastDeviceController () <GCKLoggerDelegate, CastMiniControllerDelegate> {
   dispatch_queue_t _queue;
 }
 
@@ -30,21 +35,16 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 
 @property bool deviceMuted;
 @property bool isReconnecting;
-@property(nonatomic) NSArray *idleStateToolbarButtons;
-@property(nonatomic) NSArray *playStateToolbarButtons;
-@property(nonatomic) NSArray *pauseStateToolbarButtons;
-@property(nonatomic) UIImageView *toolbarThumbnailImage;
-@property(nonatomic) NSURL *toolbarThumbnailURL;
-@property(nonatomic) UILabel *toolbarTitleLabel;
-@property(nonatomic) UILabel *toolbarSubTitleLabel;
-@property(nonatomic) GCKMediaTextTrackStyle *textTrackStyle;
+
+@property(nonatomic, readwrite) UIStoryboard *storyboard;
+@property(nonatomic) CastMiniController *castMiniController;
 @property(nonatomic) CastIconBarButtonItem *castIconButton;
 
-// TODO(ianbarber): We could have circular references here. Perhaps we should have an
-// optional method in the delegate that returns the view controller under control,
-// or we require that in the protocol some how.
 @property(nonatomic, weak) UIViewController *viewController;
 @property(nonatomic) BOOL manageToolbar;
+
+@property(nonatomic) NSString *lastContentID;
+@property(nonatomic) NSTimeInterval lastPosition;
 
 @end
 
@@ -56,8 +56,6 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 
   dispatch_once(&p, ^{
     _sharedDeviceController = [[self alloc] init];
-    // Always start a scan on creation.
-    [_sharedDeviceController performScan:YES];
   });
 
   return _sharedDeviceController;
@@ -70,25 +68,41 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 
     // Initialize device scanner
     self.deviceScanner = [[GCKDeviceScanner alloc] init];
-
-    // Create filter criteria to only show devices that can run your app
-    GCKFilterCriteria *filterCriteria = [[GCKFilterCriteria alloc] init];
-    filterCriteria = [GCKFilterCriteria criteriaForAvailableApplicationWithID:kReceiverAppID];
-
-    // Add the criteria to the scanner to only show devices that can run your app.
-    // This allows you to publish your app to the Apple App store before before publishing in Cast console.
-    // Once the app is published in Cast console the cast icon will begin showing up on ios devices.
-    // If an app is not published in the Cast console the cast icon will only appear for whitelisted dongles
-    self.deviceScanner.filterCriteria = filterCriteria;
+    self.deviceScanner.passiveScan = YES;
 
     // Initialize UI controls for navigation bar and tool bar.
     [self initControls];
+
+    // Load the storyboard for the Cast component UI.
+    self.storyboard = [UIStoryboard storyboardWithName:@"CastComponents" bundle:nil];
 
     // Queue used for loading thumbnails.
     _queue = dispatch_queue_create("com.google.sample.Chromecast", NULL);
 
   }
   return self;
+}
+
+/**
+ *  Set the application ID and initialise a scan.
+ *
+ *  @param applicationID Cast application ID
+ */
+- (void)setApplicationID:(NSString *)applicationID {
+  _applicationID = applicationID;
+
+  // Create filter criteria to only show devices that can run your app
+  GCKFilterCriteria *filterCriteria = [[GCKFilterCriteria alloc] init];
+  filterCriteria = [GCKFilterCriteria criteriaForAvailableApplicationWithID:applicationID];
+
+  // Add the criteria to the scanner to only show devices that can run your app.
+  // This allows you to publish your app to the Apple App store before before publishing in Cast console.
+  // Once the app is published in Cast console the cast icon will begin showing up on ios devices.
+  // If an app is not published in the Cast console the cast icon will only appear for whitelisted dongles
+  self.deviceScanner.filterCriteria = filterCriteria;
+
+  // Always start a scan as soon as we have an application ID.
+  [self performScan:YES];
 }
 
 - (BOOL)isConnected {
@@ -145,7 +159,9 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 }
 
 - (void)updateToolbarForViewController:(UIViewController *)viewController {
-  [self updateToolbarStateIn:viewController];
+  [self.castMiniController updateToolbarStateIn:viewController
+                            forMediaInformation:self.mediaInformation
+                                    playerState:self.playerState];
 }
 
 - (void)updateStatsFromDevice {
@@ -158,18 +174,14 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
     if (!self.selectedTrackByIdentifier) {
       [self zeroSelectedTracks];
     }
+
+    self.lastPosition = _streamPosition;
+    self.lastContentID = _mediaInformation.contentID;
   }
 }
 
 - (void)setDeviceVolume:(float)deviceVolume {
   [self.deviceManager setVolume:deviceVolume];
-}
-
-- (void)changeVolumeIncrease:(BOOL)goingUp {
-  float idealVolume = self.deviceVolume + (goingUp ? 0.1 : -0.1);
-  idealVolume = MIN(1.0, MAX(0.0, idealVolume));
-
-  [self.deviceManager setVolume:idealVolume];
 }
 
 - (void)setPlaybackPercent:(float)newPercent {
@@ -199,10 +211,17 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 }
 
 - (void)manageViewController:(UIViewController *)controller icon:(BOOL)icon toolbar:(BOOL)toolbar {
+  if (!controller.navigationItem) {
+    NSLog(@"View Controller must have navigation item for auto-icon management.");
+    return;
+  }
   self.viewController = controller;
   self.manageToolbar = toolbar;
   if (icon) {
     controller.navigationItem.rightBarButtonItem = _castIconButton;
+  }
+  if (self.manageToolbar) {
+    [self updateToolbarForViewController:self.viewController];
   }
 }
 
@@ -210,16 +229,39 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
   [[GCKLogger sharedInstance] setDelegate:self];
 }
 
+- (CastViewController *)castViewControllerForMedia:(GCKMediaInformation *)media
+                                  withStartingTime:(NSTimeInterval)startTime {
+  CastViewController *vc = [_storyboard instantiateViewControllerWithIdentifier:kCastViewController];
+  [vc setMediaToPlay:media withStartingTime:startTime];
+  return vc;
+}
+
+- (void)displayCurrentlyPlayingMedia {
+  if (self.viewController && self.manageToolbar) {
+    CastViewController *vc =
+        [_storyboard instantiateViewControllerWithIdentifier:kCastViewController];
+    [vc setMediaToPlay:self.mediaInformation];
+    [self.viewController.navigationController pushViewController:vc animated:YES];
+  }
+}
+
+- (NSTimeInterval)streamPositionForPreviouslyCastMedia:(NSString *)contentID {
+  if ([contentID isEqualToString:_lastContentID]) {
+    return _lastPosition;
+  }
+  return 0;
+}
+
 #pragma mark - GCKDeviceManagerDelegate
 
 - (void)deviceManagerDidConnect:(GCKDeviceManager *)deviceManager {
 
   if(!self.isReconnecting) {
-    [self.deviceManager launchApplication:kReceiverAppID];
+    [self.deviceManager launchApplication:_applicationID];
   } else {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString* lastSessionID = [defaults valueForKey:@"lastSessionID"];
-    [self.deviceManager joinApplication:kReceiverAppID sessionID:lastSessionID];
+    [self.deviceManager joinApplication:_applicationID sessionID:lastSessionID];
   }
   [self updateCastIconButtonStates];
 }
@@ -321,7 +363,6 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
     [self.delegate didDisconnect];
   }
 
-  // TODO(ianbarber): Maybe move these lines out to a separate function.
   if (self.viewController && self.manageToolbar) {
     [self updateToolbarForViewController:self.viewController];
   }
@@ -358,9 +399,7 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
   if (reason == GCKConnectionSuspendReasonAppBackgrounded) {
     NSLog(@"Connection Suspended: App Backgrounded");
   } else {
-    [self showError:@"Connection Suspended: Network"];
-    [self deviceDisconnectedForgetDevice:NO];
-    [self updateCastIconButtonStates];
+    NSLog(@"Connection Suspended: Network disconnected. Expecting reconnect.");
   }
 }
 
@@ -424,43 +463,17 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
   }
 }
 
-- (BOOL)loadMedia:(NSURL *)url
-     thumbnailURL:(NSURL *)thumbnailURL
-            title:(NSString *)title
-         subtitle:(NSString *)subtitle
-         mimeType:(NSString *)mimeType
-           tracks:(NSArray *)tracks
-        startTime:(NSTimeInterval)startTime
+- (BOOL)loadMedia:(GCKMediaInformation *)media
+            startTime:(NSTimeInterval)startTime
          autoPlay:(BOOL)autoPlay {
   if (!self.deviceManager || self.deviceManager.connectionState != GCKConnectionStateConnected ) {
     return NO;
   }
+
   // Reset selected tracks.
   self.selectedTrackByIdentifier = nil;
-  GCKMediaMetadata *metadata = [[GCKMediaMetadata alloc] init];
-  if (title) {
-    [metadata setString:title forKey:kGCKMetadataKeyTitle];
-  }
 
-  if (subtitle) {
-    [metadata setString:subtitle forKey:kGCKMetadataKeySubtitle];
-  }
-
-  if (thumbnailURL) {
-    [metadata addImage:[[GCKImage alloc] initWithURL:thumbnailURL width:200 height:100]];
-  }
-
-  GCKMediaInformation *mediaInformation =
-      [[GCKMediaInformation alloc] initWithContentID:[url absoluteString]
-                                          streamType:GCKMediaStreamTypeNone
-                                         contentType:mimeType
-                                            metadata:metadata
-                                      streamDuration:0
-                                         mediaTracks:tracks
-                                      textTrackStyle:[self textTrackStyle]
-                                          customData:nil];
-
-  [self.mediaControlChannel loadMedia:mediaInformation autoplay:autoPlay playPosition:startTime];
+  [self.mediaControlChannel loadMedia:media autoplay:autoPlay playPosition:startTime];
 
   return YES;
 }
@@ -496,133 +509,29 @@ static NSString *const kReceiverAppID = @"4F8B3483";  //Replace with your app id
 }
 
 - (void)initControls {
-  _castIconButton = [CastIconBarButtonItem barButtonItemWithTarget:self
+  self.castIconButton = [CastIconBarButtonItem barButtonItemWithTarget:self
                                                           selector:@selector(chooseDevice:)];
-
-  // Create toolbar buttons for the mini player.
-  CGRect frame = CGRectMake(0, 0, 49, 37);
-  _toolbarThumbnailImage =
-      [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"video_thumb_mini.png"]];
-  _toolbarThumbnailImage.frame = frame;
-  _toolbarThumbnailImage.contentMode = UIViewContentModeScaleAspectFit;
-  UIButton *someButton = [[UIButton alloc] initWithFrame:frame];
-  [someButton addSubview:_toolbarThumbnailImage];
-  [someButton addTarget:self
-                 action:@selector(showMedia)
-       forControlEvents:UIControlEventTouchUpInside];
-  [someButton setShowsTouchWhenHighlighted:YES];
-  UIBarButtonItem *thumbnail = [[UIBarButtonItem alloc] initWithCustomView:someButton];
-
-  UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
-  [btn setFrame:CGRectMake(0, 0, 200, 45)];
-  _toolbarTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 185, 30)];
-  _toolbarTitleLabel.backgroundColor = [UIColor clearColor];
-  _toolbarTitleLabel.font = [UIFont systemFontOfSize:17];
-  _toolbarTitleLabel.text = @"This is the title";
-  _toolbarTitleLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-  _toolbarTitleLabel.textColor = [UIColor blackColor];
-  [btn addSubview:_toolbarTitleLabel];
-
-  _toolbarSubTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 15, 185, 30)];
-  _toolbarSubTitleLabel.backgroundColor = [UIColor clearColor];
-  _toolbarSubTitleLabel.font = [UIFont systemFontOfSize:14];
-  _toolbarSubTitleLabel.text = @"This is the sub";
-  _toolbarSubTitleLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-  _toolbarSubTitleLabel.textColor = [UIColor grayColor];
-  [btn addSubview:_toolbarSubTitleLabel];
-  [btn addTarget:self action:@selector(showMedia) forControlEvents:UIControlEventTouchUpInside];
-  UIBarButtonItem *titleBtn = [[UIBarButtonItem alloc] initWithCustomView:btn];
-
-  UIBarButtonItem *flexibleSpaceLeft =
-      [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-                                                    target:nil
-                                                    action:nil];
-
-  UIBarButtonItem *playButton =
-      [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemPlay
-                                                    target:self
-                                                    action:@selector(playMedia)];
-  playButton.tintColor = [UIColor blackColor];
-
-  UIBarButtonItem *pauseButton =
-      [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemPause
-                                                    target:self
-                                                    action:@selector(pauseMedia)];
-  pauseButton.tintColor = [UIColor blackColor];
-
-  _idleStateToolbarButtons = [NSArray arrayWithObjects:thumbnail, titleBtn, flexibleSpaceLeft, nil];
-  _playStateToolbarButtons =
-      [NSArray arrayWithObjects:thumbnail, titleBtn, flexibleSpaceLeft, pauseButton, nil];
-  _pauseStateToolbarButtons =
-      [NSArray arrayWithObjects:thumbnail, titleBtn, flexibleSpaceLeft, playButton, nil];
+  self.castMiniController = [[CastMiniController alloc] initWithDelegate:self];
 }
 
 - (void)chooseDevice:(id)sender {
+  BOOL showPicker = YES;
   if ([self.delegate respondsToSelector:@selector(shouldDisplayModalDeviceController)]) {
-    [_delegate shouldDisplayModalDeviceController];
+    showPicker = [_delegate shouldDisplayModalDeviceController];
   }
-}
-
-- (void)updateToolbarStateIn:(UIViewController *)viewController {
-  // Ignore this view controller if it is not visible.
-  if (!(viewController.isViewLoaded && viewController.view.window)) {
-    return;
-  }
-  // Get the playing status.
-  if (self.isPlayingMedia) {
-    viewController.navigationController.toolbarHidden = NO;
-  } else {
-    viewController.navigationController.toolbarHidden = YES;
-    return;
-  }
-
-  // Update the play/pause state.
-  if (self.playerState == GCKMediaPlayerStateUnknown ||
-      self.playerState == GCKMediaPlayerStateIdle) {
-    viewController.toolbarItems = self.idleStateToolbarButtons;
-  } else {
-    BOOL playing = (self.playerState == GCKMediaPlayerStatePlaying ||
-                    self.playerState == GCKMediaPlayerStateBuffering);
-    if (playing) {
-      viewController.toolbarItems = self.playStateToolbarButtons;
-    } else {
-      viewController.toolbarItems = self.pauseStateToolbarButtons;
+  if (self.viewController && showPicker) {
+    // If we are managing the display, fire the device picker.
+    UINavigationController *dtvc = (UINavigationController *)[_storyboard instantiateViewControllerWithIdentifier:kDeviceTableViewController];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+      dtvc.modalPresentationStyle = UIModalPresentationFormSheet;
     }
-  }
-
-  // Update the title.
-  self.toolbarTitleLabel.text = [self.mediaInformation.metadata stringForKey:kGCKMetadataKeyTitle];
-  self.toolbarSubTitleLabel.text =
-      [self.mediaInformation.metadata stringForKey:kGCKMetadataKeySubtitle];
-
-  // Update the image.
-  GCKImage *img = [self.mediaInformation.metadata.images objectAtIndex:0];
-  if ([img.URL isEqual:self.toolbarThumbnailURL]) {
-    return;
-  }
-
-  //Loading thumbnail async
-  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-    UIImage *image = [UIImage imageWithData:[SimpleImageFetcher getDataFromImageURL:img.URL]];
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-      self.toolbarThumbnailURL = img.URL;
-      self.toolbarThumbnailImage.image = image;
-    });
-  });
-}
-
-- (void)playMedia {
-  [self pauseCastMedia:NO];
-}
-
-- (void)pauseMedia {
-  [self pauseCastMedia:YES];
-}
-
-- (void)showMedia {
-  if ([self.delegate respondsToSelector:@selector(shouldPresentPlaybackController)]) {
-    [self.delegate shouldPresentPlaybackController];
+    // This is a little unpleasant, but is our way of getting a handle back so the device
+    // table can dismiss itself. The nicer method would be to introduce a protocol so that
+    // the client could dismiss it, but since we're trying to minimise the work the Media side
+    // of the app has to do, we'll use this for now. One option may be to have the protocol on
+    // the ChromecastDeviceController.
+    ((DeviceTableViewController *)dtvc.viewControllers[0]).viewController = self.viewController;
+    [self.viewController presentViewController:dtvc animated:YES completion:nil];
   }
 }
 

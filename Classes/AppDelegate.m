@@ -13,8 +13,8 @@
 // limitations under the License.
 
 #import "AppDelegate.h"
-#import "ChromecastDeviceController.h"
 #import <AVFoundation/AVFoundation.h>
+#import "ChromecastDeviceController.h"
 
 @implementation AppDelegate
 
@@ -25,8 +25,12 @@
 
   // Turn on the Cast logging for debug purposes.
   [[ChromecastDeviceController sharedInstance] enableLogging];
+  // Set the receiver application ID to initialise scanning.
+  [ChromecastDeviceController sharedInstance].applicationID = @"4F8B3483";
+  // Replace the value above with your app id.
 
-  // Set playback category mode.
+  // Set playback category mode to allow playing audio on the video files even when the ringer
+  // mute switch is on.
   NSError *setCategoryError;
   BOOL success = [[AVAudioSession sharedInstance]
                   setCategory:AVAudioSessionCategoryPlayback
