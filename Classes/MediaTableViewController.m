@@ -20,7 +20,7 @@
 #import "MediaTableViewController.h"
 #import "SimpleImageFetcher.h"
 
-@interface MediaTableViewController () <ChromecastControllerDelegate>
+@interface MediaTableViewController () <ChromecastDeviceControllerDelegate>
 
 /** The media to be displayed. */
 @property(nonatomic, strong) MediaListModel *mediaList;
@@ -51,11 +51,12 @@
 
   // Assign ourselves as delegate ONLY in viewWillAppear of a view controller.
   [ChromecastDeviceController sharedInstance].delegate = self;
+  [[ChromecastDeviceController sharedInstance] decorateViewController:self];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
-  [[ChromecastDeviceController sharedInstance] manageViewController:self icon:YES toolbar:YES];
+  [[ChromecastDeviceController sharedInstance] updateToolbarForViewController:self];
 }
 
 #pragma mark - Table View

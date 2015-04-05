@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-#import <AVFoundation/AVFoundation.h>
 #import "LocalPlayerView.h"
 #import "SimpleImageFetcher.h"
+
+#import <AVFoundation/AVFoundation.h>
 
 /* Internal state of the view. */
 typedef NS_ENUM(NSInteger, LPVState) {
@@ -32,7 +32,7 @@ static NSInteger kToolbarHeight = 44;
 @interface LocalPlayerView()
 
 /* The aspect ratio constraint for the view. */
-@property(nonatomic,weak) IBOutlet NSLayoutConstraint* viewAspectRatio;
+@property(nonatomic, weak) IBOutlet NSLayoutConstraint* viewAspectRatio;
 /* The current state of the view. */
 @property(nonatomic) LPVState state;
 /* The splash image to display before playback or while casting. */
@@ -91,8 +91,8 @@ static NSInteger kToolbarHeight = 44;
 # pragma mark - Layout Managment
 
 - (void)layoutSubviews {
-  CGRect frame = [self fullscreen] ? [UIScreen mainScreen].bounds :
-                                      [self fullFrame];
+  CGRect frame = [self fullscreen] ?
+      [UIScreen mainScreen].bounds : [self fullFrame];
   if ((NSFoundationVersionNumber <= NSFoundationVersionNumber_iOS_7_1) &&
       [self fullscreen]) {
     // Below iOS 8 the bounds don't change with orientation changes.
@@ -271,11 +271,12 @@ static NSInteger kToolbarHeight = 44;
 - (void)registerMovieStateObservers {
   // We take a weak reference to self to avoid retain cycles in the block.
   __weak LocalPlayerView *self_ = self;
-  self.playerObserver = [self.moviePlayer addPeriodicTimeObserverForInterval:CMTimeMake(1, 1)
-                                                                       queue:NULL
-                                                                  usingBlock:^(CMTime time) {
-      [self_ updateTimersForTime:time];
-    }];
+  self.playerObserver =
+      [self.moviePlayer addPeriodicTimeObserverForInterval:CMTimeMake(1, 1)
+                                                     queue:NULL
+                                                usingBlock:^(CMTime time) {
+                                                    [self_ updateTimersForTime:time];
+                                                }];
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(movieDidFinish)
                                                name:AVPlayerItemDidPlayToEndTimeNotification
@@ -524,13 +525,15 @@ static NSInteger kToolbarHeight = 44;
                             @"playButton" : self.playButton
                             };
   [self.toolbarView addConstraints:
-    [NSLayoutConstraint constraintsWithVisualFormat:hlayout
-                                            options:NSLayoutFormatAlignAllCenterY
-                                            metrics:nil views:self.viewsDictionary]];
+      [NSLayoutConstraint constraintsWithVisualFormat:hlayout
+                                              options:NSLayoutFormatAlignAllCenterY
+                                              metrics:nil
+                                                views:self.viewsDictionary]];
   [self.toolbarView addConstraints:
-   [NSLayoutConstraint constraintsWithVisualFormat:vlayout
-                                           options:0
-                                           metrics:nil views:self.viewsDictionary]];
+      [NSLayoutConstraint constraintsWithVisualFormat:vlayout
+                                              options:0
+                                              metrics:nil
+                                                views:self.viewsDictionary]];
 }
 
 /* Hide the tool bar, and the navigation controller if in the appropriate state. If there has been
@@ -543,12 +546,13 @@ static NSInteger kToolbarHeight = 44;
     self.recentInteraction = NO;
     [self performSelector:@selector(hideToolBar) withObject:self afterDelay:kToolbarDelay];
   } else  {
-    [UIView animateWithDuration:0.5 animations:^{
-      [self.toolbarView setAlpha:0];
-    } completion:^(BOOL finished) {
-      [self hideControls];
-      [self.toolbarView setAlpha:1];
-    }];
+    [UIView animateWithDuration:0.5
+                     animations:^{
+                         [self.toolbarView setAlpha:0]; }
+                     completion:^(BOOL finished) {
+                         [self hideControls];
+                         [self.toolbarView setAlpha:1];
+                     }];
   }
 }
 

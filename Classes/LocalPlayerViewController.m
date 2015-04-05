@@ -14,11 +14,14 @@
 
 #import "AppDelegate.h"
 #import "CastInstructionsViewController.h"
+#import "CastViewController.h"
 #import "ChromecastDeviceController.h"
 #import "GCKMediaInformation+LocalMedia.h"
 #import "LocalPlayerViewController.h"
 
-@interface LocalPlayerViewController () <ChromecastControllerDelegate>
+#import <GoogleCast/GCKDeviceManager.h>
+
+@interface LocalPlayerViewController () <ChromecastDeviceControllerDelegate>
 
 /* Whether to reset the edges on disappearing. */
 @property(nonatomic) BOOL resetEdgesOnDisappear;
@@ -48,6 +51,7 @@
 
   // Assign ourselves as delegate ONLY in viewWillAppear of a view controller.
   [ChromecastDeviceController sharedInstance].delegate = self;
+  [[ChromecastDeviceController sharedInstance] decorateViewController:self];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -63,7 +67,7 @@
 
 - (void)viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
-  [[ChromecastDeviceController sharedInstance] manageViewController:self icon:YES toolbar:YES];
+  [[ChromecastDeviceController sharedInstance] updateToolbarForViewController:self];
 }
 
 - (void)deviceOrientationDidChange:(NSNotification *)notification {
@@ -109,7 +113,7 @@
                                             withAnimation:UIStatusBarAnimationFade];
     self.navigationController.interactivePopGestureRecognizer.enabled = YES;
     _resetEdgesOnDisappear = NO;
-  } else if(style == LPVNavBarTransparent) {
+  } else if (style == LPVNavBarTransparent) {
     self.edgesForExtendedLayout = UIRectEdgeNone;
     [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
                                                   forBarMetrics:UIBarMetricsDefault];
@@ -130,7 +134,7 @@
 /* Play has been pressed in the LocalPlayerView. */
 - (BOOL)continueAfterPlayButtonClicked {
   ChromecastDeviceController *controller = [ChromecastDeviceController sharedInstance];
-  if (controller.isConnected) {
+  if (controller.deviceManager.isConnectedToApp) {
     [self castCurrentMedia:0];
     return NO;
   }
@@ -151,9 +155,10 @@
   ChromecastDeviceController *controller = [ChromecastDeviceController sharedInstance];
   GCKMediaInformation *media =
       [GCKMediaInformation mediaInformationFromLocalMedia:self.mediaToPlay];
-  UIViewController *cvc = [controller castViewControllerForMedia:media
-                                                withStartingTime:from];
-  [self.navigationController pushViewController:cvc animated:YES];
+  CastViewController *vc =
+      [controller.storyboard instantiateViewControllerWithIdentifier:kCastViewController];
+  [vc setMediaToPlay:media withStartingTime:from];
+  [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma mark - ChromecastControllerDelegate

@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import <GoogleCast/GCKMediaInformation.h>
 #import "Media.h"
+
+#import <GoogleCast/GCKMediaInformation.h>
 
 /**
  * Category to convert the Media objects we are using for local storage to a

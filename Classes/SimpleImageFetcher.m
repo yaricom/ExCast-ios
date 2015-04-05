@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import <CommonCrypto/CommonDigest.h>
 #import "SimpleImageFetcher.h"
+
+#import <CommonCrypto/CommonDigest.h>
 
 @implementation SimpleImageFetcher
 
@@ -86,9 +87,9 @@
   CC_SHA1([data bytes], (CC_LONG)[data length], digest);
 
   NSMutableString *hash = [NSMutableString stringWithCapacity:40];
-  for (int i = 0; i < CC_SHA1_DIGEST_LENGTH; i++)
+  for (int i = 0; i < CC_SHA1_DIGEST_LENGTH; i++) {
     [hash appendFormat:@"%02x", digest[i]];
-  
+  }
   return hash;
 }
 

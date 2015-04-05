@@ -12,18 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "ChromecastDeviceController.h"
+#import <GoogleCast/GCKMediaControlChannel.h>
+#import <GoogleCast/GCKMediaInformation.h>
+#import <GoogleCast/GCKMediaStatus.h>
+#import <GoogleCast/GCKMediaTrack.h>
+
 #import "TracksTableViewController.h"
 
 @interface TracksTableViewController ()
 
 @property(nonatomic) UIStatusBarStyle statusBarStyle;
-@property(weak, nonatomic) ChromecastDeviceController *deviceController;
+@property(weak, nonatomic) GCKMediaControlChannel *controlChannel;
 @property(weak, nonatomic) GCKMediaInformation* media;
 @property(strong, nonatomic) NSMutableArray* tracks;
 @property(nonatomic) GCKMediaTrackType type;
 @property(nonatomic) BOOL toolbarWasShowing;
 @property(nonatomic) NSNumber *currSelected;
+@property(nonatomic) NSNumber *currSelectedRow;
 @end
 
 @implementation TracksTableViewController
@@ -37,7 +42,7 @@
   NSString *title = self.type == GCKMediaTrackTypeAudio ? @"Audio Tracks" : @"Subtitles";
   [self.tabBarController.navigationItem setTitle:title];
   self.statusBarStyle = [UIApplication sharedApplication].statusBarStyle;
-  [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
+  [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -48,27 +53,35 @@
   [[UIApplication sharedApplication] setStatusBarStyle:_statusBarStyle];
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+  [super viewDidAppear:animated];
+  NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.currSelectedRow integerValue]
+                                              inSection:0];
+  [self.tableView selectRowAtIndexPath:indexPath
+                              animated:YES
+                        scrollPosition:UITableViewScrollPositionTop];
+}
+
 - (void)setMedia:(GCKMediaInformation *)media
          forType:(GCKMediaTrackType)type
-    deviceController:(ChromecastDeviceController *)deviceController {
+    deviceController:(GCKMediaControlChannel *)controlChannel {
   self.tracks = [[NSMutableArray alloc] init];
   self.type = type;
-  self.deviceController = deviceController;
-  NSInteger selected = 0, i = 1;
+  self.controlChannel = controlChannel;
+  NSInteger i = 1;
+  NSArray *activeTracks = _controlChannel.mediaStatus.activeTrackIDs;
   for(GCKMediaTrack *track in media.mediaTracks) {
     if (track.type == type) {
       NSNumber *trackId = [NSNumber numberWithInteger:track.identifier];
-      if ([[deviceController.selectedTrackByIdentifier objectForKey:trackId] boolValue]) {
+      if (activeTracks && [activeTracks containsObject:trackId]) {
         self.currSelected = trackId;
-        selected = i;
+        self.currSelectedRow = @(i);
       }
       [self.tracks addObject:track];
       i++;
     }
   }
   [self.tableView reloadData];
-  NSIndexPath *indexPath = [NSIndexPath indexPathForRow:selected inSection:0];
-  [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionTop];
 }
 
 #pragma mark - Table view data source
@@ -81,7 +94,8 @@
   return [self.tracks count] + 1;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+- (UITableViewCell *)tableView:(UITableView *)tableView
+         cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"trackcell"
                                                           forIndexPath:indexPath];
   if (!cell) {
@@ -89,7 +103,7 @@
                                   reuseIdentifier:@"trackcell"];
   }
   NSInteger row = indexPath.row;
-  if(row == 0) {
+  if (row == 0) {
     cell.textLabel.text = self.type == GCKMediaTrackTypeText ? @"None" : @"Default";
   } else {
     row--;
@@ -101,24 +115,22 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+  NSMutableArray *tracks =
+      [NSMutableArray arrayWithArray:_controlChannel.mediaStatus.activeTrackIDs];
   NSInteger row = indexPath.row;
   if (self.currSelected) {
-    [self.deviceController.selectedTrackByIdentifier setObject:[NSNumber numberWithBool:NO]
-                                                        forKey:self.currSelected];
+    [tracks removeObjectIdenticalTo:self.currSelected];
   }
   if (row > 0) {
     row--;
     GCKMediaTrack *track = self.tracks[row];
     NSNumber *trackIdentifier  = [NSNumber numberWithInteger:track.identifier];
-
-    [self.deviceController.selectedTrackByIdentifier setObject:[NSNumber numberWithBool:YES]
-                                                 forKey:trackIdentifier];
+    [tracks addObject:trackIdentifier];
     self.currSelected = trackIdentifier;
   } else {
     self.currSelected = nil;
   }
-  // Signal the device to update displayed tracks.
-  [self.deviceController updateActiveTracks];
+  [_controlChannel setActiveTrackIDs:tracks];
 }
 
 @end

@@ -14,12 +14,13 @@
 
 
 #import "CastMiniController.h"
-#import <GoogleCast/GoogleCast.h>
 #import "SimpleImageFetcher.h"
+
+#import <GoogleCast/GoogleCast.h>
 
 @interface CastMiniController ()
 
-@property(nonatomic,weak) id<CastMiniControllerDelegate> delegate;
+@property(nonatomic, weak) id<CastMiniControllerDelegate> delegate;
 @property(nonatomic) NSArray *idleStateToolbarButtons;
 @property(nonatomic) NSArray *playStateToolbarButtons;
 @property(nonatomic) NSArray *pauseStateToolbarButtons;
@@ -44,7 +45,7 @@
     // Create toolbar buttons for the mini player.
     CGRect frame = CGRectMake(0, 0, 49, 37);
     _toolbarThumbnailImage =
-      [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"video_thumb_mini.png"]];
+        [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"video_thumb_mini.png"]];
     _toolbarThumbnailImage.frame = frame;
     _toolbarThumbnailImage.contentMode = UIViewContentModeScaleAspectFit;
     UIButton *someButton = [[UIButton alloc] initWithFrame:frame];
@@ -76,20 +77,20 @@
     UIBarButtonItem *titleBtn = [[UIBarButtonItem alloc] initWithCustomView:btn];
 
     UIBarButtonItem *flexibleSpaceLeft =
-    [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-                                                  target:nil
-                                                  action:nil];
+        [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+                                                      target:nil
+                                                      action:nil];
 
     UIBarButtonItem *playButton =
-    [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemPlay
-                                                  target:self
-                                                  action:@selector(playMedia)];
+        [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemPlay
+                                                      target:self
+                                                      action:@selector(playMedia)];
     playButton.tintColor = [UIColor blackColor];
 
     UIBarButtonItem *pauseButton =
-    [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemPause
-                                                  target:self
-                                                  action:@selector(pauseMedia)];
+        [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemPause
+                                                      target:self
+                                                      action:@selector(pauseMedia)];
     pauseButton.tintColor = [UIColor blackColor];
 
     _idleStateToolbarButtons =
@@ -111,14 +112,14 @@
 }
 
 - (void)playMedia {
-  if (self.delegate) {
-    [self.delegate pauseCastMedia:NO];
+  if ([_delegate mediaControlChannel]) {
+    [[_delegate mediaControlChannel] play];
   }
 }
 
 - (void)pauseMedia {
-  if (self.delegate) {
-    [self.delegate pauseCastMedia:YES];
+  if ([_delegate mediaControlChannel]) {
+    [[_delegate mediaControlChannel] pause];
   }
 }
 
@@ -144,8 +145,7 @@
   if (state == GCKMediaPlayerStateUnknown || state == GCKMediaPlayerStateIdle) {
     viewController.toolbarItems = self.idleStateToolbarButtons;
   } else {
-    BOOL playing = (state == GCKMediaPlayerStatePlaying ||
-                    state == GCKMediaPlayerStateBuffering);
+    BOOL playing = (state == GCKMediaPlayerStatePlaying || state == GCKMediaPlayerStateBuffering);
     if (playing) {
       viewController.toolbarItems = self.playStateToolbarButtons;
     } else {

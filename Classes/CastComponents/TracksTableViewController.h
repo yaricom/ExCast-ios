@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "ChromecastDeviceController.h"
 #import <GoogleCast/GCKMediaTrack.h>
 #import <UIKit/UIKit.h>
+
+@class GCKMediaInformation;
+@class GCKMediaControlChannel;
 
 /**
  *  A simple picker for captions or alternate audio tracks.
@@ -27,10 +29,10 @@
  *
  *  @param media            The current media
  *  @param type             The type of tracks to display
- *  @param deviceController The central device controller.
+ *  @param controlChannel   The device control channel
  */
 - (void)setMedia:(GCKMediaInformation *)media
          forType:(GCKMediaTrackType)type
-    deviceController:(ChromecastDeviceController *)deviceController;
+    deviceController:(GCKMediaControlChannel *)controlChannel;
 
 @end

@@ -15,6 +15,8 @@
 #import <Foundation/Foundation.h>
 #import <GoogleCast/GCKMediaStatus.h>
 
+@class GCKMediaControlChannel;
+
 @protocol CastMiniControllerDelegate <NSObject>
 
 /**
@@ -23,11 +25,11 @@
 - (void)displayCurrentlyPlayingMedia;
 
 /**
- *  Pause or resume the currently playing media
+ *  The media control channel for the currently playing media, if any.
  *
- *  @param pauseOrResume YES to pause, NO to resume.
+ *  @return Control channel for the currently cast media.
  */
-- (void)pauseCastMedia:(BOOL)pauseOrResume;
+- (GCKMediaControlChannel *)mediaControlChannel;
 
 @end
 

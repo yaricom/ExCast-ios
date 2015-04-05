@@ -14,13 +14,21 @@
 
 #import "AppDelegate.h"
 #import "CastViewController.h"
+#import "ChromecastDeviceController.h"
 #import "SimpleImageFetcher.h"
 #import "TracksTableViewController.h"
 
+#import <GoogleCast/GCKDevice.h>
+#import <GoogleCast/GCKMediaControlChannel.h>
+#import <GoogleCast/GCKMediaInformation.h>
+#import <GoogleCast/GCKMediaMetadata.h>
+#import <GoogleCast/GCKMediaStatus.h>
+
 static NSString * const kListTracks = @"listTracks";
 static NSString * const kListTracksPopover = @"listTracksPopover";
+NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
 
-@interface CastViewController () {
+@interface CastViewController () <ChromecastDeviceControllerDelegate> {
   NSTimeInterval _mediaStartTime;
   /* Flag to indicate we are scrubbing - the play position is only updated at the end. */
   BOOL _currentlyDraggingSlider;
@@ -30,9 +38,10 @@ static NSString * const kListTracksPopover = @"listTracksPopover";
   BOOL _joinExistingSession;
   /* The most recent playback time - used for syncing between local and remote playback. */
   NSTimeInterval _lastKnownTime;
-  __weak ChromecastDeviceController* _chromecastController;
 }
 
+/* The device manager used for the currently casting media. */
+@property(weak, nonatomic) ChromecastDeviceController *castDeviceController;
 /* The image of the current media. */
 @property IBOutlet UIImageView* thumbnailImage;
 /* The label displaying the currently connected device. */
@@ -70,9 +79,6 @@ static NSString * const kListTracksPopover = @"listTracksPopover";
 /* Pause image. */
 @property(nonatomic) UIImage *pauseImage;
 
-/* Don't update the slider if we get a volume status message back related to our own change. */
-@property BOOL isManualVolumeChange;
-
 /* Whether the viewcontroller is currently visible. */
 @property BOOL visible;
 
@@ -85,28 +91,22 @@ static NSString * const kListTracksPopover = @"listTracksPopover";
 
   self.visible = false;
 
-  _chromecastController = [ChromecastDeviceController sharedInstance];
+  self.castDeviceController = [ChromecastDeviceController sharedInstance];
 
   self.castingToLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Casting to %@", nil),
-      _chromecastController.deviceName];
+      _castDeviceController.deviceManager.device.friendlyName];
   self.mediaTitleLabel.text = [self.mediaToPlay.metadata stringForKey:kGCKMetadataKeyTitle];
 
   self.volumeControlLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%@ Volume", nil),
-                              _chromecastController.deviceName];
+                                    _castDeviceController.deviceManager.device.friendlyName];
   self.volumeSlider.minimumValue = 0;
   self.volumeSlider.maximumValue = 1.0;
-  self.volumeSlider.value = _chromecastController.deviceVolume ?
-      _chromecastController.deviceVolume : 0.5;
+  self.volumeSlider.value = _castDeviceController.deviceManager.deviceVolume ?
+      _castDeviceController.deviceManager.deviceVolume : 0.5;
   self.volumeSlider.continuous = NO;
   [self.volumeSlider addTarget:self
                         action:@selector(sliderValueChanged:)
               forControlEvents:UIControlEventValueChanged];
-
-  _isManualVolumeChange = NO;
-  [[NSNotificationCenter defaultCenter] addObserver:self
-                                           selector:@selector(receivedVolumeChangedNotification:)
-                                               name:@"Volume changed"
-                                             object:_chromecastController];
 
   UIButton *transparencyButton = [[UIButton alloc] initWithFrame:self.view.bounds];
   transparencyButton.autoresizingMask =
@@ -116,17 +116,26 @@ static NSString * const kListTracksPopover = @"listTracksPopover";
   [transparencyButton addTarget:self
                          action:@selector(showVolumeSlider:)
                forControlEvents:UIControlEventTouchUpInside];
+  self.navigationController.interactivePopGestureRecognizer.enabled = NO;
   [self initControls];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
 
-  // Assign ourselves as delegate ONLY in viewWillAppear of a view controller.
-  _chromecastController.delegate = self;
+  // Listen for volume change notifications.
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(volumeDidChange)
+                                               name:@"castVolumeChanged"
+                                             object:nil];
+
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(didReceiveMediaStateChange)
+                                               name:@"castMediaStatusChange"
+                                             object:nil];
 
   // Add the cast icon to our nav bar.
-  [[ChromecastDeviceController sharedInstance] manageViewController:self icon:YES toolbar:NO];
+  [[ChromecastDeviceController sharedInstance] decorateViewController:self];
 
   // Make the navigation bar transparent.
   self.navigationController.navigationBar.translucent = YES;
@@ -149,10 +158,14 @@ static NSString * const kListTracksPopover = @"listTracksPopover";
 - (void)viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
   self.visible = true;
-  if (!_chromecastController.isConnected) {
+
+  if (!_castDeviceController.deviceManager.isConnectedToApp) {
     // If we're not connected, exit.
     [self maybePopController];
   }
+
+  // Assign ourselves as the delegate.
+  _castDeviceController.delegate = self;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -161,10 +174,11 @@ static NSString * const kListTracksPopover = @"listTracksPopover";
   self.updateStreamTimer = nil;
 
   // We no longer want to be delegate.
-  _chromecastController.delegate = nil;
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
 
   [self.navigationController.navigationBar setBackgroundImage:nil
                                                 forBarMetrics:UIBarMetricsDefault];
+  [super viewWillDisappear:animated];
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
@@ -172,36 +186,29 @@ static NSString * const kListTracksPopover = @"listTracksPopover";
   [super viewDidDisappear:animated];
 }
 
-- (void)receivedVolumeChangedNotification:(NSNotification *) notification {
-    if(!_isManualVolumeChange) {
-      ChromecastDeviceController *deviceController = (ChromecastDeviceController *) notification.object;
-      NSLog(@"Got volume changed notification: %g", deviceController.deviceVolume);
-      self.volumeSlider.value = _chromecastController.deviceVolume;
-    }
-}
-
 - (IBAction)sliderValueChanged:(id)sender {
-    UISlider *slider = (UISlider *) sender;
-    // Essentially a fake lock to prevent us from being stuck in an endless loop (volume change
-    // triggers notification, triggers UI change, triggers volume change ...
-    // This method is not foolproof (not thread safe), but for most use cases *should* be safe
-    // enough.
-    _isManualVolumeChange = YES;
-    NSLog(@"Got new slider value: %.2f", slider.value);
-    _chromecastController.deviceVolume = slider.value;
-    _isManualVolumeChange = NO;
+  UISlider *slider = (UISlider *) sender;
+  NSLog(@"Got new slider value: %.2f", slider.value);
+  [_castDeviceController.deviceManager setVolume:slider.value];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+  if (!_castDeviceController) {
+    self.castDeviceController = [ChromecastDeviceController sharedInstance];
+  }
   if ([segue.identifier isEqualToString:kListTracks] ||
       [segue.identifier isEqualToString:kListTracksPopover]) {
-    _chromecastController = [ChromecastDeviceController sharedInstance];
     UITabBarController *controller;
-    controller = (UITabBarController *)[(UINavigationController *)[segue destinationViewController] visibleViewController];
+    controller = (UITabBarController *)
+        [(UINavigationController *)[segue destinationViewController] visibleViewController];
     TracksTableViewController *trackController  = controller.viewControllers[0];
-    [trackController setMedia:self.mediaToPlay forType:GCKMediaTrackTypeText deviceController:_chromecastController];
+    [trackController setMedia:self.mediaToPlay
+                      forType:GCKMediaTrackTypeText
+             deviceController:_castDeviceController.mediaControlChannel];
     TracksTableViewController *audioTrackController  = controller.viewControllers[1];
-    [audioTrackController setMedia:self.mediaToPlay forType:GCKMediaTrackTypeAudio deviceController:_chromecastController];
+    [audioTrackController setMedia:self.mediaToPlay
+                           forType:GCKMediaTrackTypeAudio
+                  deviceController:_castDeviceController.mediaControlChannel];
   }
 }
 
@@ -243,7 +250,7 @@ static NSString * const kListTracksPopover = @"listTracksPopover";
 }
 
 - (IBAction)showVolumeSlider:(id)sender {
-  if(self.volumeControls.hidden) {
+  if (self.volumeControls.hidden) {
     self.volumeControls.hidden = NO;
     [self.volumeControls setAlpha:0];
 
@@ -258,13 +265,14 @@ static NSString * const kListTracksPopover = @"listTracksPopover";
   }
   // Do this so if a user taps the screen or plays with the volume slider, it resets the timer
   // for fading the volume controls
-  if(self.fadeVolumeControlTimer != nil) {
+  if (self.fadeVolumeControlTimer != nil) {
     [self.fadeVolumeControlTimer invalidate];
   }
   self.fadeVolumeControlTimer = [NSTimer scheduledTimerWithTimeInterval:3.0
                                                                  target:self
                                                                selector:@selector(fadeVolumeSlider:)
-                                                               userInfo:nil repeats:NO];
+                                                               userInfo:nil
+                                                                repeats:NO];
 }
 
 - (void)fadeVolumeSlider:(NSTimer *)timer {
@@ -287,23 +295,21 @@ static NSString * const kListTracksPopover = @"listTracksPopover";
 }
 
 - (void)updateInterfaceFromCast:(NSTimer*)timer {
-  [_chromecastController updateStatsFromDevice];
-
   if (!_readyToShowInterface)
     return;
 
-  if (_chromecastController.playerState != GCKMediaPlayerStateBuffering) {
+  if (_castDeviceController.playerState != GCKMediaPlayerStateBuffering) {
     [self.castActivityIndicator stopAnimating];
   } else {
     [self.castActivityIndicator startAnimating];
   }
 
-  if (_chromecastController.streamDuration > 0 && !_currentlyDraggingSlider) {
-    _lastKnownTime = _chromecastController.streamPosition;
-    self.currTime.text = [self getFormattedTime:_chromecastController.streamPosition];
-    self.totalTime.text = [self getFormattedTime:_chromecastController.streamDuration];
+  if (_castDeviceController.streamDuration > 0 && !_currentlyDraggingSlider) {
+    _lastKnownTime = _castDeviceController.streamPosition;
+    self.currTime.text = [self getFormattedTime:_castDeviceController.streamPosition];
+    self.totalTime.text = [self getFormattedTime:_castDeviceController.streamDuration];
     [self.slider
-        setValue:(_chromecastController.streamPosition / _chromecastController.streamDuration)
+        setValue:(_castDeviceController.streamPosition / _castDeviceController.streamDuration)
         animated:YES];
   }
   [self updateToolbarControls];
@@ -311,11 +317,11 @@ static NSString * const kListTracksPopover = @"listTracksPopover";
 
 
 - (void)updateToolbarControls {
-  if (_chromecastController.playerState == GCKMediaPlayerStatePaused ||
-      _chromecastController.playerState == GCKMediaPlayerStateIdle) {
+  if (_castDeviceController.playerState == GCKMediaPlayerStatePaused ||
+      _castDeviceController.playerState == GCKMediaPlayerStateIdle) {
     [self.playButton setImage:self.playImage forState:UIControlStateNormal];
-  } else if (_chromecastController.playerState == GCKMediaPlayerStatePlaying ||
-             _chromecastController.playerState == GCKMediaPlayerStateBuffering) {
+  } else if (_castDeviceController.playerState == GCKMediaPlayerStatePlaying ||
+      _castDeviceController.playerState == GCKMediaPlayerStateBuffering) {
     [self.playButton setImage:self.pauseImage forState:UIControlStateNormal];
   }
 }
@@ -337,11 +343,12 @@ static NSString * const kListTracksPopover = @"listTracksPopover";
 }
 
 - (void)configureView {
-  if (self.mediaToPlay && _chromecastController.isConnected) {
+  if (self.mediaToPlay && _castDeviceController.deviceManager.isConnectedToApp) {
     NSURL* url = self.mediaToPlay.customData;
     NSString *title = [_mediaToPlay.metadata stringForKey:kGCKMetadataKeyTitle];
     self.castingToLabel.text =
-        [NSString stringWithFormat:@"Casting to %@", _chromecastController.deviceName];
+        [NSString stringWithFormat:@"Casting to %@",
+            _castDeviceController.deviceManager.device.friendlyName];
     self.mediaTitleLabel.text = title;
 
     NSLog(@"Casting movie %@ at starting time %f", url, _mediaStartTime);
@@ -363,13 +370,13 @@ static NSString * const kListTracksPopover = @"listTracksPopover";
 
     self.cc.enabled = [self.mediaToPlay.mediaTracks count] > 0;
 
-    NSString *cur = [_chromecastController.mediaInformation.metadata
+    NSString *cur = [_castDeviceController.mediaInformation.metadata
                         stringForKey:kGCKMetadataKeyTitle];
     // If the newMedia is already playing, join the existing session.
     if (![title isEqualToString:cur] ||
-          _chromecastController.playerState == GCKMediaPlayerStateIdle) {
+        _castDeviceController.playerState == GCKMediaPlayerStateIdle) {
       //Cast the movie!
-      [_chromecastController loadMedia:self.mediaToPlay
+      [_castDeviceController loadMedia:self.mediaToPlay
                              startTime:_mediaStartTime
                               autoPlay:YES];
       _joinExistingSession = NO;
@@ -396,10 +403,10 @@ static NSString * const kListTracksPopover = @"listTracksPopover";
 
 #pragma mark - On - screen UI elements
 - (IBAction)playButtonClicked:(id)sender {
-  if ([_chromecastController isPaused]) {
-    [_chromecastController pauseCastMedia:NO];
+  if (_castDeviceController.playerState == GCKMediaPlayerStatePaused) {
+    [_castDeviceController.mediaControlChannel play];
   } else {
-    [_chromecastController pauseCastMedia:YES];
+    [_castDeviceController.mediaControlChannel pause];
   }
 }
 
@@ -418,14 +425,14 @@ static NSString * const kListTracksPopover = @"listTracksPopover";
 // This is continuous, so we can update the current/end time labels
 - (IBAction)onSliderValueChanged:(id)sender {
   float pctThrough = [self.slider value];
-  if (_chromecastController.streamDuration > 0) {
+  if (_castDeviceController.streamDuration > 0) {
     self.currTime.text =
-        [self getFormattedTime:(pctThrough * _chromecastController.streamDuration)];
+        [self getFormattedTime:(pctThrough * _castDeviceController.streamDuration)];
   }
 }
 // This is called only on one of the two touch up events
 - (void)touchIsFinished {
-  [_chromecastController setPlaybackPercent:[self.slider value]];
+  [_castDeviceController setPlaybackPercent:[self.slider value]];
   _currentlyDraggingSlider = NO;
 }
 
@@ -452,7 +459,7 @@ static NSString * const kListTracksPopover = @"listTracksPopover";
  * Called when the playback state of media on the device changes.
  */
 - (void)didReceiveMediaStateChange {
-  NSString *currentlyPlayingMediaTitle = [_chromecastController.mediaInformation.metadata
+  NSString *currentlyPlayingMediaTitle = [_castDeviceController.mediaInformation.metadata
                                           stringForKey:kGCKMetadataKeyTitle];
   NSString *title = [_mediaToPlay.metadata stringForKey:kGCKMetadataKeyTitle];
 
@@ -463,7 +470,7 @@ static NSString * const kListTracksPopover = @"listTracksPopover";
     return;
   }
 
-  if (_chromecastController.playerState == GCKMediaPlayerStateIdle && _mediaToPlay) {
+  if (_castDeviceController.playerState == GCKMediaPlayerStateIdle && _mediaToPlay) {
     [self maybePopController];
     return;
   }
@@ -491,7 +498,7 @@ static NSString * const kListTracksPopover = @"listTracksPopover";
   // Play/Pause button.
   self.playButton = [UIButton buttonWithType:UIButtonTypeSystem];
   [self.playButton setFrame:CGRectMake(0, 0, 40, 40)];
-  if ([_chromecastController isPaused]) {
+  if (_castDeviceController.playerState == GCKMediaPlayerStatePaused) {
     [self.playButton setImage:self.playImage forState:UIControlStateNormal];
   } else {
     [self.playButton setImage:self.pauseImage forState:UIControlStateNormal];
@@ -500,14 +507,13 @@ static NSString * const kListTracksPopover = @"listTracksPopover";
                       action:@selector(playButtonClicked:)
             forControlEvents:UIControlEventTouchUpInside];
   self.playButton.tintColor = [UIColor whiteColor];
-  NSLayoutConstraint *constraint =[NSLayoutConstraint
-                                   constraintWithItem:self.playButton
-                                   attribute:NSLayoutAttributeHeight
-                                   relatedBy:NSLayoutRelationEqual
-                                   toItem:self.playButton
-                                   attribute:NSLayoutAttributeWidth
-                                   multiplier:1.0
-                                   constant:0.0f];
+  NSLayoutConstraint *constraint =[NSLayoutConstraint constraintWithItem:self.playButton
+                                                               attribute:NSLayoutAttributeHeight
+                                                               relatedBy:NSLayoutRelationEqual
+                                                                  toItem:self.playButton
+                                                               attribute:NSLayoutAttributeWidth
+                                                              multiplier:1.0
+                                                                constant:0.0f];
   [self.playButton addConstraint:constraint];
   self.playButton.translatesAutoresizingMaskIntoConstraints = NO;
 
@@ -534,36 +540,35 @@ static NSString * const kListTracksPopover = @"listTracksPopover";
   [self.volumeButton setFrame:CGRectMake(0, 0, 40, 40)];
   [self.volumeButton setImage:[UIImage imageNamed:@"icon_volume3"] forState:UIControlStateNormal];
   [self.volumeButton addTarget:self
-                      action:@selector(showVolumeSlider:)
-            forControlEvents:UIControlEventTouchUpInside];
+                        action:@selector(showVolumeSlider:)
+              forControlEvents:UIControlEventTouchUpInside];
   self.volumeButton.tintColor = [UIColor whiteColor];
-  constraint =[NSLayoutConstraint
-                                   constraintWithItem:self.volumeButton
-                                   attribute:NSLayoutAttributeHeight
-                                   relatedBy:NSLayoutRelationEqual
-                                   toItem:self.volumeButton
-                                   attribute:NSLayoutAttributeWidth
-                                   multiplier:1.0
-                                   constant:0.0f];
+  constraint =[NSLayoutConstraint constraintWithItem:self.volumeButton
+                                           attribute:NSLayoutAttributeHeight
+                                           relatedBy:NSLayoutRelationEqual
+                                              toItem:self.volumeButton
+                                           attribute:NSLayoutAttributeWidth
+                                          multiplier:1.0
+                                            constant:0.0f];
   [self.volumeButton addConstraint:constraint];
   self.volumeButton.translatesAutoresizingMaskIntoConstraints = NO;
 
   // Tracks selector.
   self.cc = [UIButton buttonWithType:UIButtonTypeSystem];
   [self.cc setFrame:CGRectMake(0, 0, 40, 40)];
-  [self.cc setImage:[UIImage imageNamed:@"closed_caption_white.png.png"] forState:UIControlStateNormal];
+  [self.cc setImage:[UIImage imageNamed:@"closed_caption_white.png.png"]
+                               forState:UIControlStateNormal];
   [self.cc addTarget:self
                         action:@selector(subtitleButtonClicked:)
               forControlEvents:UIControlEventTouchUpInside];
   self.cc.tintColor = [UIColor whiteColor];
-  constraint =[NSLayoutConstraint
-               constraintWithItem:self.cc
-               attribute:NSLayoutAttributeHeight
-               relatedBy:NSLayoutRelationEqual
-               toItem:self.cc
-               attribute:NSLayoutAttributeWidth
-               multiplier:1.0
-               constant:0.0f];
+  constraint =[NSLayoutConstraint constraintWithItem:self.cc
+                                           attribute:NSLayoutAttributeHeight
+                                           relatedBy:NSLayoutRelationEqual
+                                              toItem:self.cc
+                                           attribute:NSLayoutAttributeWidth
+                                          multiplier:1.0
+                                            constant:0.0f];
   [self.cc addConstraint:constraint];
   self.cc.translatesAutoresizingMaskIntoConstraints = NO;
 
@@ -605,8 +610,9 @@ static NSString * const kListTracksPopover = @"listTracksPopover";
   self.volumeControls.layer.masksToBounds = YES;
 
   // Layout.
-  NSString *hlayout =
-  @"|-(<=5)-[playButton(==35)]-[volumeButton(==30)]-[currTime]-[slider(>=90)]-[totalTime]-[ccButton(==playButton)]-(<=5)-|";
+  NSString *hlayout = [NSString stringWithFormat:@"%@%@",
+      @"|-(<=5)-[playButton(==35)]-[volumeButton(==30)]-[currTime]",
+      @"-[slider(>=90)]-[totalTime]-[ccButton(==playButton)]-(<=5)-|"];
   self.viewsDictionary = @{ @"slider" : self.slider,
                             @"currTime" : self.currTime,
                             @"totalTime" :  self.totalTime,
@@ -617,13 +623,15 @@ static NSString * const kListTracksPopover = @"listTracksPopover";
   [self.toolbarView addConstraints:
    [NSLayoutConstraint constraintsWithVisualFormat:hlayout
                                            options:NSLayoutFormatAlignAllCenterY
-                                           metrics:nil views:self.viewsDictionary]];
+                                           metrics:nil
+                                             views:self.viewsDictionary]];
 
-   NSString *vlayout = @"V:[slider(==35)]-|";
+  NSString *vlayout = @"V:[slider(==35)]-|";
   [self.toolbarView addConstraints:
    [NSLayoutConstraint constraintsWithVisualFormat:vlayout
                                            options:0
-                                           metrics:nil views:self.viewsDictionary]];
+                                           metrics:nil
+                                             views:self.viewsDictionary]];
 
   // Autolayout toolbar.
   NSString *toolbarVLayout = @"V:[toolbar(==44)]|";
@@ -631,10 +639,19 @@ static NSString * const kListTracksPopover = @"listTracksPopover";
   [self.view addConstraints:
    [NSLayoutConstraint constraintsWithVisualFormat:toolbarVLayout
                                            options:0
-                                           metrics:nil views:@{@"toolbar" : self.toolbarView}]];
+                                           metrics:nil
+                                             views:@{@"toolbar" : self.toolbarView}]];
   [self.view addConstraints:
    [NSLayoutConstraint constraintsWithVisualFormat:toolbarHLayout
                                            options:0
-                                           metrics:nil views:@{@"toolbar" : self.toolbarView}]];
+                                           metrics:nil
+                                             views:@{@"toolbar" : self.toolbarView}]];
 }
+
+#pragma mark Volume listener.
+
+- (void)volumeDidChange {
+  self.volumeSlider.value = _castDeviceController.deviceManager.deviceVolume;
+}
+
 @end

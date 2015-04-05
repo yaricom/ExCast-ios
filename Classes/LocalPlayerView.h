@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #import "Media.h"
+
 #import <UIKit/UIKit.h>
 
 /* Navigation Bar styles/ */
@@ -50,9 +50,9 @@ typedef NS_ENUM(NSUInteger, LPVNavBarStyle) {
 /* Local player elapsed time. */
 @property(nonatomic) NSInteger playbackTime;
 /* YES if the video is playing or paused in the local player. */
-@property(nonatomic,readonly) BOOL playingLocally;
+@property(nonatomic, readonly) BOOL playingLocally;
 /* YES if the video is fullscreen. */
-@property(nonatomic,readonly) BOOL fullscreen;
+@property(nonatomic, readonly) BOOL fullscreen;
 
 /* Set the media to be displayed and played. */
 - (void)setMedia:(Media *)media;

@@ -23,11 +23,13 @@
   // Asynchronously load the media json
   NSOperationQueue *queue = [[NSOperationQueue alloc] init];
 
-  NSURL *mediaURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", MEDIA_URL_BASE, MEDIA_URL_FILE]];
+  NSURL *mediaURL = [NSURL URLWithString:
+                        [NSString stringWithFormat:@"%@%@", MEDIA_URL_BASE, MEDIA_URL_FILE]];
   NSURLRequest *request = [NSURLRequest requestWithURL:mediaURL];
   [NSURLConnection sendAsynchronousRequest:request
-                  queue:queue
-      completionHandler:^(NSURLResponse *response, NSData *jsonData, NSError *connectionError) {
+                                     queue:queue
+                         completionHandler:
+      ^(NSURLResponse *response, NSData *jsonData, NSError *connectionError) {
         if (connectionError) {
           // Handle error here.
           NSLog(@"Media list fetch error! %@", [connectionError localizedDescription]);

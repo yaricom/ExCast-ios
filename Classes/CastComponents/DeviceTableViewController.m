@@ -14,10 +14,18 @@
 
 #import "AppDelegate.h"
 #import "DeviceTableViewController.h"
-#import "ChromecastDeviceController.h"
 #import "SimpleImageFetcher.h"
 
-static NSString * const kVersionFooter = @"CastVideos-iOS version";
+#import <GoogleCast/GCKDevice.h>
+#import <GoogleCast/GCKDeviceManager.h>
+#import <GoogleCast/GCKDeviceScanner.h>
+#import <GoogleCast/GCKImage.h>
+#import <GoogleCast/GCKMediaControlChannel.h>
+#import <GoogleCast/GCKMediaInformation.h>
+#import <GoogleCast/GCKMediaMetadata.h>
+#import <GoogleCast/GCKMediaStatus.h>
+
+static NSString * const kVersionFooter = @"v";
 
 @implementation DeviceTableViewController {
   BOOL _isManualVolumeChange;
@@ -27,21 +35,39 @@ static NSString * const kVersionFooter = @"CastVideos-iOS version";
 
 - (void)viewDidLoad {
   [super viewDidLoad];
-  if ([ChromecastDeviceController sharedInstance].applicationID) {
+  if (_delegate.deviceScanner) {
     // Disable passive scan when we appear to get latest updates.
-    [ChromecastDeviceController sharedInstance].deviceScanner.passiveScan = NO;
+    _delegate.deviceScanner.passiveScan = NO;
   }
   _statusBarStyle = [UIApplication sharedApplication].statusBarStyle;
   [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+  [super viewWillAppear:animated];
+
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(volumeDidChange)
+                                               name:@"castVolumeChanged"
+                                             object:nil];
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(scanDidChange)
+                                               name:@"castScanStatusUpdated"
+                                             object:nil];
+}
+
 - (void)viewWillDisappear:(BOOL)animated {
   [super viewWillDisappear:animated];
-  if ([ChromecastDeviceController sharedInstance].applicationID) {
+  if (_delegate.deviceScanner) {
     // Enable passive scan after the user has finished interacting.
-    [ChromecastDeviceController sharedInstance].deviceScanner.passiveScan = YES;
+    _delegate.deviceScanner.passiveScan = YES;
   }
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
   [[UIApplication sharedApplication] setStatusBarStyle:_statusBarStyle];
+}
+
+- (void)scanDidChange {
+  [self.tableView reloadData];
 }
 
 
@@ -57,12 +83,12 @@ static NSString * const kVersionFooter = @"CastVideos-iOS version";
     return 1;
   }
   // Return the number of rows in the section.
-  if ([ChromecastDeviceController sharedInstance].isConnected == NO) {
+  if (_delegate.deviceManager.isConnectedToApp == NO) {
     self.title = @"Connect to";
-    return [ChromecastDeviceController sharedInstance].deviceScanner.devices.count;
+    return _delegate.deviceScanner.devices.count;
   } else {
     self.title =
-        [NSString stringWithFormat:@"%@", [ChromecastDeviceController sharedInstance].deviceName];
+        [NSString stringWithFormat:@"%@", _delegate.deviceManager.device.friendlyName];
     return 3;
   }
 }
@@ -84,7 +110,7 @@ static NSString * const kVersionFooter = @"CastVideos-iOS version";
   static NSString *CellIdForDeviceName = @"deviceName";
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdForDeviceName
                                                           forIndexPath:indexPath];
-  GCKDevice *device = [[ChromecastDeviceController sharedInstance].deviceScanner.devices
+  GCKDevice *device = [_delegate.deviceScanner.devices
                           objectAtIndex:indexPath.row];
   cell.textLabel.text = device.friendlyName;
   cell.detailTextLabel.text = device.statusText ? device.statusText : device.modelName;
@@ -95,31 +121,30 @@ static NSString * const kVersionFooter = @"CastVideos-iOS version";
 - (UITableViewCell *)tableView:(UITableView *)tableView
    mediaCellForRowAtIndexPath:(NSIndexPath *)indexPath {
   static NSString *CellIdForPlayerController = @"playerController";
-  ChromecastDeviceController *castControl = [ChromecastDeviceController sharedInstance];
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdForPlayerController
                                                           forIndexPath:indexPath];
-  cell.textLabel.text = [castControl.mediaInformation.metadata stringForKey:kGCKMetadataKeyTitle];
-  cell.detailTextLabel.text = [castControl.mediaInformation.metadata
+  cell.textLabel.text = [_delegate.mediaInformation.metadata stringForKey:kGCKMetadataKeyTitle];
+  cell.detailTextLabel.text = [_delegate.mediaInformation.metadata
                                stringForKey:kGCKMetadataKeySubtitle];
 
   // Accessory is the play/pause button.
-  BOOL paused = castControl.playerState == GCKMediaPlayerStatePaused;
-  UIImage *playImage = (paused ? [UIImage imageNamed:@"media_play"]
-                        : [UIImage imageNamed:@"media_pause"]);
+  BOOL paused = _delegate.mediaControlChannel.mediaStatus.playerState == GCKMediaPlayerStatePaused;
+  UIImage *playImage = paused ?
+      [UIImage imageNamed:@"media_play"] : [UIImage imageNamed:@"media_pause"];
   CGRect frame = CGRectMake(0, 0, playImage.size.width, playImage.size.height);
   UIButton *button = [[UIButton alloc] initWithFrame:frame];
   [button setBackgroundImage:playImage forState:UIControlStateNormal];
-  [button addTarget:self
-             action:@selector(playPausePressed:)
-   forControlEvents:UIControlEventTouchUpInside];
+  [button     addTarget:self
+                 action:@selector(playPausePressed:)
+       forControlEvents:UIControlEventTouchUpInside];
   cell.accessoryView = button;
 
   // Asynchronously load the table view image
-  if (castControl.mediaInformation.metadata.images.count > 0) {
+  if (_delegate.mediaInformation.metadata.images.count > 0) {
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
 
     dispatch_async(queue, ^{
-      GCKImage *mediaImage = [castControl.mediaInformation.metadata.images objectAtIndex:0];
+      GCKImage *mediaImage = [_delegate.mediaInformation.metadata.images objectAtIndex:0];
       UIImage *image =
           [UIImage imageWithData:[SimpleImageFetcher getDataFromImageURL:mediaImage.URL]];
 
@@ -142,20 +167,16 @@ static NSString * const kVersionFooter = @"CastVideos-iOS version";
   static NSString *CellIdForVolumeControl = @"volumeController";
   static int TagForVolumeSlider = 201;
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdForVolumeControl
-                                         forIndexPath:indexPath];
+                                                          forIndexPath:indexPath];
 
   _volumeSlider = (UISlider *)[cell.contentView viewWithTag:TagForVolumeSlider];
   _volumeSlider.minimumValue = 0;
   _volumeSlider.maximumValue = 1.0;
-  _volumeSlider.value = [ChromecastDeviceController sharedInstance].deviceVolume;
+  _volumeSlider.value = _delegate.deviceManager.deviceVolume;
   _volumeSlider.continuous = NO;
   [_volumeSlider addTarget:self
                     action:@selector(sliderValueChanged:)
           forControlEvents:UIControlEventValueChanged];
-  [[NSNotificationCenter defaultCenter] addObserver:self
-                                           selector:@selector(receivedVolumeChangedNotification:)
-                                               name:@"Volume changed"
-                                             object:[ChromecastDeviceController sharedInstance]];
   return cell;
 }
 
@@ -170,13 +191,13 @@ static NSString * const kVersionFooter = @"CastVideos-iOS version";
   if (indexPath.section == 1) {
     // Version string.
     cell = [self tableView:tableView versionCellForRowAtIndexPath:indexPath];
-  } else if ([ChromecastDeviceController sharedInstance].isConnected == NO) {
+  } else if (_delegate.deviceManager.isConnectedToApp == NO) {
     // Device chooser.
     cell = [self tableView:tableView deviceCellForRowAtIndexPath:indexPath];
   } else {
     // Connection manager.
     if (indexPath.row == 0) {
-      if ([ChromecastDeviceController sharedInstance].isPlayingMedia == NO) {
+      if (_delegate.mediaControlChannel.mediaStatus.playerState == GCKMediaPlayerStateIdle) {
         // Display the ready status message.
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdForReadyStatus
                                                forIndexPath:indexPath];
@@ -198,15 +219,18 @@ static NSString * const kVersionFooter = @"CastVideos-iOS version";
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-  ChromecastDeviceController *castControl = [ChromecastDeviceController sharedInstance];
-  if (castControl.isConnected == NO) {
-    if (indexPath.row < castControl.deviceScanner.devices.count) {
-      GCKDevice *device = [castControl.deviceScanner.devices objectAtIndex:indexPath.row];
+  GCKDeviceManager *deviceManager = _delegate.deviceManager;
+  GCKDeviceScanner *deviceScanner = _delegate.deviceScanner;
+  if (deviceManager.isConnectedToApp == NO) {
+    if (indexPath.row < deviceScanner.devices.count) {
+      GCKDevice *device = [deviceScanner.devices objectAtIndex:indexPath.row];
       NSLog(@"Selecting device:%@", device.friendlyName);
-      [castControl connectToDevice:device];
+      [_delegate connectToDevice:device];
     }
-  } else if (castControl.isPlayingMedia == YES && indexPath.row == 0) {
-    [castControl displayCurrentlyPlayingMedia];
+  } else if (_delegate.mediaControlChannel.mediaStatus.playerState != GCKMediaPlayerStateIdle
+      && indexPath.row == 0
+      && [_delegate respondsToSelector:@selector(displayCurrentlyPlayingMedia)]) {
+    [_delegate displayCurrentlyPlayingMedia];
   }
   // Dismiss the view.
   [self dismiss];
@@ -218,7 +242,7 @@ static NSString * const kVersionFooter = @"CastVideos-iOS version";
 }
 
 - (IBAction)disconnectDevice:(id)sender {
-  [[ChromecastDeviceController sharedInstance] disconnectFromDevice];
+  [_delegate.deviceManager disconnect];
 
   // Dismiss the view.
   [self dismiss];
@@ -237,10 +261,13 @@ static NSString * const kVersionFooter = @"CastVideos-iOS version";
 }
 
 - (void)playPausePressed:(id)sender {
-  ChromecastDeviceController *castControl = [ChromecastDeviceController sharedInstance];
-  BOOL paused = castControl.playerState == GCKMediaPlayerStatePaused;
+  BOOL paused = _delegate.mediaControlChannel.mediaStatus.playerState == GCKMediaPlayerStatePaused;
   paused = !paused; // Flip the state from current.
-  [castControl pauseCastMedia:paused];
+  if (paused) {
+    [_delegate.mediaControlChannel pause];
+  } else {
+    [_delegate.mediaControlChannel play];
+  }
 
   // change the icon.
   UIButton *button = sender;
@@ -251,19 +278,16 @@ static NSString * const kVersionFooter = @"CastVideos-iOS version";
 
 # pragma mark - volume
 
-- (void)receivedVolumeChangedNotification:(NSNotification *) notification {
-  if(!_isManualVolumeChange) {
-    ChromecastDeviceController *deviceController = (ChromecastDeviceController *) notification.object;
-    _volumeSlider.value = deviceController.deviceVolume;
+- (void)volumeDidChange {
+  if (_volumeSlider) {
+    _volumeSlider.value = _delegate.deviceManager.deviceVolume;
   }
 }
 
 - (IBAction)sliderValueChanged:(id)sender {
   UISlider *slider = (UISlider *) sender;
-  _isManualVolumeChange = YES;
   NSLog(@"Got new slider value: %.2f", slider.value);
-  [ChromecastDeviceController sharedInstance].deviceVolume = slider.value;
-  _isManualVolumeChange = NO;
+  [_delegate.deviceManager setVolume:slider.value];
 }
 
 @end

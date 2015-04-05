@@ -12,10 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "ChromecastDeviceController.h"
-#import "GCKMediaInformation+LocalMedia.h"
+#import <GoogleCast/GCKImage.h>
 #import <GoogleCast/GCKMediaMetadata.h>
+#import <GoogleCast/GCKMediaTextTrackStyle.h>
 #import <GoogleCast/GCKMediaTrack.h>
+
+#import "CastViewController.h"
+#import "GCKMediaInformation+LocalMedia.h"
 #import "MediaTrack.h"
 
 @implementation GCKMediaInformation (LocalMedia)
@@ -23,16 +26,18 @@
 + (GCKMediaInformation *)mediaInformationFromLocalMedia:(Media *)media {
   NSMutableArray *tracks = [NSMutableArray arrayWithCapacity:media.tracks.count];
   for (MediaTrack *track in media.tracks) {
-    [tracks addObject:[[GCKMediaTrack alloc] initWithIdentifier:track.identifier
-                            contentIdentifier:[track.url absoluteString]
-                                  contentType:@"text/vtt"
-                                    type:[self trackTypeFrom:track.type]
-                                  textSubtype:[self trackSubtypeFrom:track.subtype]
-                                         name:track.name
-                                 languageCode:track.language
-                                   customData:nil]];
+    [tracks addObject:
+        [[GCKMediaTrack alloc] initWithIdentifier:track.identifier
+                                contentIdentifier:[track.url absoluteString]
+                                      contentType:@"text/vtt"
+                                             type:[self trackTypeFrom:track.type]
+                                      textSubtype:[self trackSubtypeFrom:track.subtype]
+                                             name:track.name
+                                     languageCode:track.language
+                                       customData:nil]];
   }
-  GCKMediaMetadata *metadata = [[GCKMediaMetadata alloc] initWithMetadataType:GCKMediaMetadataTypeGeneric];
+  GCKMediaMetadata *metadata =
+      [[GCKMediaMetadata alloc] initWithMetadataType:GCKMediaMetadataTypeGeneric];
   if (media.title) {
     [metadata setString:media.title forKey:kGCKMetadataKeyTitle];
   }
@@ -49,7 +54,15 @@
     [metadata setString:[media.posterURL absoluteString] forKey:kCastComponentPosterURL];
   }
 
-  GCKMediaInformation *mi = [[GCKMediaInformation alloc] initWithContentID:[media.URL absoluteString] streamType:GCKMediaStreamTypeNone contentType:media.mimeType metadata:metadata streamDuration:0 mediaTracks:tracks textTrackStyle:[ChromecastDeviceController sharedInstance].textTrackStyle customData:nil];
+  GCKMediaInformation *mi =
+      [[GCKMediaInformation alloc] initWithContentID:[media.URL absoluteString]
+                                          streamType:GCKMediaStreamTypeNone
+                                         contentType:media.mimeType
+                                            metadata:metadata
+                                      streamDuration:0
+                                         mediaTracks:tracks
+                                      textTrackStyle:[GCKMediaTextTrackStyle createDefault]
+                                          customData:nil];
   return mi;
 }
 

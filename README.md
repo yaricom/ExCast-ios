@@ -15,7 +15,10 @@ Here is the list of other reference apps:
 ## Setup Instructions
 * Get a Chromecast device and get it set up for development: https://developers.google.com/cast/docs/developers#Get_started
 * Register an application on the Developers Console [http://cast.google.com/publish](http://cast.google.com/publish "Google Cast Developer Console"). The easiest would be to use the Styled Media Receiver option there. You will get an App ID when you finish registering your application.
-* Setup the project dependencies in xCode: copy the GoogleCast.framework and CastFrameworkAssets.xcassets to the root folder of the project.
+* Setup the project dependencies in xCode using Cocoapods. 
+** If necessary, install Cocoapods: See this [guide](http://guides.cocoapods.org/using/getting-started.html)
+** In the CastVideos-ios directory, run `pod install`
+** Open CastVideos-ios.xcworkspace (not the .xcproject)
 * In AppDelegate.m, replace the value after .applicationID with your app identifier from the Google Cast Developer Console. When you are done, it will look something like: 
   * [ChromecastDeviceController sharedInstance].applicationID = @"1234ABCD";
 
