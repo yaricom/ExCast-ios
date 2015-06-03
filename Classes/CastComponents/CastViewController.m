@@ -159,7 +159,8 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
   [super viewDidAppear:animated];
   self.visible = true;
 
-  if (!_castDeviceController.deviceManager.isConnectedToApp) {
+  if (_castDeviceController.deviceManager.applicationConnectionState
+      != GCKConnectionStateConnected) {
     // If we're not connected, exit.
     [self maybePopController];
   }
@@ -343,7 +344,9 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
 }
 
 - (void)configureView {
-  if (self.mediaToPlay && _castDeviceController.deviceManager.isConnectedToApp) {
+  if (self.mediaToPlay &&
+      _castDeviceController.deviceManager.applicationConnectionState == GCKConnectionStateConnected)
+  {
     NSURL* url = self.mediaToPlay.customData;
     NSString *title = [_mediaToPlay.metadata stringForKey:kGCKMetadataKeyTitle];
     self.castingToLabel.text =

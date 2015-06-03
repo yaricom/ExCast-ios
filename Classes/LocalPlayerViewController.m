@@ -134,7 +134,7 @@
 /* Play has been pressed in the LocalPlayerView. */
 - (BOOL)continueAfterPlayButtonClicked {
   ChromecastDeviceController *controller = [ChromecastDeviceController sharedInstance];
-  if (controller.deviceManager.isConnectedToApp) {
+  if (controller.deviceManager.applicationConnectionState == GCKConnectionStateConnected) {
     [self castCurrentMedia:0];
     return NO;
   }

@@ -83,7 +83,7 @@ static NSString * const kVersionFooter = @"v";
     return 1;
   }
   // Return the number of rows in the section.
-  if (_delegate.deviceManager.isConnectedToApp == NO) {
+  if (_delegate.deviceManager.applicationConnectionState != GCKConnectionStateConnected) {
     self.title = @"Connect to";
     return _delegate.deviceScanner.devices.count;
   } else {
@@ -191,7 +191,7 @@ static NSString * const kVersionFooter = @"v";
   if (indexPath.section == 1) {
     // Version string.
     cell = [self tableView:tableView versionCellForRowAtIndexPath:indexPath];
-  } else if (_delegate.deviceManager.isConnectedToApp == NO) {
+  } else if (_delegate.deviceManager.applicationConnectionState != GCKConnectionStateConnected) {
     // Device chooser.
     cell = [self tableView:tableView deviceCellForRowAtIndexPath:indexPath];
   } else {
@@ -221,7 +221,7 @@ static NSString * const kVersionFooter = @"v";
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   GCKDeviceManager *deviceManager = _delegate.deviceManager;
   GCKDeviceScanner *deviceScanner = _delegate.deviceScanner;
-  if (deviceManager.isConnectedToApp == NO) {
+  if (deviceManager.applicationConnectionState != GCKConnectionStateConnected) {
     if (indexPath.row < deviceScanner.devices.count) {
       GCKDevice *device = [deviceScanner.devices objectAtIndex:indexPath.row];
       NSLog(@"Selecting device:%@", device.friendlyName);

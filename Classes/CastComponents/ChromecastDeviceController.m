@@ -127,7 +127,7 @@ NSString * const kCastViewController = @"castViewController";
   newPercent = MAX(MIN(1.0, newPercent), 0.0);
 
   NSTimeInterval newTime = newPercent * self.streamDuration;
-  if (newTime > 0 && _deviceManager.isConnectedToApp) {
+  if (newTime > 0 && _deviceManager.applicationConnectionState == GCKConnectionStateConnected) {
     [self.mediaControlChannel seekToTimeInterval:newTime];
   }
 }
@@ -139,7 +139,6 @@ NSString * const kCastViewController = @"castViewController";
  */
 - (void)setApplicationID:(NSString *)applicationID {
   _applicationID = applicationID;
-  self.deviceScanner = [[GCKDeviceScanner alloc] init];
 
   // Create filter criteria to only show devices that can run your app
   GCKFilterCriteria * filterCriteria =
@@ -150,7 +149,7 @@ NSString * const kCastViewController = @"castViewController";
   // console. Once the app is published in Cast console the cast icon will begin showing up on ios
   // devices. If an app is not published in the Cast console the cast icon will only appear for
   // whitelisted dongles
-  self.deviceScanner.filterCriteria = filterCriteria;
+  self.deviceScanner = [[GCKDeviceScanner alloc] initWithFilterCriteria:filterCriteria];
 
   // Always start a scan as soon as we have an application ID.
   NSLog(@"Starting Scan");
@@ -162,7 +161,7 @@ NSString * const kCastViewController = @"castViewController";
 
 - (void)chooseDevice:(id)sender {
   BOOL showPicker = YES;
-  if (_delegate && [_delegate respondsToSelector:@selector(shouldDisplayModalDeviceController)]) {
+  if ([_delegate respondsToSelector:@selector(shouldDisplayModalDeviceController)]) {
     showPicker = [_delegate shouldDisplayModalDeviceController];
   }
   if (self.controller && showPicker) {
@@ -219,10 +218,17 @@ NSString * const kCastViewController = @"castViewController";
 # pragma mark - GCKDeviceManagerDelegate
 
 - (void)deviceManagerDidConnect:(GCKDeviceManager *)deviceManager {
-  if (!self.isReconnecting
-      || ![deviceManager.applicationMetadata.applicationID isEqualToString:_applicationID]) {
+  BOOL appMatch = [deviceManager.applicationMetadata.applicationID isEqualToString:_applicationID];
+  if (!_isReconnecting || !appMatch) {
+    // Explicit connect request when a different app (or none) is Casting.
     [self.deviceManager launchApplication:_applicationID];
+  } else if (_isReconnecting &&
+             deviceManager.applicationMetadata.applicationID &&
+             !appMatch) {
+    // Implicit reconnect but an application other than ours is playing, disconnect.
+    [deviceManager disconnect];
   } else {
+    // Reconnect, or our app is playing. Attempt to join our session if there.
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString* lastSessionID = [defaults valueForKey:@"lastSessionID"];
     [self.deviceManager joinApplication:_applicationID sessionID:lastSessionID];
@@ -243,8 +249,8 @@ didConnectToCastApplication:(GCKApplicationMetadata *)applicationMetadata
   [[NSNotificationCenter defaultCenter] postNotificationName:@"castApplicationConnected"
                                                       object:self];
 
-  if ([self.delegate respondsToSelector:@selector(didConnectToDevice:)]) {
-    [self.delegate didConnectToDevice:deviceManager.device];
+  if ([_delegate respondsToSelector:@selector(didConnectToDevice:)]) {
+    [_delegate didConnectToDevice:deviceManager.device];
   }
 
   self.isReconnecting = NO;
@@ -286,6 +292,9 @@ didConnectToCastApplication:(GCKApplicationMetadata *)applicationMetadata
   _mediaInformation = nil;
   [self updateCastIconButtonStates];
 
+  if ([_delegate respondsToSelector:@selector(didDisconnect)]) {
+    [_delegate didDisconnect];
+  }
 }
 
 - (void)deviceManager:(GCKDeviceManager *)deviceManager
@@ -296,10 +305,8 @@ didConnectToCastApplication:(GCKApplicationMetadata *)applicationMetadata
     NSLog(@"Application disconnected with error: %@", error);
   }
 
-  if (_delegate && [_delegate respondsToSelector:@selector(didDisconnect)]) {
-    [_delegate didDisconnect];
-  }
-  [self updateCastIconButtonStates];
+  // If we've lost the app connection, tear down the device connection.
+  [deviceManager disconnect];
 }
 
 # pragma mark - Reconnection
@@ -329,8 +336,8 @@ didConnectToCastApplication:(GCKApplicationMetadata *)applicationMetadata
     [self connectToDevice:device];
   }
 
-  if ([self.delegate respondsToSelector:@selector(didDiscoverDeviceOnNetwork)]) {
-    [self.delegate didDiscoverDeviceOnNetwork];
+  if ([_delegate respondsToSelector:@selector(didDiscoverDeviceOnNetwork)]) {
+    [_delegate didDiscoverDeviceOnNetwork];
   }
 
   [[NSNotificationCenter defaultCenter] postNotificationName:@"castScanStatusUpdated" object:self];
