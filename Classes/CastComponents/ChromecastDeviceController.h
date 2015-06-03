@@ -45,6 +45,11 @@ extern NSString * const kCastViewController;
 - (void)didDiscoverDeviceOnNetwork;
 
 /**
+ * Called when the connected device's queue updates.
+ */
+- (void)didUpdateQueueForDevice:(GCKDevice *)device;
+
+/**
  *  Whether or not the device controller should be displayed.
  *
  *  @return YES to display, NO to prevent.
@@ -143,13 +148,13 @@ extern NSString * const kCastViewController;
          autoPlay:(BOOL)autoPlay;
 
 /** 
- *  Enable Cast enhancing of the controller by adding icons
- *  and other UI elements. Signals that this view controller should be 
- *  used for presenting UI elements.
+ *  Enable Cast enhancing of a controller by returning a UIBarButtonItem to show the Cast
+ *  device status. Signals that a view controller is being used to present the UI.
  *
- *  @param controller The UIViewController to decorate.
+ *  @param item UIViewController to use as a parent for queue actions
+ *  @return item The decorated UIBarButtonItem, always non-nil
  */
-- (void)decorateViewController:(UIViewController *)controller;
+- (UIBarButtonItem *)queueItemForController:(UIViewController *)controller;
 
 /**
  *  Request an update for the minicontroller toolbar. Passed UIViewController must have a

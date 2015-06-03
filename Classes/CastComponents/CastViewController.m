@@ -135,7 +135,8 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
                                              object:nil];
 
   // Add the cast icon to our nav bar.
-  [[ChromecastDeviceController sharedInstance] decorateViewController:self];
+  UIBarButtonItem *item = [[ChromecastDeviceController sharedInstance] queueItemForController:self];
+  self.navigationItem.rightBarButtonItems = @[item];
 
   // Make the navigation bar transparent.
   self.navigationController.navigationBar.translucent = YES;

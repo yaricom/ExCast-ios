@@ -20,10 +20,15 @@
 #import "MediaTableViewController.h"
 #import "SimpleImageFetcher.h"
 
+#import <GoogleCast/GCKDeviceManager.h>
+
 @interface MediaTableViewController () <ChromecastDeviceControllerDelegate>
 
 /** The media to be displayed. */
 @property(nonatomic, strong) MediaListModel *mediaList;
+
+/** The queue button. */
+@property(nonatomic, strong) UIBarButtonItem *showQueueButton;
 
 @end
 
@@ -32,9 +37,11 @@
 - (void)viewDidLoad {
   [super viewDidLoad];
 
-  // Show stylized application title in the titleview.
-  self.navigationItem.titleView =
+  // Show stylized application title as a left-aligned image.
+  UIView *titleView =
       [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo_castvideos.png"]];
+  self.navigationItem.titleView = [[UIView alloc] init];
+  self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:titleView];
 
   // Asynchronously load the media json.
   AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
@@ -44,19 +51,58 @@
     self.title = self.mediaList.mediaTitle;
     [self.tableView reloadData];
   }];
+
+  // Create the queue button.
+  UIImage *playlistImage = [UIImage imageNamed:@"playlist_white.png"];
+  _showQueueButton = [[UIBarButtonItem alloc] initWithImage:playlistImage
+                                                      style:UIBarButtonItemStylePlain
+                                                     target:self
+                                                     action:@selector(showQueue:)];
+
+  GCKDeviceManager *manager = [ChromecastDeviceController sharedInstance].deviceManager;
+  _showQueueButton.enabled = (manager.applicationConnectionState == GCKConnectionStateConnected);
 }
 
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
 
   // Assign ourselves as delegate ONLY in viewWillAppear of a view controller.
-  [ChromecastDeviceController sharedInstance].delegate = self;
-  [[ChromecastDeviceController sharedInstance] decorateViewController:self];
+  ChromecastDeviceController *controller = [ChromecastDeviceController sharedInstance];
+  controller.delegate = self;
+
+  UIBarButtonItem *item = [controller queueItemForController:self];
+  self.navigationItem.rightBarButtonItems = @[item, _showQueueButton];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
   [[ChromecastDeviceController sharedInstance] updateToolbarForViewController:self];
+}
+
+#pragma mark - ChromecastDeviceControllerDelegate
+
+- (void)didConnectToDevice:(GCKDevice *)device {
+  // TODO: The enabled bit dims the button, but it should instead completely hide it.
+  _showQueueButton.enabled = YES;
+}
+
+- (void)didDisconnect {
+  _showQueueButton.enabled = NO;
+}
+
+#pragma mark - Interface
+
+- (void)showQueue:(id)sender {
+  [self performSegueWithIdentifier:@"showQueue" sender:self];
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+  if ([segue.identifier isEqualToString:@"playMedia"]) {
+    NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
+    Media *media = [self.mediaList mediaAtIndex:(int)indexPath.row];
+    // Pass the currently selected media to the next controller if it needs it.
+    [[segue destinationViewController] setMediaToPlay:media];
+  }
 }
 
 #pragma mark - Table View
@@ -101,15 +147,6 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   // Display the media details view.
   [self performSegueWithIdentifier:@"playMedia" sender:self];
-}
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-  if ([[segue identifier] isEqualToString:@"playMedia"]) {
-    NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-    Media *media = [self.mediaList mediaAtIndex:(int)indexPath.row];
-    // Pass the currently selected media to the next controller if it needs it.
-    [[segue destinationViewController] setMediaToPlay:media];
-  }
 }
 
 @end

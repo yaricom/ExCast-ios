@@ -26,11 +26,26 @@
 /* Whether to reset the edges on disappearing. */
 @property(nonatomic) BOOL resetEdgesOnDisappear;
 
+/** The queue button. */
+@property(nonatomic, strong) UIBarButtonItem *showQueueButton;
+
 @end
 
 @implementation LocalPlayerViewController
 
 #pragma mark - ViewController lifecycle
+
+- (void)viewDidLoad {
+  // Create the queue button.
+  UIImage *playlistImage = [UIImage imageNamed:@"playlist_white.png"];
+  _showQueueButton = [[UIBarButtonItem alloc] initWithImage:playlistImage
+                                                      style:UIBarButtonItemStylePlain
+                                                     target:self
+                                                     action:@selector(showQueue:)];
+
+  GCKDeviceManager *manager = [ChromecastDeviceController sharedInstance].deviceManager;
+  _showQueueButton.enabled = (manager.applicationConnectionState == GCKConnectionStateConnected);
+}
 
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
@@ -50,8 +65,10 @@
   }
 
   // Assign ourselves as delegate ONLY in viewWillAppear of a view controller.
-  [ChromecastDeviceController sharedInstance].delegate = self;
-  [[ChromecastDeviceController sharedInstance] decorateViewController:self];
+  ChromecastDeviceController *controller = [ChromecastDeviceController sharedInstance];
+  controller.delegate = self;
+  UIBarButtonItem *item = [controller queueItemForController:self];
+  self.navigationItem.rightBarButtonItems = @[item, _showQueueButton];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -82,6 +99,12 @@
 /* Prefer hiding the status bar if we're full screen. */
 - (BOOL)prefersStatusBarHidden {
   return self.playerView.fullscreen;
+}
+
+#pragma mark - Interface
+
+- (void)showQueue:(id)sender {
+  [self performSegueWithIdentifier:@"showQueue" sender:self];
 }
 
 #pragma mark - Managing the detail item
@@ -169,12 +192,18 @@
  * @param device The device to which the connection was established.
  */
 - (void)didConnectToDevice:(GCKDevice *)device {
+  _showQueueButton.enabled = YES;
+
   if (_playerView.playingLocally) {
     [_playerView pause];
     [self castCurrentMedia:_playerView.playbackTime];
   }
 
   [_playerView showSplashScreen];
+}
+
+- (void)didDisconnect {
+  _showQueueButton.enabled = NO;
 }
 
 /**

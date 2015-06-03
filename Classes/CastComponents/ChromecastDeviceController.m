@@ -52,7 +52,7 @@ NSString * const kCastViewController = @"castViewController";
 /**
  *  The Cast Icon Button controlled by this class.
  */
-@property(nonatomic) CastIconBarButtonItem *castIconButton;
+@property(nonatomic) CastIconButton *castIconButton;
 
 /**
  *  The Cast Mini Controller controlled by this class.
@@ -201,8 +201,10 @@ NSString * const kCastViewController = @"castViewController";
 }
 
 - (void)initControls {
-  self.castIconButton = [CastIconBarButtonItem barButtonItemWithTarget:self
-                                                              selector:@selector(chooseDevice:)];
+  _castIconButton = [CastIconButton buttonWithFrame:CGRectMake(0, 0, 29, 22)];
+  [_castIconButton addTarget:self
+                      action:@selector(chooseDevice:)
+            forControlEvents:UIControlEventTouchUpInside];
   self.castMiniController = [[CastMiniController alloc] initWithDelegate:self];
 }
 
@@ -369,6 +371,15 @@ didConnectToCastApplication:(GCKApplicationMetadata *)applicationMetadata
   [[NSNotificationCenter defaultCenter] postNotificationName:@"castMediaStatusChange" object:self];
 }
 
+- (void)mediaControlChannelDidUpdateQueue:(GCKMediaControlChannel *)mediaControlChannel {
+  NSLog(@"Media control channel queue changed");
+
+  if ([_delegate respondsToSelector:@selector(didUpdateQueueForDevice:)]) {
+    [_delegate didUpdateQueueForDevice:_deviceManager.device];
+  }
+}
+
+
 # pragma mark - Device & Media Management
 
 - (void)connectToDevice:(GCKDevice *)device {
@@ -398,12 +409,14 @@ didConnectToCastApplication:(GCKApplicationMetadata *)applicationMetadata
   return YES;
 }
 
-- (void)decorateViewController:(UIViewController *)controller {
-  self.controller = controller;
-  if (_controller) {
-    self.manageToolbar = false;
-    _controller.navigationItem.rightBarButtonItem = _castIconButton;
+- (UIBarButtonItem *)queueItemForController:(UIViewController *)controller {
+  _controller = controller;
+  if (!_controller) {
+    return nil;
   }
+
+  _manageToolbar = NO;
+  return [[UIBarButtonItem alloc] initWithCustomView:_castIconButton];
 }
 
 - (void)updateToolbarForViewController:(UIViewController *)viewController {

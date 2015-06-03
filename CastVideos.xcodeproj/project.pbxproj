@@ -32,6 +32,11 @@
 		491627AF184FBF9C00351397 /* SimpleImageFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 491627AE184FBF9C00351397 /* SimpleImageFetcher.m */; };
 		496D46FE182DBE9100343F72 /* Media.m in Sources */ = {isa = PBXBuildFile; fileRef = 496D46FD182DBE9100343F72 /* Media.m */; };
 		496D4701182DBE9C00343F72 /* MediaListModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 496D4700182DBE9C00343F72 /* MediaListModel.m */; };
+		5FA883B01B2102C5008D7840 /* QueueTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA883AF1B2102C5008D7840 /* QueueTableViewController.m */; };
+		5FA883B51B210940008D7840 /* playlist_white@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FA883B11B210940008D7840 /* playlist_white@2x.png */; };
+		5FA883B61B210940008D7840 /* playlist_white@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FA883B21B210940008D7840 /* playlist_white@3x.png */; };
+		5FA883B71B210940008D7840 /* playlist@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FA883B31B210940008D7840 /* playlist@2x.png */; };
+		5FA883B81B210940008D7840 /* playlist@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FA883B41B210940008D7840 /* playlist@3x.png */; };
 		CCE5BD43196F037300016BAB /* MediaAccessibility.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE5BD42196F037300016BAB /* MediaAccessibility.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		CCE5BD45196F038400016BAB /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE5BD44196F038400016BAB /* CoreText.framework */; };
 		EB0EAE502A661842D7221B79 /* libPods-CastVideos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FC9B5525AE0F00A7BF2F43E7 /* libPods-CastVideos.a */; };
@@ -96,6 +101,12 @@
 		496D4700182DBE9C00343F72 /* MediaListModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaListModel.m; sourceTree = "<group>"; };
 		4A57F69A5118DA34FB4A308C /* Pods-CastVideos.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CastVideos.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CastVideos/Pods-CastVideos.debug.xcconfig"; sourceTree = "<group>"; };
 		52402E57263507436405B954 /* Pods-CastVideos.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CastVideos.release.xcconfig"; path = "Pods/Target Support Files/Pods-CastVideos/Pods-CastVideos.release.xcconfig"; sourceTree = "<group>"; };
+		5FA883AE1B2102C5008D7840 /* QueueTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueueTableViewController.h; sourceTree = "<group>"; };
+		5FA883AF1B2102C5008D7840 /* QueueTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QueueTableViewController.m; sourceTree = "<group>"; };
+		5FA883B11B210940008D7840 /* playlist_white@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "playlist_white@2x.png"; sourceTree = "<group>"; };
+		5FA883B21B210940008D7840 /* playlist_white@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "playlist_white@3x.png"; sourceTree = "<group>"; };
+		5FA883B31B210940008D7840 /* playlist@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "playlist@2x.png"; sourceTree = "<group>"; };
+		5FA883B41B210940008D7840 /* playlist@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "playlist@3x.png"; sourceTree = "<group>"; };
 		CCE5BD42196F037300016BAB /* MediaAccessibility.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaAccessibility.framework; path = System/Library/Frameworks/MediaAccessibility.framework; sourceTree = SDKROOT; };
 		CCE5BD44196F038400016BAB /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		EF110FAF19759BB30009410F /* CastInstructionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CastInstructionsViewController.h; sourceTree = "<group>"; };
@@ -199,6 +210,8 @@
 				EFD7C20219FE71AF00082842 /* LocalPlayerView.m */,
 				284CBDA0182ADC2D007F65F9 /* LocalPlayerViewController.h */,
 				284CBDA1182ADC2D007F65F9 /* LocalPlayerViewController.m */,
+				5FA883AE1B2102C5008D7840 /* QueueTableViewController.h */,
+				5FA883AF1B2102C5008D7840 /* QueueTableViewController.m */,
 				491627AD184FBF9C00351397 /* SimpleImageFetcher.h */,
 				491627AE184FBF9C00351397 /* SimpleImageFetcher.m */,
 				EFD8A0EE1AAE32AB005808B2 /* GCKMediaInformation+LocalMedia.h */,
@@ -223,23 +236,27 @@
 		284CC025182B0F9B007F65F9 /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				EFB7D7091ADC52AE00628229 /* CastFrameworkAssets.xcassets */,
-				EF775C5B1A49FE9E00995266 /* thumb.png */,
-				EF775C5C1A49FE9E00995266 /* thumb@2x.png */,
-				EF775C5D1A49FE9E00995266 /* thumb@3x.png */,
-				EF23DBA719C0EF7F00DA5ABB /* closed_caption_white.png */,
-				EF23DBA819C0EF7F00DA5ABB /* closed_caption_white@2x.png */,
 				EF110FB21976AA2C0009410F /* cling.png */,
 				EF110FB31976AA2C0009410F /* cling@2x.png */,
-				125F8FC81880BA3300F14A9F /* logo_castvideos.png */,
-				125F8FC91880BA3300F14A9F /* logo_castvideos@2x.png */,
-				129886E11872348A00B013D2 /* video_thumb_mini.png */,
-				129886E21872348A00B013D2 /* video_thumb_mini@2x.png */,
+				EF23DBA719C0EF7F00DA5ABB /* closed_caption_white.png */,
+				EF23DBA819C0EF7F00DA5ABB /* closed_caption_white@2x.png */,
+				284CC026182B0F9B007F65F9 /* Default-568h@2x.png */,
 				12E0CCF118550A0700447896 /* list_outline_white.png */,
 				12E0CCF218550A0700447896 /* list_outline_white@2x.png */,
 				12E0CCF318550A0700447896 /* list_outline.png */,
 				12E0CCF418550A0700447896 /* list_outline@2x.png */,
-				284CC026182B0F9B007F65F9 /* Default-568h@2x.png */,
+				125F8FC81880BA3300F14A9F /* logo_castvideos.png */,
+				125F8FC91880BA3300F14A9F /* logo_castvideos@2x.png */,
+				5FA883B11B210940008D7840 /* playlist_white@2x.png */,
+				5FA883B21B210940008D7840 /* playlist_white@3x.png */,
+				5FA883B31B210940008D7840 /* playlist@2x.png */,
+				5FA883B41B210940008D7840 /* playlist@3x.png */,
+				EF775C5B1A49FE9E00995266 /* thumb.png */,
+				EF775C5C1A49FE9E00995266 /* thumb@2x.png */,
+				EF775C5D1A49FE9E00995266 /* thumb@3x.png */,
+				129886E11872348A00B013D2 /* video_thumb_mini.png */,
+				129886E21872348A00B013D2 /* video_thumb_mini@2x.png */,
+				EFB7D7091ADC52AE00628229 /* CastFrameworkAssets.xcassets */,
 			);
 			path = Images;
 			sourceTree = "<group>";
@@ -336,6 +353,7 @@
 			files = (
 				EF775C601A49FE9E00995266 /* thumb@3x.png in Resources */,
 				EF110FB51976AA2C0009410F /* cling@2x.png in Resources */,
+				5FA883B61B210940008D7840 /* playlist_white@3x.png in Resources */,
 				125F8FCA1880BA3300F14A9F /* logo_castvideos.png in Resources */,
 				125F8FCB1880BA3300F14A9F /* logo_castvideos@2x.png in Resources */,
 				EF110FB41976AA2C0009410F /* cling.png in Resources */,
@@ -344,8 +362,10 @@
 				12E0CD1B18550A0700447896 /* list_outline.png in Resources */,
 				EFD8A0EB1AABD632005808B2 /* Main.storyboard in Resources */,
 				EFD8A0ED1AACFCAF005808B2 /* CastComponents.storyboard in Resources */,
+				5FA883B81B210940008D7840 /* playlist@3x.png in Resources */,
 				EF775C5F1A49FE9E00995266 /* thumb@2x.png in Resources */,
 				284CBDA4182ADC2D007F65F9 /* Images.xcassets in Resources */,
+				5FA883B51B210940008D7840 /* playlist_white@2x.png in Resources */,
 				EF23DBA919C0EF7F00DA5ABB /* closed_caption_white.png in Resources */,
 				EFB7D70A1ADC52AE00628229 /* CastFrameworkAssets.xcassets in Resources */,
 				EF775C5E1A49FE9E00995266 /* thumb.png in Resources */,
@@ -354,6 +374,7 @@
 				EF23DBAA19C0EF7F00DA5ABB /* closed_caption_white@2x.png in Resources */,
 				12E0CD1918550A0700447896 /* list_outline_white.png in Resources */,
 				12E0CD1A18550A0700447896 /* list_outline_white@2x.png in Resources */,
+				5FA883B71B210940008D7840 /* playlist@2x.png in Resources */,
 				284CC02B182B0F9B007F65F9 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -407,6 +428,7 @@
 				284CBD92182ADC2D007F65F9 /* main.m in Sources */,
 				124377D0187CC2B500ADF736 /* DeviceTableViewController.m in Sources */,
 				EFD8A0F01AAE32AB005808B2 /* GCKMediaInformation+LocalMedia.m in Sources */,
+				5FA883B01B2102C5008D7840 /* QueueTableViewController.m in Sources */,
 				491627AF184FBF9C00351397 /* SimpleImageFetcher.m in Sources */,
 				EFD8A0F31AAE8EE3005808B2 /* CastMiniController.m in Sources */,
 				EF23DBAD19C0FF2F00DA5ABB /* TracksTableViewController.m in Sources */,
