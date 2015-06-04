@@ -43,31 +43,31 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
 /* The device manager used for the currently casting media. */
 @property(weak, nonatomic) ChromecastDeviceController *castDeviceController;
 /* The image of the current media. */
-@property IBOutlet UIImageView* thumbnailImage;
+@property IBOutlet UIImageView *thumbnailImage;
 /* The label displaying the currently connected device. */
-@property IBOutlet UILabel* castingToLabel;
+@property IBOutlet UILabel *castingToLabel;
 /* The label displaying the currently playing media. */
-@property(weak, nonatomic) IBOutlet UILabel* mediaTitleLabel;
+@property(weak, nonatomic) IBOutlet UILabel *mediaTitleLabel;
 /* An activity indicator while the cast is starting. */
-@property(weak, nonatomic) IBOutlet UIActivityIndicatorView* castActivityIndicator;
+@property(weak, nonatomic) IBOutlet UIActivityIndicatorView *castActivityIndicator;
 /* A timer to trigger a callback to update the times/slider position. */
-@property(weak, nonatomic) NSTimer* updateStreamTimer;
+@property(weak, nonatomic) NSTimer *updateStreamTimer;
 /* A timer to trigger removal of the volume control. */
-@property(weak, nonatomic) NSTimer* fadeVolumeControlTimer;
+@property(weak, nonatomic) NSTimer *fadeVolumeControlTimer;
 
 /* The time of the play head in the current video. */
-@property(nonatomic) UILabel* currTime;
+@property(nonatomic) UILabel *currTime;
 /* The total time of the video. */
-@property(nonatomic) UILabel* totalTime;
+@property(nonatomic) UILabel *totalTime;
 /* The tracks selector button (for closed captions primarily in this sample). */
-@property(nonatomic) UIButton* cc;
+@property(nonatomic) UIButton *cc;
 /* The button that brings up the volume control: Apple recommends not overriding the hardware
    volume controls, so we use a separate on-screen UI. */
-@property(nonatomic) UIButton* volumeButton;
+@property(nonatomic) UIButton *volumeButton;
 /* The play icon button. */
-@property(nonatomic) UIButton* playButton;
+@property(nonatomic) UIButton *playButton;
 /* A slider for the progress/scrub bar. */
-@property(nonatomic) UISlider* slider;
+@property(nonatomic) UISlider *slider;
 
 /* A containing view for the toolbar. */
 @property(nonatomic) UIView *toolbarView;
@@ -189,7 +189,7 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
 }
 
 - (IBAction)sliderValueChanged:(id)sender {
-  UISlider *slider = (UISlider *) sender;
+  UISlider *slider = (UISlider *)sender;
   NSLog(@"Got new slider value: %.2f", slider.value);
   [_castDeviceController.deviceManager setVolume:slider.value];
 }
@@ -202,12 +202,12 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
       [segue.identifier isEqualToString:kListTracksPopover]) {
     UITabBarController *controller;
     controller = (UITabBarController *)
-        [(UINavigationController *)[segue destinationViewController] visibleViewController];
-    TracksTableViewController *trackController  = controller.viewControllers[0];
+        ((UINavigationController *)segue.destinationViewController).visibleViewController;
+    TracksTableViewController *trackController = controller.viewControllers[0];
     [trackController setMedia:self.mediaToPlay
                       forType:GCKMediaTrackTypeText
              deviceController:_castDeviceController.mediaControlChannel];
-    TracksTableViewController *audioTrackController  = controller.viewControllers[1];
+    TracksTableViewController *audioTrackController = controller.viewControllers[1];
     [audioTrackController setMedia:self.mediaToPlay
                            forType:GCKMediaTrackTypeAudio
                   deviceController:_castDeviceController.mediaControlChannel];
@@ -261,7 +261,7 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
                        self.volumeControls.alpha = 1.0;
                      }
                      completion:^(BOOL finished){
-                       NSLog(@"Done!");
+                       NSLog(@"Volume slider hidden done!");
                      }];
 
   }
@@ -297,8 +297,9 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
 }
 
 - (void)updateInterfaceFromCast:(NSTimer*)timer {
-  if (!_readyToShowInterface)
+  if (!_readyToShowInterface) {
     return;
+  }
 
   if (_castDeviceController.playerState != GCKMediaPlayerStateBuffering) {
     [self.castActivityIndicator stopAnimating];
@@ -329,7 +330,7 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
 }
 
 // Little formatting option here
-- (NSString*)getFormattedTime:(NSTimeInterval)timeInSeconds {
+- (NSString *)getFormattedTime:(NSTimeInterval)timeInSeconds {
   int seconds = round(timeInSeconds);
   int hours = seconds / (60 * 60);
   seconds %= (60 * 60);
@@ -348,8 +349,9 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
   if (self.mediaToPlay &&
       _castDeviceController.deviceManager.applicationConnectionState == GCKConnectionStateConnected)
   {
-    NSURL* url = self.mediaToPlay.customData;
+    NSURL *url = self.mediaToPlay.customData;
     NSString *title = [_mediaToPlay.metadata stringForKey:kGCKMetadataKeyTitle];
+    // TODO(i18n): Localize this string.
     self.castingToLabel.text =
         [NSString stringWithFormat:@"Casting to %@",
             _castDeviceController.deviceManager.device.friendlyName];
@@ -357,11 +359,11 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
 
     NSLog(@"Casting movie %@ at starting time %f", url, _mediaStartTime);
 
-    //Loading thumbnail async
+    // Loading thumbnail async.
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
       NSString *posterURL = [_mediaToPlay.metadata stringForKey:kCastComponentPosterURL];
       if (posterURL) {
-        UIImage* image = [UIImage
+        UIImage *image = [UIImage
             imageWithData:[SimpleImageFetcher getDataFromImageURL:[NSURL URLWithString:posterURL]]];
 
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -372,14 +374,14 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
       }
     });
 
-    self.cc.enabled = [self.mediaToPlay.mediaTracks count] > 0;
+    self.cc.enabled = self.mediaToPlay.mediaTracks.count > 0;
 
     NSString *cur = [_castDeviceController.mediaInformation.metadata
                         stringForKey:kGCKMetadataKeyTitle];
     // If the newMedia is already playing, join the existing session.
     if (![title isEqualToString:cur] ||
         _castDeviceController.playerState == GCKMediaPlayerStateIdle) {
-      //Cast the movie!
+      // Cast the movie!
       [_castDeviceController loadMedia:self.mediaToPlay
                              startTime:_mediaStartTime
                               autoPlay:YES];
@@ -405,7 +407,8 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
   }
 }
 
-#pragma mark - On - screen UI elements
+#pragma mark - Interface
+
 - (IBAction)playButtonClicked:(id)sender {
   if (_castDeviceController.playerState == GCKMediaPlayerStatePaused) {
     [_castDeviceController.mediaControlChannel play];
@@ -434,6 +437,7 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
         [self getFormattedTime:(pctThrough * _castDeviceController.streamDuration)];
   }
 }
+
 // This is called only on one of the two touch up events
 - (void)touchIsFinished {
   [_castDeviceController setPlaybackPercent:[self.slider value]];
@@ -487,6 +491,7 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
 }
 
 #pragma mark - implementation.
+
 - (void)initControls {
 
   // Play/Pause images.

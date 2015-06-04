@@ -224,7 +224,7 @@ static NSString * const kVersionFooter = @"v";
   if (deviceManager.applicationConnectionState != GCKConnectionStateConnected) {
     if (indexPath.row < deviceScanner.devices.count) {
       GCKDevice *device = [deviceScanner.devices objectAtIndex:indexPath.row];
-      NSLog(@"Selecting device:%@", device.friendlyName);
+      NSLog(@"Selecting device: %@", device.friendlyName);
       [_delegate connectToDevice:device];
     }
   } else if (_delegate.mediaControlChannel.mediaStatus.playerState != GCKMediaPlayerStateIdle
@@ -276,7 +276,7 @@ static NSString * const kVersionFooter = @"v";
   [button setBackgroundImage:playImage forState:UIControlStateNormal];
 }
 
-# pragma mark - volume
+#pragma mark - volume
 
 - (void)volumeDidChange {
   if (_volumeSlider) {

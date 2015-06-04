@@ -41,7 +41,6 @@
     self.url = [NSURL URLWithString:[jsonAsDict objectForKey:KEY_TRACK_URL]];
     self.name = [jsonAsDict objectForKey:KEY_TRACK_NAME];
     self.language = [jsonAsDict objectForKey:KEY_TRACK_LANGUAGE];
-
   }
   return self;
 }

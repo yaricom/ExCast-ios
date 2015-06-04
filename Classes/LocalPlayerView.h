@@ -24,6 +24,7 @@ typedef NS_ENUM(NSUInteger, LPVNavBarStyle) {
 
 /* Protocol for callbacks from the LocalPlayerView. */
 @protocol LocalPlayerDelegate <NSObject>
+
 /* Signal the requested style for the view. */
 - (void)setNavigationBarStyle:(LPVNavBarStyle)style;
 /* Request the navigation bar to be hidden or shown. */
@@ -40,6 +41,7 @@ typedef NS_ENUM(NSUInteger, LPVNavBarStyle) {
  * Return NO to halt default actions, YES to continue as normal.
  */
 - (BOOL)continueAfterPauseButtonClicked;
+
 @end
 
 /* UIView for displaying a local player or splash screen. */

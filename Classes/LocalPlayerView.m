@@ -32,7 +32,7 @@ static NSInteger kToolbarHeight = 44;
 @interface LocalPlayerView()
 
 /* The aspect ratio constraint for the view. */
-@property(nonatomic, weak) IBOutlet NSLayoutConstraint* viewAspectRatio;
+@property(nonatomic, weak) IBOutlet NSLayoutConstraint *viewAspectRatio;
 /* The current state of the view. */
 @property(nonatomic) LPVState state;
 /* The splash image to display before playback or while casting. */

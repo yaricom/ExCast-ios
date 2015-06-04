@@ -25,14 +25,14 @@
  *
  *  @param viewController The UIViewController to overlay.
  */
-+(void)showIfFirstTimeOverViewController:(UIViewController *)viewController;
++ (void)showIfFirstTimeOverViewController:(UIViewController *)viewController;
 
 /**
  *  Whether the instructions cling will appear or not.
  *
  *  @return YES if the user has seen the cling.
  */
-+(BOOL)hasSeenInstructions;
++ (BOOL)hasSeenInstructions;
 
 /**
  *  Represents the entire overlay with instructions for first time Cast users.

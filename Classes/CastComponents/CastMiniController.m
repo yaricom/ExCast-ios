@@ -61,7 +61,6 @@
     _toolbarTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 185, 30)];
     _toolbarTitleLabel.backgroundColor = [UIColor clearColor];
     _toolbarTitleLabel.font = [UIFont systemFontOfSize:17];
-    _toolbarTitleLabel.text = @"This is the title";
     _toolbarTitleLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     _toolbarTitleLabel.textColor = [UIColor blackColor];
     [btn addSubview:_toolbarTitleLabel];
@@ -69,7 +68,6 @@
     _toolbarSubTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 15, 185, 30)];
     _toolbarSubTitleLabel.backgroundColor = [UIColor clearColor];
     _toolbarSubTitleLabel.font = [UIFont systemFontOfSize:14];
-    _toolbarSubTitleLabel.text = @"This is the sub";
     _toolbarSubTitleLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     _toolbarSubTitleLabel.textColor = [UIColor grayColor];
     [btn addSubview:_toolbarSubTitleLabel];

@@ -23,8 +23,8 @@
 
 @property(nonatomic) UIStatusBarStyle statusBarStyle;
 @property(weak, nonatomic) GCKMediaControlChannel *controlChannel;
-@property(weak, nonatomic) GCKMediaInformation* media;
-@property(strong, nonatomic) NSMutableArray* tracks;
+@property(weak, nonatomic) GCKMediaInformation *media;
+@property(strong, nonatomic) NSMutableArray *tracks;
 @property(nonatomic) GCKMediaTrackType type;
 @property(nonatomic) BOOL toolbarWasShowing;
 @property(nonatomic) NSNumber *currSelected;
@@ -39,6 +39,7 @@
     self.toolbarWasShowing = true;
     [self.navigationController setToolbarHidden:YES animated:animated];
   }
+  // TODO(i18n): Localize these strings.
   NSString *title = self.type == GCKMediaTrackTypeAudio ? @"Audio Tracks" : @"Subtitles";
   [self.tabBarController.navigationItem setTitle:title];
   self.statusBarStyle = [UIApplication sharedApplication].statusBarStyle;
@@ -70,9 +71,9 @@
   self.controlChannel = controlChannel;
   NSInteger i = 1;
   NSArray *activeTracks = _controlChannel.mediaStatus.activeTrackIDs;
-  for(GCKMediaTrack *track in media.mediaTracks) {
+  for (GCKMediaTrack *track in media.mediaTracks) {
     if (track.type == type) {
-      NSNumber *trackId = [NSNumber numberWithInteger:track.identifier];
+      NSNumber *trackId = @(track.identifier);
       if (activeTracks && [activeTracks containsObject:trackId]) {
         self.currSelected = trackId;
         self.currSelectedRow = @(i);
@@ -91,7 +92,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-  return [self.tracks count] + 1;
+  return self.tracks.count + 1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView
@@ -104,6 +105,7 @@
   }
   NSInteger row = indexPath.row;
   if (row == 0) {
+    // TODO(i18n): Localize these strings.
     cell.textLabel.text = self.type == GCKMediaTrackTypeText ? @"None" : @"Default";
   } else {
     row--;
@@ -124,7 +126,7 @@
   if (row > 0) {
     row--;
     GCKMediaTrack *track = self.tracks[row];
-    NSNumber *trackIdentifier  = [NSNumber numberWithInteger:track.identifier];
+    NSNumber *trackIdentifier = @(track.identifier);
     [tracks addObject:trackIdentifier];
     self.currSelected = trackIdentifier;
   } else {
