@@ -141,7 +141,7 @@ NSString * const kCastViewController = @"castViewController";
   _applicationID = applicationID;
 
   // Create filter criteria to only show devices that can run your app
-  GCKFilterCriteria * filterCriteria =
+  GCKFilterCriteria *filterCriteria =
       [GCKFilterCriteria criteriaForAvailableApplicationWithID:applicationID];
 
   // Add the criteria to the scanner to only show devices that can run your app.
@@ -230,14 +230,14 @@ NSString * const kCastViewController = @"castViewController";
   } else {
     // Reconnect, or our app is playing. Attempt to join our session if there.
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString* lastSessionID = [defaults valueForKey:@"lastSessionID"];
+    NSString *lastSessionID = [defaults valueForKey:@"lastSessionID"];
     [self.deviceManager joinApplication:_applicationID sessionID:lastSessionID];
   }
   [self updateCastIconButtonStates];
 }
 
 - (void)deviceManager:(GCKDeviceManager *)deviceManager
-didConnectToCastApplication:(GCKApplicationMetadata *)applicationMetadata
+    didConnectToCastApplication:(GCKApplicationMetadata *)applicationMetadata
             sessionID:(NSString *)sessionID
   launchedApplication:(BOOL)launchedApplication {
   self.mediaControlChannel = [[GCKMediaControlChannel alloc] init];
@@ -330,7 +330,7 @@ didConnectToCastApplication:(GCKApplicationMetadata *)applicationMetadata
   NSLog(@"device found - %@", device.friendlyName);
 
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-  NSString* lastDeviceID = [defaults objectForKey:@"lastDeviceID"];
+  NSString *lastDeviceID = [defaults objectForKey:@"lastDeviceID"];
   if (lastDeviceID != nil && [[device deviceID] isEqualToString:lastDeviceID]){
     self.isReconnecting = YES;
     [self connectToDevice:device];

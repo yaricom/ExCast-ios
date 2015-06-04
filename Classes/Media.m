@@ -48,8 +48,8 @@
         MEDIA_URL_BASE, [jsonAsDict objectForKey:KEY_POSTER]]];
     if ([jsonAsDict objectForKey:KEY_TRACKS]) {
       NSArray *source = [jsonAsDict objectForKey:KEY_TRACKS];
-      NSMutableArray *tracks = [NSMutableArray arrayWithCapacity:[source count]];
-      for(int i = 0; i < [source count]; i++) {
+      NSMutableArray *tracks = [NSMutableArray arrayWithCapacity:source.count];
+      for(int i = 0; i < source.count; i++) {
         NSDictionary *sourceTrack = [jsonAsDict objectForKey:KEY_TRACKS][i];
         tracks[i] = [MediaTrack trackFromExternalJSON:sourceTrack];
       }

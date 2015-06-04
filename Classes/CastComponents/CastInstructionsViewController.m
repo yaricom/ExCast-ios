@@ -16,10 +16,9 @@
 #import "ChromecastDeviceController.h"
 
 static NSString * const kCastInstructionsViewController = @"castInstructionsViewController";
+static NSString * const kHasSeenChromecastOverlay = @"hasSeenChromecastOverlay";
 
 @implementation CastInstructionsViewController
-
-NSString *const kHasSeenChromecastOverlay = @"hasSeenChromecastOverlay";
 
 + (BOOL)hasSeenInstructions {
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];

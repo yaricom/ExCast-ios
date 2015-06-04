@@ -20,7 +20,7 @@
 @interface MediaListModel : NSObject
 
 /* Top level title of the list of media: ex: Videos. */
-@property(nonatomic, strong) NSString* mediaTitle;
+@property(nonatomic, strong) NSString *mediaTitle;
 
 /* The number of media objects in the array. */
 @property(nonatomic, readonly) int numberOfMediaLoaded;

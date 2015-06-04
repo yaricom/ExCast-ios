@@ -24,7 +24,7 @@
   NSOperationQueue *queue = [[NSOperationQueue alloc] init];
 
   NSURL *mediaURL = [NSURL URLWithString:
-                        [NSString stringWithFormat:@"%@%@", MEDIA_URL_BASE, MEDIA_URL_FILE]];
+                     [NSString stringWithFormat:@"%@%@", MEDIA_URL_BASE, MEDIA_URL_FILE]];
   NSURLRequest *request = [NSURLRequest requestWithURL:mediaURL];
   [NSURLConnection sendAsynchronousRequest:request
                                      queue:queue
@@ -41,7 +41,7 @@
         NSMutableArray *mediaBuilder = [[NSMutableArray alloc] initWithCapacity:10];
         if (jsonData) {
           mediaData =
-          [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:&error];
+              [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:&error];
         } else {
           NSLog(@"Media data was nil - maybe a problem contacting the server.");
         }
@@ -77,7 +77,7 @@
 }
 
 - (int)numberOfMediaLoaded {
-  return (int)[_medias count];
+  return (int)_medias.count;
 }
 
 - (Media *)mediaAtIndex:(int)index {

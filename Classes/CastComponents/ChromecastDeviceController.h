@@ -32,7 +32,7 @@ extern NSString * const kCastViewController;
  *
  * @param device The device to which the connection was established.
  */
-- (void)didConnectToDevice:(GCKDevice*)device;
+- (void)didConnectToDevice:(GCKDevice *)device;
 
 /**
  *  Called when the device disconnects.
@@ -76,17 +76,17 @@ extern NSString * const kCastViewController;
 /**
  *  The device manager used to manage a connection to a Cast device.
  */
-@property(nonatomic, strong) GCKDeviceManager* deviceManager;
+@property(nonatomic, strong) GCKDeviceManager *deviceManager;
 
 /**
  *  The device scanner used to detect devices on the network.
  */
-@property(nonatomic, strong) GCKDeviceScanner* deviceScanner;
+@property(nonatomic, strong) GCKDeviceScanner *deviceScanner;
 
 /**
  *  The media information of the loaded media on the device.
  */
-@property(nonatomic, readonly) GCKMediaInformation* mediaInformation;
+@property(nonatomic, readonly) GCKMediaInformation *mediaInformation;
 
 /** 
  *  The media control channel for the playing media. 

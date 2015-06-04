@@ -24,15 +24,15 @@ static const int kCastIconButtonAnimationDuration = 2;
 /**
  *  The image containing the empty cast icon.
  */
-@property(nonatomic) UIImage* castOff;
+@property(nonatomic) UIImage *castOff;
 /**
  *  The image with the filled cast icon.
  */
-@property(nonatomic) UIImage* castOn;
+@property(nonatomic) UIImage *castOn;
 /**
  *  The loop of images for animating.
  */
-@property(nonatomic) NSArray* castConnecting;
+@property(nonatomic) NSArray *castConnecting;
 
 @end
 
@@ -46,7 +46,7 @@ static const int kCastIconButtonAnimationDuration = 2;
  *  @return A ready to use CastIconButton.
  */
 + (CastIconButton *)buttonWithFrame:(CGRect)frame {
-  return [[CastIconButton alloc] initWithFrame:frame ];
+  return [[CastIconButton alloc] initWithFrame:frame];
 }
 
 /**
@@ -63,15 +63,14 @@ static const int kCastIconButtonAnimationDuration = 2;
                     imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     self.castOn = [[UIImage imageNamed:@"cast_on"]
                    imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-    self.castConnecting = @[
-                              [[UIImage imageNamed:@"cast_on0"]
-                                imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate],
-                              [[UIImage imageNamed:@"cast_on1"]
-                                 imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate],
-                              [[UIImage imageNamed:@"cast_on2"]
-                                 imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate],
-                              [[UIImage imageNamed:@"cast_on1"]
-                                 imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
+    self.castConnecting = @[[[UIImage imageNamed:@"cast_on0"]
+                             imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate],
+                            [[UIImage imageNamed:@"cast_on1"]
+                             imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate],
+                            [[UIImage imageNamed:@"cast_on2"]
+                             imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate],
+                            [[UIImage imageNamed:@"cast_on1"]
+                             imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
     self.imageView.animationImages = self.castConnecting;
     self.imageView.animationDuration = kCastIconButtonAnimationDuration;
     self.status = CIBCastUnavailable;
@@ -86,7 +85,7 @@ static const int kCastIconButtonAnimationDuration = 2;
  */
 - (void)setStatus:(CastIconButtonState)status {
   _status = status;
-  switch(status) {
+  switch (status) {
     case CIBCastUnavailable:
       [self.imageView stopAnimating];
       [self setHidden:YES];

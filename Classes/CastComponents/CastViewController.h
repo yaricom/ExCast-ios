@@ -31,7 +31,7 @@ extern NSString * const kCastComponentPosterURL;
 /**
  *  The media object being played on Chromecast device. Set this before presenting the view.
  */
-@property(strong, nonatomic) GCKMediaInformation* mediaToPlay;
+@property(strong, nonatomic) GCKMediaInformation *mediaToPlay;
 
 /**
  *  The volume slider control.

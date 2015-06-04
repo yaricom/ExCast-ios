@@ -17,7 +17,7 @@
 /**
  *  The possible states for the Cast button.
  */
-typedef NS_ENUM(NSUInteger, CastIconButtonState){
+typedef NS_ENUM(NSUInteger, CastIconButtonState) {
   /**
    *  No cast devices available - hide the icon.
    */
