@@ -47,7 +47,7 @@ NSString * const kCastViewController = @"castViewController";
 /**
  *  The (optional) view controller that we are managing.
  */
-@property(nonatomic) UIViewController *controller;
+@property(nonatomic, weak) UIViewController *controller;
 
 /**
  *  The Cast Icon Button controlled by this class.
@@ -439,7 +439,7 @@ NSString * const kCastViewController = @"castViewController";
 
 - (UIBarButtonItem *)queueItemForController:(UIViewController *)controller {
   _controller = controller;
-  if (!_controller) {
+  if (!controller) {
     return nil;
   }
 
@@ -448,7 +448,7 @@ NSString * const kCastViewController = @"castViewController";
 }
 
 - (void)updateToolbarForViewController:(UIViewController *)viewController {
-  self.manageToolbar = YES;
+  _manageToolbar = YES;
   [self.castMiniController updateToolbarStateIn:viewController
                             forMediaInformation:self.mediaInformation
                                     playerState:self.playerState];

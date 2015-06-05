@@ -37,6 +37,8 @@
 #pragma mark - ViewController lifecycle
 
 - (void)viewDidLoad {
+  [super viewDidLoad];
+
   // Create the queue button.
   UIImage *playlistImage = [UIImage imageNamed:@"playlist_white.png"];
   _showQueueButton = [[UIBarButtonItem alloc] initWithImage:playlistImage
@@ -75,8 +77,12 @@
 - (void)viewWillDisappear:(BOOL)animated {
   [[NSNotificationCenter defaultCenter] removeObserver:self];
   if (_playerView.playingLocally) {
+    // Explicitly clear the playing media and release the AVPlayer.
     [_playerView pause];
   }
+  [_playerView setMedia:nil];
+  _playerView.delegate = nil;
+
   if (_resetEdgesOnDisappear) {
     [self setNavigationBarStyle:LPVNavBarDefault];
   }

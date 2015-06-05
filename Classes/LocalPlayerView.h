@@ -48,7 +48,7 @@ typedef NS_ENUM(NSUInteger, LPVNavBarStyle) {
 @interface LocalPlayerView : UIView
 
 /* Delegate to use for callbacks for play/pause presses while in Cast mode. */
-@property(nonatomic) id<LocalPlayerDelegate> delegate;
+@property(nonatomic, assign) id<LocalPlayerDelegate> delegate;
 /* Local player elapsed time. */
 @property(nonatomic) NSInteger playbackTime;
 /* YES if the video is playing or paused in the local player. */

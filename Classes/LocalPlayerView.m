@@ -139,10 +139,14 @@ static NSInteger kToolbarHeight = 44;
     return;
   }
 
+  _mediaToPlay = media;
+  if (media == nil) {
+    [self clearMovie];
+    return;
+  }
   // TODO: Is this adding superflous views if we re-use this view for new media?
 
   self.translatesAutoresizingMaskIntoConstraints = NO;
-  _mediaToPlay = media;
   _state = LPVSplash;
 
   // Splash image containing video preview.

@@ -28,6 +28,7 @@
 @implementation QueueTableViewController
 
 - (void)viewDidLoad {
+  [super viewDidLoad];
   _mediaControlChannel = [ChromecastDeviceController sharedInstance].mediaControlChannel;
 }
 
