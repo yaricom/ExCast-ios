@@ -62,6 +62,8 @@ static NSInteger kToolbarHeight = 44;
 @property(nonatomic) NSArray *constraints;
 /* Play/Pause button. */
 @property(nonatomic) UIButton *playButton;
+/* Splash play button. */
+@property(nonatomic) UIButton *splashPlayButton;
 /* Playback position slider. */
 @property(nonatomic) UISlider *slider;
 /* Label displaying length of video. */
@@ -136,21 +138,40 @@ static NSInteger kToolbarHeight = 44;
     // Don't reinit if we already have the media.
     return;
   }
+
+  // TODO: Is this adding superflous views if we re-use this view for new media?
+
   self.translatesAutoresizingMaskIntoConstraints = NO;
   _mediaToPlay = media;
   _state = LPVSplash;
 
+  // Splash image containing video preview.
   _splashImage = [[UIImageView alloc] initWithFrame:[self fullFrame]];
   _splashImage.contentMode = UIViewContentModeScaleAspectFill;
   _splashImage.clipsToBounds = YES;
   [self addSubview:_splashImage];
 
+  // Single-tap control view to bring controls back to the front.
   _controlView = [[UIView alloc] init];
   self.singleFingerTap = [[UITapGestureRecognizer alloc]
                             initWithTarget:self
                                     action:@selector(didTouchControl:)];
   [_controlView addGestureRecognizer:self.singleFingerTap];
   [self addSubview:_controlView];
+
+  // Play overlay that users can tap to get started.
+  UIImage *giantPlayButton = [UIImage imageNamed:@"play_circle"];
+  self.splashPlayButton = [UIButton buttonWithType:UIButtonTypeSystem];
+  self.splashPlayButton.frame = [self fullFrame];
+  self.splashPlayButton.contentMode = UIViewContentModeCenter;
+  [self.splashPlayButton setImage:giantPlayButton forState:UIControlStateNormal];
+  self.splashPlayButton.autoresizingMask =
+      UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+  [self.splashPlayButton addTarget:self
+                            action:@selector(playButtonClicked:)
+                  forControlEvents:UIControlEventTouchUpInside];
+  self.splashPlayButton.tintColor = [UIColor whiteColor];
+  [self addSubview:self.splashPlayButton];
 
   [self initialiseToolbarControls];
 
@@ -404,7 +425,8 @@ static NSInteger kToolbarHeight = 44;
 - (void)configureControls {
   if (_state == LPVSplash) {
     [self.playButton setImage:self.playImage forState:UIControlStateNormal];
-    self.playButton.hidden = NO;
+    self.playButton.hidden = YES;
+    self.splashPlayButton.hidden = NO;
     self.splashImage.layer.hidden = NO;
     self.playerLayer.hidden = YES;
     self.currTime.hidden = YES;
@@ -416,6 +438,8 @@ static NSInteger kToolbarHeight = 44;
     // Play or Pause button based on state.
     UIImage *image = _state == LPVPaused ? self.playImage : self.pauseImage;
     [self.playButton setImage:image forState:UIControlStateNormal];
+    self.playButton.hidden = NO;
+    self.splashPlayButton.hidden = YES;
 
     self.playerLayer.hidden = NO;
     self.splashImage.layer.hidden = YES;
@@ -442,13 +466,16 @@ static NSInteger kToolbarHeight = 44;
 
 /* Initial setup of the controls in the toolbar. */
 - (void)initialiseToolbarControls {
+  CGRect frame = [self fullFrame];
+
   // Play/Pause images.
   self.playImage = [UIImage imageNamed:@"media_play"];
   self.pauseImage = [UIImage imageNamed:@"media_pause"];
 
   // Toolbar.
   self.toolbarView = [[UIView alloc] init];
-  [self layoutToolbar:[self fullFrame]];
+  [self layoutToolbar:frame];
+
 
   // Play/Pause button.
   self.playButton = [UIButton buttonWithType:UIButtonTypeSystem];
