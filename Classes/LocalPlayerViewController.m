@@ -18,8 +18,9 @@
 #import "ChromecastDeviceController.h"
 #import "GCKMediaInformation+LocalMedia.h"
 #import "LocalPlayerViewController.h"
+#import "AlertHelper.h"
 
-#import <GoogleCast/GCKDeviceManager.h>
+#import <GoogleCast/GoogleCast.h>
 
 @interface LocalPlayerViewController () <ChromecastDeviceControllerDelegate>
 
@@ -157,31 +158,42 @@
 /* Play has been pressed in the LocalPlayerView. */
 - (BOOL)continueAfterPlayButtonClicked {
   ChromecastDeviceController *controller = [ChromecastDeviceController sharedInstance];
-  if (controller.deviceManager.applicationConnectionState == GCKConnectionStateConnected) {
-    [self castCurrentMedia:0];
-    return NO;
+  if (controller.deviceManager.applicationConnectionState != GCKConnectionStateConnected) {
+    NSTimeInterval pos =
+        [controller streamPositionForPreviouslyCastMedia:_mediaToPlay.URL.absoluteString];
+    if (pos > 0) {
+      _playerView.playbackTime = pos;
+      // We are playing locally, so don't try and reconnect.
+      [controller clearPreviousSession];
+    }
+    return YES;
   }
-  NSTimeInterval pos =
-      [controller streamPositionForPreviouslyCastMedia:[self.mediaToPlay.URL absoluteString]];
-  if (pos > 0) {
-    _playerView.playbackTime = pos;
-    // We are playing locally, so don't try and reconnect.
-    [controller clearPreviousSession];
-  }
-  return YES;
-}
 
-- (void)castCurrentMedia:(NSTimeInterval)from {
-  if (from < 0) {
-    from = 0;
-  }
-  ChromecastDeviceController *controller = [ChromecastDeviceController sharedInstance];
+  AlertHelper *helper = [[AlertHelper alloc] init];
+  helper.cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
+
   GCKMediaInformation *media =
-      [GCKMediaInformation mediaInformationFromLocalMedia:self.mediaToPlay];
-  CastViewController *vc =
-      [controller.storyboard instantiateViewControllerWithIdentifier:kCastViewController];
-  [vc setMediaToPlay:media withStartingTime:from];
-  [self.navigationController pushViewController:vc animated:YES];
+      [GCKMediaInformation mediaInformationFromLocalMedia:_mediaToPlay];
+
+  // Play Now blindly loads the media, clobbering the current queue.
+  [helper addAction:NSLocalizedString(@"Play Now", nil) handler:^{
+    [controller mediaPlayNow:media];
+  }];
+
+  // Play Next is available if something is currently being played.
+  if (controller.mediaInformation) {
+    [helper addAction:NSLocalizedString(@"Play Next", nil) handler:^{
+      [controller mediaPlayNext:media];
+    }];
+  }
+
+  // Add To Queue adds to the end of the queue, even if nothing is currently playing.
+  [helper addAction:NSLocalizedString(@"Add To Queue", nil) handler:^{
+    [controller mediaAddToQueue:media];
+  }];
+
+  [helper showOnController:self];
+  return NO;
 }
 
 #pragma mark - ChromecastControllerDelegate
@@ -196,7 +208,15 @@
 
   if (_playerView.playingLocally) {
     [_playerView pause];
-    [self castCurrentMedia:_playerView.playbackTime];
+
+    // When we connect to a new device and are playing locally, always clobber the currently
+    // playing video (as per Android).
+    ChromecastDeviceController *controller = [ChromecastDeviceController sharedInstance];
+    GCKMediaInformation *media =
+        [GCKMediaInformation mediaInformationFromLocalMedia:_mediaToPlay];
+    [controller.mediaControlChannel loadMedia:media
+                                     autoplay:YES
+                                 playPosition:_playerView.playbackTime];
   }
 
   [_playerView showSplashScreen];

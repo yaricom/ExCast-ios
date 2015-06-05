@@ -135,19 +135,30 @@ extern NSString * const kCastViewController;
 - (void)connectToDevice:(GCKDevice *)device;
 
 /**
- *  Load media onto the currently connected device.
+ *  "Play Now" the specified GCKMediaInformation. This will clobber the any current queue
+ *  of media.
  *
- *  @param media     The GCKMediaInformation to play, with the URL as the contentID
- *  @param startTime Time to start from if starting a fresh cast
- *  @param autoPlay  Whether to start playing as soon as the media is loaded.
- *
- *  @return YES if we can load the media.
+ *  @param media The GCKMediaInformation to play.
  */
-- (BOOL)loadMedia:(GCKMediaInformation *)media
-        startTime:(NSTimeInterval)startTime
-         autoPlay:(BOOL)autoPlay;
+- (void)mediaPlayNow:(GCKMediaInformation *)media;
 
-/** 
+/**
+ *  "Play Next" the specified GCKMediaInformation. If there is nothing currently playing,
+ *  the media will play immediately.
+ *
+ *  @param media The GCKMediaInformation to play.
+ */
+- (void)mediaPlayNext:(GCKMediaInformation *)media;
+
+/**
+ *  "Add To Queue" the specified GCKMediaInformation. If there is nothing currently
+ *  playing, the media will play immediately.
+ *
+ *  @param media The GCKMediaInformation to play.
+ */
+- (void)mediaAddToQueue:(GCKMediaInformation *)media;
+
+/**
  *  Enable Cast enhancing of a controller by returning a UIBarButtonItem to show the Cast
  *  device status. Signals that a view controller is being used to present the UI.
  *

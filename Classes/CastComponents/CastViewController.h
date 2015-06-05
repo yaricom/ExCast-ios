@@ -29,11 +29,6 @@ extern NSString * const kCastComponentPosterURL;
 @interface CastViewController : UIViewController
 
 /**
- *  The media object being played on Chromecast device. Set this before presenting the view.
- */
-@property(strong, nonatomic) GCKMediaInformation *mediaToPlay;
-
-/**
  *  The volume slider control.
  */
 @property(strong, nonatomic) IBOutlet UISlider *volumeSlider;
@@ -47,14 +42,6 @@ extern NSString * const kCastComponentPosterURL;
  *  The entire volume control container, including the label.
  */
 @property(strong, nonatomic) IBOutlet UIView *volumeControls;
-
-/**
- *  Set the media object and the start time. This should be called before presenting the view.
- *
- *  @param newMedia  The media to play, contentID should be set to the URL.
- *  @param startTime The start time of the media if casting new content.
- */
-- (void)setMediaToPlay:(GCKMediaInformation *)newMedia withStartingTime:(NSTimeInterval)startTime;
 
 /**
  *  Show the slider for a few sections if touched.

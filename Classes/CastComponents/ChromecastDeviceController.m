@@ -212,7 +212,6 @@ NSString * const kCastViewController = @"castViewController";
   if (self.controller) {
     CastViewController *vc =
         [_storyboard instantiateViewControllerWithIdentifier:kCastViewController];
-    [vc setMediaToPlay:self.mediaInformation];
     [self.controller.navigationController pushViewController:vc animated:YES];
   }
 }
@@ -379,8 +378,7 @@ NSString * const kCastViewController = @"castViewController";
   }
 }
 
-
-# pragma mark - Device & Media Management
+#pragma mark - Device & Media Management
 
 - (void)connectToDevice:(GCKDevice *)device {
   NSLog(@"Connecting to device address: %@:%d", device.ipAddress, (unsigned int)device.servicePort);
@@ -396,17 +394,47 @@ NSString * const kCastViewController = @"castViewController";
   self.castIconButton.status = CIBCastConnecting;
 }
 
-- (BOOL)loadMedia:(GCKMediaInformation *)media
-        startTime:(NSTimeInterval)startTime
-         autoPlay:(BOOL)autoPlay {
-  if (!self.deviceManager || self.deviceManager.connectionState != GCKConnectionStateConnected ) {
-    return NO;
+- (void)mediaPlayNow:(GCKMediaInformation *)media {
+  [_mediaControlChannel loadMedia:media autoplay:YES];
+}
+
+- (void)mediaPlayNext:(GCKMediaInformation *)media {
+  GCKMediaQueueItem *queueItem = [[GCKMediaQueueItem alloc] initWithMediaInformation:media
+                                                                            autoplay:YES
+                                                                           startTime:0
+                                                                         preloadTime:0
+                                                                      activeTrackIDs:nil
+                                                                          customData:nil];
+  GCKMediaStatus *status = _mediaControlChannel.mediaStatus;
+  GCKMediaQueueItem *current = [status queueItemWithItemID:status.currentItemID];
+  GCKMediaQueueItem *candidate;
+  BOOL found = NO;
+  for (NSUInteger i = 0; i < [status queueItemCount]; ++i) {
+    candidate = [status queueItemAtIndex:i];
+    if (found) {
+      break;
+    }
+    if (candidate == current) {
+      found = YES;
+    }
+  }
+  [_mediaControlChannel queueInsertItem:queueItem beforeItemWithID:candidate.itemID];
+}
+
+- (void)mediaAddToQueue:(GCKMediaInformation *)media {
+  if (!_mediaControlChannel.mediaStatus.mediaInformation) {
+    // Calling queueInsertItem with nothing in the queue does nothing.
+    [self mediaPlayNow:media];
+    return;
   }
 
-  _mediaInformation = media;
-  [self.mediaControlChannel loadMedia:media autoplay:autoPlay playPosition:startTime];
-
-  return YES;
+  GCKMediaQueueItem *queueItem = [[GCKMediaQueueItem alloc] initWithMediaInformation:media
+                                                                            autoplay:YES
+                                                                           startTime:0
+                                                                         preloadTime:0
+                                                                      activeTrackIDs:nil
+                                                                          customData:nil];
+  [_mediaControlChannel queueInsertItem:queueItem beforeItemWithID:0];
 }
 
 - (UIBarButtonItem *)queueItemForController:(UIViewController *)controller {

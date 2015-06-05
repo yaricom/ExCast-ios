@@ -29,13 +29,10 @@ static NSString * const kListTracksPopover = @"listTracksPopover";
 NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
 
 @interface CastViewController () <ChromecastDeviceControllerDelegate> {
-  NSTimeInterval _mediaStartTime;
   /* Flag to indicate we are scrubbing - the play position is only updated at the end. */
   BOOL _currentlyDraggingSlider;
   /* Flag to indicate whether we have status from the Cast device and can show the UI. */
   BOOL _readyToShowInterface;
-  /* Flag for whether we are reconnecting or playing from scratch. */
-  BOOL _joinExistingSession;
   /* The most recent playback time - used for syncing between local and remote playback. */
   NSTimeInterval _lastKnownTime;
 }
@@ -95,7 +92,6 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
 
   self.castingToLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Casting to %@", nil),
       _castDeviceController.deviceManager.device.friendlyName];
-  self.mediaTitleLabel.text = [self.mediaToPlay.metadata stringForKey:kGCKMetadataKeyTitle];
 
   self.volumeControlLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%@ Volume", nil),
                                     _castDeviceController.deviceManager.device.friendlyName];
@@ -149,9 +145,7 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
 
   [self resetInterfaceElements];
 
-  if (_joinExistingSession == YES) {
-    [self mediaNowPlaying];
-  }
+  _readyToShowInterface = (_castDeviceController.mediaInformation != nil);
 
   [self configureView];
 }
@@ -200,15 +194,17 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
   }
   if ([segue.identifier isEqualToString:kListTracks] ||
       [segue.identifier isEqualToString:kListTracksPopover]) {
+    GCKMediaInformation *media = _castDeviceController.mediaInformation;
+
     UITabBarController *controller;
     controller = (UITabBarController *)
         ((UINavigationController *)segue.destinationViewController).visibleViewController;
     TracksTableViewController *trackController = controller.viewControllers[0];
-    [trackController setMedia:self.mediaToPlay
+    [trackController setMedia:media
                       forType:GCKMediaTrackTypeText
              deviceController:_castDeviceController.mediaControlChannel];
     TracksTableViewController *audioTrackController = controller.viewControllers[1];
-    [audioTrackController setMedia:self.mediaToPlay
+    [audioTrackController setMedia:media
                            forType:GCKMediaTrackTypeAudio
                   deviceController:_castDeviceController.mediaControlChannel];
   }
@@ -223,23 +219,11 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
 - (void)maybePopController {
   // Only take action if we're visible.
   if (self.visible) {
-    self.mediaToPlay = nil; // Forget media.
     [self.navigationController popViewControllerAnimated:YES];
   }
 }
 
 #pragma mark - Managing the detail item
-
-- (void)setMediaToPlay:(GCKMediaInformation *)newDetailItem {
-  [self setMediaToPlay:newDetailItem withStartingTime:0];
-}
-
-- (void)setMediaToPlay:(GCKMediaInformation *)newMedia withStartingTime:(NSTimeInterval)startTime {
-  _mediaStartTime = startTime;
-  if (_mediaToPlay != newMedia) {
-    _mediaToPlay = newMedia;
-  }
-}
 
 - (void)resetInterfaceElements {
   self.totalTime.text = @"";
@@ -290,13 +274,7 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
 }
 
 
-- (void)mediaNowPlaying {
-  _readyToShowInterface = YES;
-  [self updateInterfaceFromCast:nil];
-  self.toolbarView.hidden = NO;
-}
-
-- (void)updateInterfaceFromCast:(NSTimer*)timer {
+- (void)updateInterfaceFromCast:(NSTimer *)timer {
   if (!_readyToShowInterface) {
     return;
   }
@@ -346,65 +324,54 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
 }
 
 - (void)configureView {
-  if (self.mediaToPlay &&
-      _castDeviceController.deviceManager.applicationConnectionState == GCKConnectionStateConnected)
-  {
-    NSURL *url = self.mediaToPlay.customData;
-    NSString *title = [_mediaToPlay.metadata stringForKey:kGCKMetadataKeyTitle];
-    // TODO(i18n): Localize this string.
-    self.castingToLabel.text =
-        [NSString stringWithFormat:@"Casting to %@",
-            _castDeviceController.deviceManager.device.friendlyName];
-    self.mediaTitleLabel.text = title;
-
-    NSLog(@"Casting movie %@ at starting time %f", url, _mediaStartTime);
-
-    // Loading thumbnail async.
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-      NSString *posterURL = [_mediaToPlay.metadata stringForKey:kCastComponentPosterURL];
-      if (posterURL) {
-        UIImage *image = [UIImage
-            imageWithData:[SimpleImageFetcher getDataFromImageURL:[NSURL URLWithString:posterURL]]];
-
-        dispatch_async(dispatch_get_main_queue(), ^{
-          NSLog(@"Loaded thumbnail image");
-          self.thumbnailImage.image = image;
-          [self.view setNeedsLayout];
-        });
-      }
-    });
-
-    self.cc.enabled = self.mediaToPlay.mediaTracks.count > 0;
-
-    NSString *cur = [_castDeviceController.mediaInformation.metadata
-                        stringForKey:kGCKMetadataKeyTitle];
-    // If the newMedia is already playing, join the existing session.
-    if (![title isEqualToString:cur] ||
-        _castDeviceController.playerState == GCKMediaPlayerStateIdle) {
-      // Cast the movie!
-      [_castDeviceController loadMedia:self.mediaToPlay
-                             startTime:_mediaStartTime
-                              autoPlay:YES];
-      _joinExistingSession = NO;
-    } else {
-      _joinExistingSession = YES;
-      [self mediaNowPlaying];
-    }
-
-    // Start the timer
-    if (self.updateStreamTimer) {
-      [self.updateStreamTimer invalidate];
-      self.updateStreamTimer = nil;
-    }
-
-    self.updateStreamTimer =
-        [NSTimer scheduledTimerWithTimeInterval:1.0
-                                         target:self
-                                       selector:@selector(updateInterfaceFromCast:)
-                                       userInfo:nil
-                                        repeats:YES];
-
+  GCKMediaInformation *media = _castDeviceController.mediaInformation;
+  BOOL connected =
+      _castDeviceController.deviceManager.applicationConnectionState == GCKConnectionStateConnected;
+  if (!media || !connected) {
+    [self resetInterfaceElements];
+    return;
   }
+
+  self.toolbarView.hidden = NO;
+
+  NSString *title = [media.metadata stringForKey:kGCKMetadataKeyTitle];
+  // TODO(i18n): Localize this string.
+  self.castingToLabel.text =
+      [NSString stringWithFormat:@"Casting to %@",
+          _castDeviceController.deviceManager.device.friendlyName];
+  self.mediaTitleLabel.text = title;
+
+  NSLog(@"Configured view with media: %@", media);
+
+  // Loading thumbnail async.
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    NSString *posterURL = [media.metadata stringForKey:kCastComponentPosterURL];
+    if (posterURL) {
+      UIImage *image = [UIImage
+          imageWithData:[SimpleImageFetcher getDataFromImageURL:[NSURL URLWithString:posterURL]]];
+
+      dispatch_async(dispatch_get_main_queue(), ^{
+        NSLog(@"Loaded thumbnail image");
+        self.thumbnailImage.image = image;
+        [self.view setNeedsLayout];
+      });
+    }
+  });
+
+  self.cc.enabled = media.mediaTracks.count > 0;
+
+  // Start the timer
+  if (self.updateStreamTimer) {
+    [self.updateStreamTimer invalidate];
+    self.updateStreamTimer = nil;
+  }
+
+  self.updateStreamTimer =
+      [NSTimer scheduledTimerWithTimeInterval:1.0
+                                       target:self
+                                     selector:@selector(updateInterfaceFromCast:)
+                                     userInfo:nil
+                                      repeats:YES];
 }
 
 #pragma mark - Interface
@@ -467,18 +434,8 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
  * Called when the playback state of media on the device changes.
  */
 - (void)didReceiveMediaStateChange {
-  NSString *currentlyPlayingMediaTitle = [_castDeviceController.mediaInformation.metadata
-                                          stringForKey:kGCKMetadataKeyTitle];
-  NSString *title = [_mediaToPlay.metadata stringForKey:kGCKMetadataKeyTitle];
-
-  if (currentlyPlayingMediaTitle &&
-      ![title isEqualToString:currentlyPlayingMediaTitle]) {
-    // The state change is related to old media, so ignore it.
-    NSLog(@"Got message for media %@ while on %@", currentlyPlayingMediaTitle, title);
-    return;
-  }
-
-  if (_castDeviceController.playerState == GCKMediaPlayerStateIdle && _mediaToPlay) {
+  GCKMediaInformation *media = _castDeviceController.mediaInformation;
+  if (_castDeviceController.playerState == GCKMediaPlayerStateIdle || !media) {
     [self maybePopController];
     return;
   }
@@ -487,6 +444,7 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
   if ([self isViewLoaded] && self.view.window) {
     // Display toolbar if we are current view.
     self.toolbarView.hidden = NO;
+    [self configureView];
   }
 }
 
