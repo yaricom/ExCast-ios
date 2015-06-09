@@ -84,7 +84,8 @@ static NSString * const kVersionFooter = @"v";
   }
   // Return the number of rows in the section.
   if (_delegate.deviceManager.applicationConnectionState != GCKConnectionStateConnected) {
-    self.title = @"Connect to";
+    // TODO(i18n): Localize this string.
+    self.title = @"Connect to device";
     return _delegate.deviceScanner.devices.count;
   } else {
     self.title =
@@ -219,6 +220,10 @@ static NSString * const kVersionFooter = @"v";
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+  if (indexPath.section != 0) {
+    return;  // only allow taps on the first section (second section is a version footer)
+  }
+
   GCKDeviceManager *deviceManager = _delegate.deviceManager;
   GCKDeviceScanner *deviceScanner = _delegate.deviceScanner;
   if (deviceManager.applicationConnectionState != GCKConnectionStateConnected) {
