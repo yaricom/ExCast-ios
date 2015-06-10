@@ -15,8 +15,6 @@
 #import "Media.h"
 #import "MediaTrack.h"
 
-#import <GoogleCast/GCKMediaTrack.h>
-
 #define KEY_TITLE @"title"
 #define KEY_DESCRIP @"subtitle"
 #define KEY_URL @"sources"
