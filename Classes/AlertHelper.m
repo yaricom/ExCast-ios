@@ -47,7 +47,8 @@
   [_handlers addObject:action];
 }
 
-- (void)showOnController:(UIViewController *)parent {
+- (void)showOnController:(UIViewController *)parent
+              sourceView:(UIView *)sourceView {
   if ([UIAlertController class]) {
     // iOS 8+ approach.
     UIAlertController *controller =
@@ -71,7 +72,19 @@
       [controller addAction:cancelAction];
     }
 
+    // Present the controller in the right location, on iPad. On iPhone, it always displays at the
+    // bottom of the screen.
+    // TODO: For now, this just appears in the center of the specified source view. Ideally, it
+    // would sit right below the 'play' icon, but it's not obvious that it's reasonable to expose
+    // that on the LocalPlayerView.
+    UIPopoverPresentationController *presentationController =
+        [controller popoverPresentationController];
+    presentationController.sourceView = sourceView;
+    presentationController.sourceRect = sourceView.bounds;
+    presentationController.permittedArrowDirections = 0;
+
     [parent presentViewController:controller animated:YES completion:nil];
+
   } else {
     // iOS 7 and below.
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:_title

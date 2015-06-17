@@ -16,7 +16,8 @@
 
 @interface AlertHelper : NSObject
 
-- (void)showOnController:(UIViewController *)controller;
+- (void)showOnController:(UIViewController *)controller
+              sourceView:(UIView *)sourceView;
 
 - (void)addAction:(NSString *)title handler:(void(^)())handler;
 

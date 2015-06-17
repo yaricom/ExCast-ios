@@ -198,7 +198,7 @@
     [controller mediaAddToQueue:media];
   }];
 
-  [helper showOnController:self];
+  [helper showOnController:self sourceView:_playerView];
   return NO;
 }
 
