@@ -23,6 +23,8 @@
 
 @property(strong, nonatomic) GCKMediaControlChannel *mediaControlChannel;
 
+@property(assign, nonatomic) NSInteger currentItemRow;
+
 @end
 
 @implementation QueueTableViewController
@@ -35,10 +37,20 @@
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
 
+  // The queue is always reorderable.
+  self.tableView.editing = YES;
+
   // Assign ourselves as delegate ONLY in viewWillAppear of a view controller.
   ChromecastDeviceController *controller = [ChromecastDeviceController sharedInstance];
   controller.delegate = self;
   self.navigationItem.rightBarButtonItem = [controller queueItemForController:self];
+
+  [self updateCurrentItem];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+  [super viewDidAppear:animated];
+  [[ChromecastDeviceController sharedInstance] updateToolbarForViewController:self];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -46,13 +58,29 @@
   [super viewWillDisappear:animated];
 }
 
+// Identify currentItemRow such that it can be indicated visually,
+// and grey out rows before this item.
+- (void)updateCurrentItem {
+  _currentItemRow = -1;
+  GCKMediaStatus *mediaStatus = _mediaControlChannel.mediaStatus;
+  NSInteger count = [mediaStatus queueItemCount];
+  for (NSInteger i = 0; i < count; ++i) {
+    GCKMediaQueueItem *item = [mediaStatus queueItemAtIndex:i];
+    if (item.itemID == mediaStatus.currentItemID) {
+      _currentItemRow = i;
+      break;
+    }
+  }
+}
+
 #pragma mark - ChromecastDeviceControllerDelegate
 
 - (void)didUpdateQueueForDevice:(GCKDevice *)device {
   [self.tableView reloadData];
+  [self updateCurrentItem];
 }
 
-#pragma mark - Table view data source
+#pragma mark - UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
   return 1;
@@ -65,8 +93,16 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   UITableViewCell *cell =
       [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
-  GCKMediaQueueItem *item = [_mediaControlChannel.mediaStatus queueItemAtIndex:indexPath.row];
+
+  GCKMediaStatus *mediaStatus = _mediaControlChannel.mediaStatus;
+  GCKMediaQueueItem *item = [mediaStatus queueItemAtIndex:indexPath.row];
   GCKMediaInformation *info = item.mediaInformation;
+
+  if (indexPath.row < _currentItemRow) {
+    cell.backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.1];
+  } else {
+    cell.backgroundColor = nil;
+  }
 
   UILabel *mediaTitle = (UILabel *)[cell viewWithTag:1];
   UILabel *mediaOwner = (UILabel *)[cell viewWithTag:2];
@@ -84,14 +120,47 @@
     });
   });
 
-
   return cell;
 }
 
+#pragma mark - UITableViewDelegate
+
+- (BOOL)tableView:(UITableView *)tableView
+    shouldIndentWhileEditingRowAtIndexPath:(NSIndexPath *)indexPath {
+  return NO;
+}
+
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView
+           editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath {
+  return UITableViewCellEditingStyleNone;
+}
+
 // Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-  // TODO: support moving
-  NSLog(@"Moving row %@ => %@", fromIndexPath, toIndexPath);
+- (void)tableView:(UITableView *)tableView
+    moveRowAtIndexPath:(NSIndexPath *)fromIndexPath
+      toIndexPath:(NSIndexPath *)toIndexPath {
+  GCKMediaStatus *mediaStatus = _mediaControlChannel.mediaStatus;
+
+  GCKMediaQueueItem *from =
+      [mediaStatus queueItemAtIndex:fromIndexPath.row];
+  NSInteger toRow = toIndexPath.row;
+
+  if (toIndexPath.row > fromIndexPath.row) {
+    // Moving farther away in the queue.
+    toRow += 1;
+  }
+
+  NSUInteger beforeItemID;
+  if (toRow < [mediaStatus queueItemCount]) {
+    GCKMediaQueueItem *to = [mediaStatus queueItemAtIndex:toRow];
+    beforeItemID = to.itemID;
+  } else {
+    // Moving to the end.
+    beforeItemID = kGCKMediaQueueInvalidItemID;
+  }
+
+  [_mediaControlChannel queueMoveItemWithID:from.itemID
+                           beforeItemWithID:beforeItemID];
 }
 
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
