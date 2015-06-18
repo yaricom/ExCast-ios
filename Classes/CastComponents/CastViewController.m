@@ -65,6 +65,10 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
 @property(nonatomic) UIButton *playButton;
 /* A slider for the progress/scrub bar. */
 @property(nonatomic) UISlider *slider;
+/* The next button. */
+@property(nonatomic) UIButton *nextButton;
+/* The previous button. */
+@property(nonatomic) UIButton *previousButton;
 
 /* A containing view for the toolbar. */
 @property(nonatomic) UIView *toolbarView;
@@ -360,6 +364,23 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
 
   self.cc.enabled = media.mediaTracks.count > 0;
 
+  // Dance to find our position in the queue, and enable/disable buttons
+  // as required.
+  GCKMediaStatus *mediaStatus = _castDeviceController.mediaControlChannel.mediaStatus;
+  GCKMediaQueueItem *currentItem = [mediaStatus queueItemWithItemID:mediaStatus.currentItemID];
+  BOOL hasPrevious = YES;
+  BOOL hasNext = NO;
+  NSInteger count = [mediaStatus queueItemCount];
+  for (NSInteger i = 0; i < count; ++i) {
+    GCKMediaQueueItem *item = [mediaStatus queueItemAtIndex:i];
+    if (currentItem == item) {
+      hasPrevious = (i > 0);
+      hasNext = (i < count - 1);
+    }
+  }
+  self.nextButton.enabled = hasNext;
+  self.previousButton.enabled = hasPrevious;
+
   // Start the timer
   if (self.updateStreamTimer) {
     [self.updateStreamTimer invalidate];
@@ -375,6 +396,14 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
 }
 
 #pragma mark - Interface
+
+- (IBAction)previousButtonClicked:(id)sender {
+  [_castDeviceController.mediaControlChannel queuePreviousItem];
+}
+
+- (IBAction)nextButtonClicked:(id)sender {
+  [_castDeviceController.mediaControlChannel queueNextItem];
+}
 
 - (IBAction)playButtonClicked:(id)sender {
   if (_castDeviceController.playerState == GCKMediaPlayerStatePaused) {
@@ -434,11 +463,12 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
  * Called when the playback state of media on the device changes.
  */
 - (void)didReceiveMediaStateChange {
-  GCKMediaInformation *media = _castDeviceController.mediaInformation;
-  if (_castDeviceController.playerState == GCKMediaPlayerStateIdle || !media) {
-    [self maybePopController];
-    return;
-  }
+  // TODO: This fires when the media just changes, e.g. play/next buttons, or natural flow. Ignore for now?
+//  GCKMediaInformation *media = _castDeviceController.mediaInformation;
+//  if (_castDeviceController.playerState == GCKMediaPlayerStateIdle || !media) {
+//    [self maybePopController];
+//    return;
+//  }
 
   _readyToShowInterface = YES;
   if ([self isViewLoaded] && self.view.window) {
@@ -456,11 +486,35 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
   self.playImage = [UIImage imageNamed:@"media_play"];
   self.pauseImage = [UIImage imageNamed:@"media_pause"];
 
-  // Toolbar.
-  self.toolbarView = [[UIView alloc] initWithFrame:self.navigationController.toolbar.frame];
+  // Toolbar. Double the size of the iOS standard.
+  CGRect toolbarFrame = self.navigationController.toolbar.frame;
+  toolbarFrame.origin.x = (toolbarFrame.origin.x + toolbarFrame.size.height - 80);
+  toolbarFrame.size.height = 120;
+
+  self.toolbarView = [[UIView alloc] initWithFrame:toolbarFrame];
   self.toolbarView.translatesAutoresizingMaskIntoConstraints = NO;
   // Hide the nav controller toolbar - we are managing our own to get autolayout.
   self.navigationController.toolbarHidden = YES;
+
+  // Next/Previous buttons.
+  self.nextButton = [UIButton buttonWithType:UIButtonTypeSystem];
+  [self.nextButton setImage:[UIImage imageNamed:@"media_right"] forState:UIControlStateNormal];
+  self.nextButton.tintColor = [UIColor whiteColor];
+  [self.nextButton addTarget:self
+                      action:@selector(nextButtonClicked:)
+            forControlEvents:UIControlEventTouchUpInside];
+  self.previousButton = [UIButton buttonWithType:UIButtonTypeSystem];
+  [self.previousButton setImage:[UIImage imageNamed:@"media_left"] forState:UIControlStateNormal];
+  self.previousButton.tintColor = [UIColor whiteColor];
+  [self.previousButton addTarget:self
+                          action:@selector(previousButtonClicked:)
+                forControlEvents:UIControlEventTouchUpInside];
+
+  // TODO: Control buttons with proper constraints.
+  [self.nextButton setFrame:CGRectMake(40, 40, 40, 40)];
+  [self.toolbarView addSubview:self.nextButton];
+  [self.previousButton setFrame:CGRectMake(0, 40, 40, 40)];
+  [self.toolbarView addSubview:self.previousButton];
 
   // Play/Pause button.
   self.playButton = [UIButton buttonWithType:UIButtonTypeSystem];
@@ -601,7 +655,7 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
                                              views:self.viewsDictionary]];
 
   // Autolayout toolbar.
-  NSString *toolbarVLayout = @"V:[toolbar(==44)]|";
+  NSString *toolbarVLayout = @"V:[toolbar(==120)]|";
   NSString *toolbarHLayout = @"|[toolbar]|";
   [self.view addConstraints:
    [NSLayoutConstraint constraintsWithVisualFormat:toolbarVLayout
