@@ -111,7 +111,7 @@
 		EF775C5B1A49FE9E00995266 /* thumb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = thumb.png; sourceTree = "<group>"; };
 		EF775C5C1A49FE9E00995266 /* thumb@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "thumb@2x.png"; sourceTree = "<group>"; };
 		EF775C5D1A49FE9E00995266 /* thumb@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "thumb@3x.png"; sourceTree = "<group>"; };
-		EFB7D7091ADC52AE00628229 /* CastFrameworkAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = CastFrameworkAssets.xcassets; path = "Pods/google-cast-sdk/GoogleCastSDK-2.7.0-Release/CastFrameworkAssets.xcassets"; sourceTree = SOURCE_ROOT; };
+		EFB7D7091ADC52AE00628229 /* CastFrameworkAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = CastFrameworkAssets.xcassets; path = "Pods/google-cast-sdk/GoogleCastSDK-2.7.1-Release/CastFrameworkAssets.xcassets"; sourceTree = SOURCE_ROOT; };
 		EFD7C20119FE71AF00082842 /* LocalPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalPlayerView.h; sourceTree = "<group>"; };
 		EFD7C20219FE71AF00082842 /* LocalPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalPlayerView.m; sourceTree = "<group>"; };
 		EFD8A0E71AABD052005808B2 /* MediaTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTrack.h; sourceTree = "<group>"; };
