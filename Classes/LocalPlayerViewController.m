@@ -15,14 +15,14 @@
 #import "AppDelegate.h"
 #import "CastInstructionsViewController.h"
 #import "CastViewController.h"
-#import "ChromecastDeviceController.h"
+#import "CastDeviceController.h"
 #import "GCKMediaInformation+LocalMedia.h"
 #import "LocalPlayerViewController.h"
 #import "AlertHelper.h"
 
 #import <GoogleCast/GoogleCast.h>
 
-@interface LocalPlayerViewController () <ChromecastDeviceControllerDelegate>
+@interface LocalPlayerViewController () <CastDeviceControllerDelegate>
 
 /* Whether to reset the edges on disappearing. */
 @property(nonatomic) BOOL resetEdgesOnDisappear;
@@ -46,7 +46,7 @@
                                                      target:self
                                                      action:@selector(showQueue:)];
 
-  GCKDeviceManager *manager = [ChromecastDeviceController sharedInstance].deviceManager;
+  GCKDeviceManager *manager = [CastDeviceController sharedInstance].deviceManager;
   _showQueueButton.enabled = (manager.applicationConnectionState == GCKConnectionStateConnected);
 }
 
@@ -68,7 +68,7 @@
   }
 
   // Assign ourselves as delegate ONLY in viewWillAppear of a view controller.
-  ChromecastDeviceController *controller = [ChromecastDeviceController sharedInstance];
+  CastDeviceController *controller = [CastDeviceController sharedInstance];
   controller.delegate = self;
   UIBarButtonItem *item = [controller queueItemForController:self];
   self.navigationItem.rightBarButtonItems = @[item, _showQueueButton];
@@ -77,11 +77,8 @@
 - (void)viewWillDisappear:(BOOL)animated {
   [[NSNotificationCenter defaultCenter] removeObserver:self];
   if (_playerView.playingLocally) {
-    // Explicitly clear the playing media and release the AVPlayer.
     [_playerView pause];
   }
-  [_playerView setMedia:nil];
-  _playerView.delegate = nil;
 
   if (_resetEdgesOnDisappear) {
     [self setNavigationBarStyle:LPVNavBarDefault];
@@ -91,7 +88,13 @@
 
 - (void)viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
-  [[ChromecastDeviceController sharedInstance] updateToolbarForViewController:self];
+  [[CastDeviceController sharedInstance] updateToolbarForViewController:self];
+}
+
+- (void)dealloc {
+  // Explicitly clear the playing media and release the AVPlayer.
+  [_playerView setMedia:nil];
+  _playerView.delegate = nil;
 }
 
 - (void)deviceOrientationDidChange:(NSNotification *)notification {
@@ -163,7 +166,7 @@
 
 /* Play has been pressed in the LocalPlayerView. */
 - (BOOL)continueAfterPlayButtonClicked {
-  ChromecastDeviceController *controller = [ChromecastDeviceController sharedInstance];
+  CastDeviceController *controller = [CastDeviceController sharedInstance];
   if (controller.deviceManager.applicationConnectionState != GCKConnectionStateConnected) {
     NSTimeInterval pos =
         [controller streamPositionForPreviouslyCastMedia:_mediaToPlay.URL.absoluteString];
@@ -191,12 +194,12 @@
     [helper addAction:NSLocalizedString(@"Play Next", nil) handler:^{
       [controller mediaPlayNext:media];
     }];
-  }
 
-  // Add To Queue adds to the end of the queue, even if nothing is currently playing.
-  [helper addAction:NSLocalizedString(@"Add To Queue", nil) handler:^{
-    [controller mediaAddToQueue:media];
-  }];
+    // Add To Queue adds to the end of the queue.
+    [helper addAction:NSLocalizedString(@"Add To Queue", nil) handler:^{
+      [controller mediaAddToQueue:media];
+    }];
+  }
 
   [helper showOnController:self sourceView:_playerView];
   return NO;
@@ -217,7 +220,7 @@
 
     // When we connect to a new device and are playing locally, always clobber the currently
     // playing video (as per Android).
-    ChromecastDeviceController *controller = [ChromecastDeviceController sharedInstance];
+    CastDeviceController *controller = [CastDeviceController sharedInstance];
     GCKMediaInformation *media =
         [GCKMediaInformation mediaInformationFromLocalMedia:_mediaToPlay];
     [controller.mediaControlChannel loadMedia:media

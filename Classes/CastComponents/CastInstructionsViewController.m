@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #import "CastInstructionsViewController.h"
-#import "ChromecastDeviceController.h"
+#import "CastDeviceController.h"
 
 static NSString * const kCastInstructionsViewController = @"castInstructionsViewController";
 static NSString * const kHasSeenChromecastOverlay = @"hasSeenChromecastOverlay";
@@ -30,7 +30,7 @@ static NSString * const kHasSeenChromecastOverlay = @"hasSeenChromecastOverlay";
 
   // Only show it if we haven't seen it before
   if (![self hasSeenInstructions]) {
-    CastInstructionsViewController *cvc = [[ChromecastDeviceController sharedInstance].storyboard
+    CastInstructionsViewController *cvc = [[CastDeviceController sharedInstance].storyboard
         instantiateViewControllerWithIdentifier:kCastInstructionsViewController];
     [viewController presentViewController:cvc animated:YES completion:^() {
       // once viewDidAppear is successfully called, mark this preference as viewed

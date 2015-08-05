@@ -14,15 +14,14 @@
 
 #import "QueueTableViewController.h"
 
-#import "ChromecastDeviceController.h"
+#import "CastDeviceController.h"
 #import "SimpleImageFetcher.h"
 
 #import <GoogleCast/GoogleCast.h>
 
-@interface QueueTableViewController () <ChromecastDeviceControllerDelegate>
+@interface QueueTableViewController () <CastDeviceControllerDelegate>
 
 @property(strong, nonatomic) GCKMediaControlChannel *mediaControlChannel;
-
 @property(assign, nonatomic) NSInteger currentItemRow;
 
 @end
@@ -31,26 +30,32 @@
 
 - (void)viewDidLoad {
   [super viewDidLoad];
-  _mediaControlChannel = [ChromecastDeviceController sharedInstance].mediaControlChannel;
+  _mediaControlChannel = [CastDeviceController sharedInstance].mediaControlChannel;
+  UILongPressGestureRecognizer *longPress =
+      [[UILongPressGestureRecognizer alloc] initWithTarget:self
+                                                    action:@selector(longPressGestureRecognized:)];
+  [self.tableView addGestureRecognizer:longPress];
+  UITapGestureRecognizer *tap =
+      [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureRecognized:)];
+  tap.numberOfTapsRequired = 2;
+  [self.tableView addGestureRecognizer:tap];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
 
-  // The queue is always reorderable.
-  self.tableView.editing = YES;
-
   // Assign ourselves as delegate ONLY in viewWillAppear of a view controller.
-  ChromecastDeviceController *controller = [ChromecastDeviceController sharedInstance];
+  CastDeviceController *controller = [CastDeviceController sharedInstance];
   controller.delegate = self;
   self.navigationItem.rightBarButtonItem = [controller queueItemForController:self];
 
+  [self.tableView reloadData];
   [self updateCurrentItem];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
-  [[ChromecastDeviceController sharedInstance] updateToolbarForViewController:self];
+  [[CastDeviceController sharedInstance] updateToolbarForViewController:self];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -73,7 +78,15 @@
   }
 }
 
-#pragma mark - ChromecastDeviceControllerDelegate
+- (void)longPressGestureRecognized:(UIView *)sender {
+  self.tableView.editing = YES;
+}
+
+- (void)tapGestureRecognized:(UIView *)sender {
+  self.tableView.editing = !self.tableView.editing;
+}
+
+#pragma mark - CastDeviceControllerDelegate
 
 - (void)didUpdateQueueForDevice:(GCKDevice *)device {
   [self.tableView reloadData];
@@ -83,14 +96,26 @@
 #pragma mark - UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-  return 1;
+  return [_mediaControlChannel.mediaStatus queueItemCount] > 0 ? 2 : 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+  if (section == 1) {
+    return 1;
+  }
   return [_mediaControlChannel.mediaStatus queueItemCount];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (UITableViewCell *)tableView:(UITableView *)tableView
+         cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+  if (indexPath.section == 1) {
+    // Load the clear button.
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"clearQueueCell"
+                                                            forIndexPath:indexPath];
+    return cell;
+  }
+
+  // Load a queue item.
   UITableViewCell *cell =
       [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
 
@@ -123,16 +148,21 @@
   return cell;
 }
 
+- (IBAction)didTapClearQueue:(id)sender {
+  NSInteger count = [_mediaControlChannel.mediaStatus queueItemCount];
+  NSMutableArray *items = [NSMutableArray arrayWithCapacity:count];
+  for (int i = 0; i < count; i++) {
+    [items addObject:@([_mediaControlChannel.mediaStatus queueItemAtIndex:i].itemID)];
+  }
+  [_mediaControlChannel queueRemoveItemsWithIDs:items];
+}
+
+
 #pragma mark - UITableViewDelegate
 
 - (BOOL)tableView:(UITableView *)tableView
     shouldIndentWhileEditingRowAtIndexPath:(NSIndexPath *)indexPath {
   return NO;
-}
-
-- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView
-           editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath {
-  return UITableViewCellEditingStyleNone;
 }
 
 // Override to support rearranging the table view.
@@ -166,6 +196,16 @@
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
   // All rows inside the queue may be reordered.
   return YES;
+}
+
+- (void)tableView:(UITableView *)tableView
+    commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
+     forRowAtIndexPath:(NSIndexPath *)indexPath {
+  GCKMediaStatus *mediaStatus = _mediaControlChannel.mediaStatus;
+  GCKMediaQueueItem *to = [mediaStatus queueItemAtIndex:indexPath.row];
+  if (editingStyle == UITableViewCellEditingStyleDelete) {
+    [_mediaControlChannel queueRemoveItemWithID:to.itemID];
+  }
 }
 
 @end

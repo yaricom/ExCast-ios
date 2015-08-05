@@ -46,6 +46,11 @@ static NSString * const kVersionFooter = @"v";
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
 
+
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(mediaStatusDidChange)
+                                               name:@"castMediaStatusChange"
+                                             object:nil];
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(volumeDidChange)
                                                name:@"castVolumeChanged"
@@ -70,6 +75,9 @@ static NSString * const kVersionFooter = @"v";
   [self.tableView reloadData];
 }
 
+- (void)mediaStatusDidChange {
+  [self.tableView reloadData];
+}
 
 #pragma mark - Table view data source
 
@@ -138,6 +146,9 @@ static NSString * const kVersionFooter = @"v";
   [button     addTarget:self
                  action:@selector(playPausePressed:)
        forControlEvents:UIControlEventTouchUpInside];
+  if (_delegate.mediaControlChannel.mediaStatus.playerState == GCKMediaPlayerStateIdle) {
+    button.enabled = NO;
+  }
   cell.accessoryView = button;
 
   // Asynchronously load the table view image
@@ -198,7 +209,8 @@ static NSString * const kVersionFooter = @"v";
   } else {
     // Connection manager.
     if (indexPath.row == 0) {
-      if (_delegate.mediaControlChannel.mediaStatus.playerState == GCKMediaPlayerStateIdle) {
+      if (!_delegate.mediaControlChannel.mediaStatus ||
+          _delegate.mediaControlChannel.mediaStatus.playerState == GCKMediaPlayerStateIdle) {
         // Display the ready status message.
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdForReadyStatus
                                                forIndexPath:indexPath];

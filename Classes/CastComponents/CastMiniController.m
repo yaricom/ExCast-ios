@@ -14,6 +14,7 @@
 
 
 #import "CastMiniController.h"
+#import "CastUpNextView.h"
 #import "SimpleImageFetcher.h"
 
 #import <GoogleCast/GoogleCast.h>
@@ -28,6 +29,7 @@
 @property(nonatomic) NSURL *toolbarThumbnailURL;
 @property(nonatomic) UILabel *toolbarTitleLabel;
 @property(nonatomic) UILabel *toolbarSubTitleLabel;
+@property(nonatomic) CastUpNextView *upnext;
 
 @end
 
@@ -41,6 +43,9 @@
   self = [super init];
   if (self) {
     self.delegate = delegate;
+
+    self.upnext = [[CastUpNextView alloc] initWithFrame:CGRectMake(0, 0, 320, 55)];
+    _upnext.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 
     // Create toolbar buttons for the mini player.
     CGRect frame = CGRectMake(0, 0, 49, 37);

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #import "AppDelegate.h"
-#import "ChromecastDeviceController.h"
+#import "CastDeviceController.h"
 #import "LocalPlayerViewController.h"
 #import "Media.h"
 #import "MediaListModel.h"
@@ -22,7 +22,7 @@
 
 #import <GoogleCast/GCKDeviceManager.h>
 
-@interface MediaTableViewController () <ChromecastDeviceControllerDelegate>
+@interface MediaTableViewController () <CastDeviceControllerDelegate>
 
 /** The media to be displayed. */
 @property(nonatomic, strong) MediaListModel *mediaList;
@@ -59,7 +59,7 @@
                                                      target:self
                                                      action:@selector(showQueue:)];
 
-  GCKDeviceManager *manager = [ChromecastDeviceController sharedInstance].deviceManager;
+  GCKDeviceManager *manager = [CastDeviceController sharedInstance].deviceManager;
   _showQueueButton.enabled = (manager.applicationConnectionState == GCKConnectionStateConnected);
 }
 
@@ -67,7 +67,7 @@
   [super viewWillAppear:animated];
 
   // Assign ourselves as delegate ONLY in viewWillAppear of a view controller.
-  ChromecastDeviceController *controller = [ChromecastDeviceController sharedInstance];
+  CastDeviceController *controller = [CastDeviceController sharedInstance];
   controller.delegate = self;
 
   UIBarButtonItem *item = [controller queueItemForController:self];
@@ -76,13 +76,12 @@
 
 - (void)viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
-  [[ChromecastDeviceController sharedInstance] updateToolbarForViewController:self];
+  [[CastDeviceController sharedInstance] updateToolbarForViewController:self];
 }
 
-#pragma mark - ChromecastDeviceControllerDelegate
+#pragma mark - CastDeviceControllerDelegate
 
 - (void)didConnectToDevice:(GCKDevice *)device {
-  // TODO: The enabled bit dims the button, but it should instead completely hide it.
   _showQueueButton.enabled = YES;
 }
 

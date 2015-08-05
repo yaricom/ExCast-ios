@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #import "AppDelegate.h"
-#import "ChromecastDeviceController.h"
+#import "CastDeviceController.h"
 
 #import <AVFoundation/AVFoundation.h>
 
@@ -25,9 +25,9 @@
   [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 
   // Turn on the Cast logging for debug purposes.
-  [[ChromecastDeviceController sharedInstance] enableLogging];
+  [[CastDeviceController sharedInstance] enableLogging];
   // Set the receiver application ID to initialise scanning.
-  [ChromecastDeviceController sharedInstance].applicationID = @"4F8B3483";
+  [CastDeviceController sharedInstance].applicationID = @"BE13B491";
   // Replace the value above with your app id.
 
   // Set playback category mode to allow playing audio on the video files even when the ringer

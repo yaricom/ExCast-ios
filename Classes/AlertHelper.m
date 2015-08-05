@@ -74,9 +74,6 @@
 
     // Present the controller in the right location, on iPad. On iPhone, it always displays at the
     // bottom of the screen.
-    // TODO: For now, this just appears in the center of the specified source view. Ideally, it
-    // would sit right below the 'play' icon, but it's not obvious that it's reasonable to expose
-    // that on the LocalPlayerView.
     UIPopoverPresentationController *presentationController =
         [controller popoverPresentationController];
     presentationController.sourceView = sourceView;

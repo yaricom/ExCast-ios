@@ -23,7 +23,7 @@
 
 extern NSString * const kCastViewController;
 
-@protocol ChromecastDeviceControllerDelegate <NSObject>
+@protocol CastDeviceControllerDelegate <NSObject>
 
 @optional
 
@@ -50,6 +50,13 @@ extern NSString * const kCastViewController;
 - (void)didUpdateQueueForDevice:(GCKDevice *)device;
 
 /**
+ *  Called when the next item in a queue starts preloading.
+ *
+ *  @param item GCKMediaQueueItem
+ */
+- (void)didUpdatePreloadStatusForItem:(GCKMediaQueueItem *)item;
+
+/**
  *  Whether or not the device controller should be displayed.
  *
  *  @return YES to display, NO to prevent.
@@ -58,7 +65,7 @@ extern NSString * const kCastViewController;
 
 @end
 
-@interface ChromecastDeviceController : NSObject <
+@interface CastDeviceController : NSObject <
     GCKDeviceScannerListener
 >
 
@@ -71,7 +78,7 @@ extern NSString * const kCastViewController;
 /**
  *  The delegate for this object.
  */
-@property(nonatomic, weak) id<ChromecastDeviceControllerDelegate> delegate;
+@property(nonatomic, weak) id<CastDeviceControllerDelegate> delegate;
 
 /**
  *  The Cast application ID to launch.
@@ -93,10 +100,15 @@ extern NSString * const kCastViewController;
  */
 @property(nonatomic, readonly) GCKMediaInformation *mediaInformation;
 
-/** 
- *  The media control channel for the playing media. 
+/**
+ *  The media control channel for the playing media.
  */
-@property GCKMediaControlChannel *mediaControlChannel;
+@property(nonatomic, strong) GCKMediaControlChannel *mediaControlChannel;
+
+/**
+ *  The information about the next item to be played in the autoplay queue.
+ */
+@property(nonatomic, readonly) GCKMediaQueueItem *preloadingItem;
 
 /**
  *  Helper accessor for the media player state of the media on the device.
@@ -116,7 +128,7 @@ extern NSString * const kCastViewController;
 /**
  *  Main access point for the class. Use this to retrieve an object you can use.
  *
- *  @return ChromecastDeviceController
+ *  @return CastDeviceController
  */
 + (instancetype)sharedInstance;
 
@@ -151,16 +163,17 @@ extern NSString * const kCastViewController;
 - (void)mediaPlayNext:(GCKMediaInformation *)media;
 
 /**
- *  "Add To Queue" the specified GCKMediaInformation. If there is nothing currently
- *  playing, the media will play immediately.
+ *  "Add To Queue" the specified GCKMediaInformation. This method should only be called
+ *  once media is playing. This is to avoid situations where the queue is unavailable due
+ *  to an updated mediaStatus not having been received.
  *
  *  @param media The GCKMediaInformation to play.
  */
 - (void)mediaAddToQueue:(GCKMediaInformation *)media;
 
 /**
- *  Enable Cast enhancing of a controller by returning a UIBarButtonItem to show the Cast
- *  device status. Signals that a view controller is being used to present the UI.
+ *  Enable Cast enhancing of a controller by returning a UIBarButtonItem to show the queue
+ *  status. Signals that a view controller is being used to present the UI.
  *
  *  @param item UIViewController to use as a parent for queue actions
  *  @return item The decorated UIBarButtonItem, always non-nil

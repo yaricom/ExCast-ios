@@ -144,38 +144,40 @@ static NSInteger kToolbarHeight = 44;
     [self clearMovie];
     return;
   }
-  // TODO: Is this adding superflous views if we re-use this view for new media?
 
   self.translatesAutoresizingMaskIntoConstraints = NO;
   _state = LPVSplash;
 
-  // Splash image containing video preview.
-  _splashImage = [[UIImageView alloc] initWithFrame:[self fullFrame]];
-  _splashImage.contentMode = UIViewContentModeScaleAspectFill;
-  _splashImage.clipsToBounds = YES;
-  [self addSubview:_splashImage];
+  // Initialise the controls.
+  if (!_splashImage) {
+    // Splash image containing video preview.
+    _splashImage = [[UIImageView alloc] initWithFrame:[self fullFrame]];
+    _splashImage.contentMode = UIViewContentModeScaleAspectFill;
+    _splashImage.clipsToBounds = YES;
+    [self addSubview:_splashImage];
 
-  // Single-tap control view to bring controls back to the front.
-  _controlView = [[UIView alloc] init];
-  self.singleFingerTap = [[UITapGestureRecognizer alloc]
-                            initWithTarget:self
-                                    action:@selector(didTouchControl:)];
-  [_controlView addGestureRecognizer:self.singleFingerTap];
-  [self addSubview:_controlView];
+    // Single-tap control view to bring controls back to the front.
+    _controlView = [[UIView alloc] init];
+    self.singleFingerTap = [[UITapGestureRecognizer alloc]
+                               initWithTarget:self
+                                       action:@selector(didTouchControl:)];
+    [_controlView addGestureRecognizer:self.singleFingerTap];
+    [self addSubview:_controlView];
 
-  // Play overlay that users can tap to get started.
-  UIImage *giantPlayButton = [UIImage imageNamed:@"play_circle"];
-  self.splashPlayButton = [UIButton buttonWithType:UIButtonTypeSystem];
-  self.splashPlayButton.frame = [self fullFrame];
-  self.splashPlayButton.contentMode = UIViewContentModeCenter;
-  [self.splashPlayButton setImage:giantPlayButton forState:UIControlStateNormal];
-  self.splashPlayButton.autoresizingMask =
-      UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-  [self.splashPlayButton addTarget:self
-                            action:@selector(playButtonClicked:)
-                  forControlEvents:UIControlEventTouchUpInside];
-  self.splashPlayButton.tintColor = [UIColor whiteColor];
-  [self addSubview:self.splashPlayButton];
+    // Play overlay that users can tap to get started.
+    UIImage *giantPlayButton = [UIImage imageNamed:@"play_circle"];
+    self.splashPlayButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    self.splashPlayButton.frame = [self fullFrame];
+    self.splashPlayButton.contentMode = UIViewContentModeCenter;
+    [self.splashPlayButton setImage:giantPlayButton forState:UIControlStateNormal];
+    self.splashPlayButton.autoresizingMask =
+        UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [self.splashPlayButton addTarget:self
+                              action:@selector(playButtonClicked:)
+                    forControlEvents:UIControlEventTouchUpInside];
+    self.splashPlayButton.tintColor = [UIColor whiteColor];
+    [self addSubview:self.splashPlayButton];
+  }
 
   [self initialiseToolbarControls];
 

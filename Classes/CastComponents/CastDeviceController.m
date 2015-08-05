@@ -16,7 +16,7 @@
 #import "CastInstructionsViewController.h"
 #import "CastMiniController.h"
 #import "CastViewController.h"
-#import "ChromecastDeviceController.h"
+#import "CastDeviceController.h"
 #import "DeviceTableViewController.h"
 
 #import <GoogleCast/GoogleCast.h>
@@ -27,11 +27,18 @@
 static NSString * const kDeviceTableViewController = @"deviceTableViewController";
 
 /**
+ *  Constant for the amount of time to load a queued item before the current item
+ *  finishes. This also is the time the preload status change will trigger from the
+ *  receiver, which will generate a callback to the |GCKMediaControlChannelDelegate|.
+ */
+static NSInteger const kPreloadTime = 30;
+
+/**
  *  Constant for the storyboard ID for the expanded view Cast controller.
  */
 NSString * const kCastViewController = @"castViewController";
 
-@interface ChromecastDeviceController() <
+@interface CastDeviceController() <
     CastMiniControllerDelegate,
     DeviceTableViewControllerDelegate,
     GCKDeviceManagerDelegate,
@@ -60,9 +67,14 @@ NSString * const kCastViewController = @"castViewController";
 @property(nonatomic) CastMiniController *castMiniController;
 
 /**
- *  Whehter we are automatically adding the toolbar.
+ *  Whether we are automatically adding the toolbar.
  */
 @property(nonatomic) BOOL manageToolbar;
+
+/**
+ *  The information about the next item to be played in the autoplay queue.
+ */
+@property(nonatomic, readwrite) GCKMediaQueueItem *preloadingItem;
 
 /**
  *  Whether or not we are attempting reconnect.
@@ -81,7 +93,7 @@ NSString * const kCastViewController = @"castViewController";
 
 @end
 
-@implementation ChromecastDeviceController
+@implementation CastDeviceController
 
 #pragma mark - Lifecycle
 
@@ -219,20 +231,14 @@ NSString * const kCastViewController = @"castViewController";
 # pragma mark - GCKDeviceManagerDelegate
 
 - (void)deviceManagerDidConnect:(GCKDeviceManager *)deviceManager {
-  BOOL appMatch = [deviceManager.applicationMetadata.applicationID isEqualToString:_applicationID];
-  if (!_isReconnecting || !appMatch) {
-    // Explicit connect request when a different app (or none) is Casting.
-    [self.deviceManager launchApplication:_applicationID];
-  } else if (_isReconnecting &&
-             deviceManager.applicationMetadata.applicationID &&
-             !appMatch) {
-    // Implicit reconnect but an application other than ours is playing, disconnect.
-    [deviceManager disconnect];
-  } else {
-    // Reconnect, or our app is playing. Attempt to join our session if there.
+  if (_isReconnecting) {
+    // Reconnect, if our app is playing. Attempt to join our session if current.
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *lastSessionID = [defaults valueForKey:@"lastSessionID"];
     [self.deviceManager joinApplication:_applicationID sessionID:lastSessionID];
+  } else {
+    // Explicit connect request.
+    [self.deviceManager launchApplication:_applicationID];
   }
   [self updateCastIconButtonStates];
 }
@@ -270,6 +276,7 @@ NSString * const kCastViewController = @"castViewController";
 
 - (void)deviceManager:(GCKDeviceManager *)deviceManager
     didFailToConnectToApplicationWithError:(NSError *)error {
+  self.isReconnecting = NO;
   [self updateCastIconButtonStates];
 }
 
@@ -378,6 +385,25 @@ NSString * const kCastViewController = @"castViewController";
   }
 }
 
+- (void)mediaControlChannelDidUpdatePreloadStatus:(GCKMediaControlChannel *)mediaControlChannel {
+  NSLog(@"Preloading status changed");
+
+  if (mediaControlChannel.mediaStatus && mediaControlChannel.mediaStatus.preloadedItemID) {
+    self.preloadingItem = [mediaControlChannel.mediaStatus
+                           queueItemWithItemID:mediaControlChannel.mediaStatus.preloadedItemID];
+  } else {
+    // Clear the preloading item when it starts playing.
+    self.preloadingItem = nil;
+  }
+
+  if ([_delegate respondsToSelector:@selector(didUpdatePreloadStatusForItem:)]) {
+    [_delegate didUpdatePreloadStatusForItem:self.preloadingItem];
+  }
+
+  [[NSNotificationCenter defaultCenter]
+      postNotificationName:@"castPreloadStatusChange" object:self];
+}
+
 #pragma mark - Device & Media Management
 
 - (void)connectToDevice:(GCKDevice *)device {
@@ -395,18 +421,32 @@ NSString * const kCastViewController = @"castViewController";
 }
 
 - (void)mediaPlayNow:(GCKMediaInformation *)media {
-  [_mediaControlChannel loadMedia:media autoplay:YES];
+  GCKMediaStatus *status = _mediaControlChannel.mediaStatus;
+  if ([status queueItemCount] == 0) {
+    [_mediaControlChannel loadMedia:media autoplay:YES];
+  } else {
+    // Insert the new media into the queue as the next item, and jump to it.
+    [self mediaPlayNext:media];
+    [_mediaControlChannel queueNextItem];
+  }
 }
 
 - (void)mediaPlayNext:(GCKMediaInformation *)media {
   GCKMediaQueueItem *queueItem = [[GCKMediaQueueItem alloc] initWithMediaInformation:media
                                                                             autoplay:YES
                                                                            startTime:0
-                                                                         preloadTime:0
+                                                                         preloadTime:kPreloadTime
                                                                       activeTrackIDs:nil
                                                                           customData:nil];
   GCKMediaStatus *status = _mediaControlChannel.mediaStatus;
-  GCKMediaQueueItem *current = [status queueItemWithItemID:status.currentItemID];
+
+  // If the current item is the last one, insert at end.
+  if ([status queueItemAtIndex:[status queueItemCount]-1].itemID == status.currentItemID) {
+    [_mediaControlChannel queueInsertItem:queueItem beforeItemWithID:kGCKMediaQueueInvalidItemID];
+    return;
+  }
+
+  // Otherwise, find our position in the list and insert before the following item.
   GCKMediaQueueItem *candidate;
   BOOL found = NO;
   for (NSUInteger i = 0; i < [status queueItemCount]; ++i) {
@@ -414,7 +454,7 @@ NSString * const kCastViewController = @"castViewController";
     if (found) {
       break;
     }
-    if (candidate == current) {
+    if (candidate.itemID == status.currentItemID) {
       found = YES;
     }
   }
@@ -422,19 +462,18 @@ NSString * const kCastViewController = @"castViewController";
 }
 
 - (void)mediaAddToQueue:(GCKMediaInformation *)media {
-  if (!_mediaControlChannel.mediaStatus.mediaInformation) {
-    // Calling queueInsertItem with nothing in the queue does nothing.
-    [self mediaPlayNow:media];
-    return;
-  }
-
   GCKMediaQueueItem *queueItem = [[GCKMediaQueueItem alloc] initWithMediaInformation:media
                                                                             autoplay:YES
                                                                            startTime:0
-                                                                         preloadTime:0
+                                                                         preloadTime:kPreloadTime
                                                                       activeTrackIDs:nil
                                                                           customData:nil];
-  [_mediaControlChannel queueInsertItem:queueItem beforeItemWithID:0];
+  NSInteger requestID = [_mediaControlChannel queueInsertItem:queueItem
+                                             beforeItemWithID:kGCKMediaQueueInvalidItemID];
+
+  if (requestID == kGCKInvalidRequestID) {
+    NSLog(@"Failed to add to queue.");
+  }
 }
 
 - (UIBarButtonItem *)queueItemForController:(UIViewController *)controller {

@@ -27,7 +27,7 @@
 		284CBDA2182ADC2D007F65F9 /* LocalPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 284CBDA1182ADC2D007F65F9 /* LocalPlayerViewController.m */; };
 		284CBDA4182ADC2D007F65F9 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 284CBDA3182ADC2D007F65F9 /* Images.xcassets */; };
 		284CC02B182B0F9B007F65F9 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 284CC026182B0F9B007F65F9 /* Default-568h@2x.png */; };
-		284CC032182B1891007F65F9 /* ChromecastDeviceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 284CC031182B1891007F65F9 /* ChromecastDeviceController.m */; };
+		284CC032182B1891007F65F9 /* CastDeviceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 284CC031182B1891007F65F9 /* CastDeviceController.m */; };
 		284CC035182C3396007F65F9 /* CastViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 284CC034182C3396007F65F9 /* CastViewController.m */; };
 		491627AF184FBF9C00351397 /* SimpleImageFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 491627AE184FBF9C00351397 /* SimpleImageFetcher.m */; };
 		496D46FE182DBE9100343F72 /* Media.m in Sources */ = {isa = PBXBuildFile; fileRef = 496D46FD182DBE9100343F72 /* Media.m */; };
@@ -37,9 +37,9 @@
 		5FA883B61B210940008D7840 /* playlist_white@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FA883B21B210940008D7840 /* playlist_white@3x.png */; };
 		5FA883B71B210940008D7840 /* playlist@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FA883B31B210940008D7840 /* playlist@2x.png */; };
 		5FA883B81B210940008D7840 /* playlist@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FA883B41B210940008D7840 /* playlist@3x.png */; };
+		5FA883BB1B212991008D7840 /* AlertHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA883BA1B212991008D7840 /* AlertHelper.m */; };
 		5FA883BE1B2165F1008D7840 /* play_circle@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FA883BC1B2165F1008D7840 /* play_circle@2x.png */; };
 		5FA883BF1B2165F1008D7840 /* play_circle@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FA883BD1B2165F1008D7840 /* play_circle@3x.png */; };
-		5FA883BB1B212991008D7840 /* AlertHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA883BA1B212991008D7840 /* AlertHelper.m */; };
 		CCE5BD43196F037300016BAB /* MediaAccessibility.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE5BD42196F037300016BAB /* MediaAccessibility.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		CCE5BD45196F038400016BAB /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE5BD44196F038400016BAB /* CoreText.framework */; };
 		EB0EAE502A661842D7221B79 /* libPods-CastVideos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FC9B5525AE0F00A7BF2F43E7 /* libPods-CastVideos.a */; };
@@ -49,11 +49,14 @@
 		EF23DBA919C0EF7F00DA5ABB /* closed_caption_white.png in Resources */ = {isa = PBXBuildFile; fileRef = EF23DBA719C0EF7F00DA5ABB /* closed_caption_white.png */; };
 		EF23DBAA19C0EF7F00DA5ABB /* closed_caption_white@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EF23DBA819C0EF7F00DA5ABB /* closed_caption_white@2x.png */; };
 		EF23DBAD19C0FF2F00DA5ABB /* TracksTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EF23DBAC19C0FF2F00DA5ABB /* TracksTableViewController.m */; };
+		EF548BBF1B73D5660026C33F /* CastUpNextView.m in Sources */ = {isa = PBXBuildFile; fileRef = EF548BBE1B73D5660026C33F /* CastUpNextView.m */; };
+		EF548BC11B73D9200026C33F /* CastUpNextView.xib in Resources */ = {isa = PBXBuildFile; fileRef = EF548BC01B73D9200026C33F /* CastUpNextView.xib */; };
+		EF548BC31B83DDCC0026C33F /* CastFrameworkAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF548BC21B83DDCC0026C33F /* CastFrameworkAssets.xcassets */; };
+		EF548C2F1B87F3F00026C33F /* CastContainerController.m in Sources */ = {isa = PBXBuildFile; fileRef = EF548C2E1B87F3F00026C33F /* CastContainerController.m */; };
 		EF60AA281A9D28A40036D4FA /* CastIconButton.m in Sources */ = {isa = PBXBuildFile; fileRef = EF60AA271A9D28A40036D4FA /* CastIconButton.m */; };
 		EF775C5E1A49FE9E00995266 /* thumb.png in Resources */ = {isa = PBXBuildFile; fileRef = EF775C5B1A49FE9E00995266 /* thumb.png */; };
 		EF775C5F1A49FE9E00995266 /* thumb@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EF775C5C1A49FE9E00995266 /* thumb@2x.png */; };
 		EF775C601A49FE9E00995266 /* thumb@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = EF775C5D1A49FE9E00995266 /* thumb@3x.png */; };
-		EFB7D70A1ADC52AE00628229 /* CastFrameworkAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EFB7D7091ADC52AE00628229 /* CastFrameworkAssets.xcassets */; };
 		EFD7C20319FE71AF00082842 /* LocalPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = EFD7C20219FE71AF00082842 /* LocalPlayerView.m */; };
 		EFD8A0E91AABD052005808B2 /* MediaTrack.m in Sources */ = {isa = PBXBuildFile; fileRef = EFD8A0E81AABD052005808B2 /* MediaTrack.m */; };
 		EFD8A0EB1AABD632005808B2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EFD8A0EA1AABD632005808B2 /* Main.storyboard */; };
@@ -61,6 +64,9 @@
 		EFD8A0F01AAE32AB005808B2 /* GCKMediaInformation+LocalMedia.m in Sources */ = {isa = PBXBuildFile; fileRef = EFD8A0EF1AAE32AB005808B2 /* GCKMediaInformation+LocalMedia.m */; };
 		EFD8A0F31AAE8EE3005808B2 /* CastMiniController.m in Sources */ = {isa = PBXBuildFile; fileRef = EFD8A0F21AAE8EE3005808B2 /* CastMiniController.m */; };
 		EFE3184819C7D97B00C053EE /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EFE3184719C7D97B00C053EE /* SystemConfiguration.framework */; };
+		EFEE50A21B8D3C6600AFE97E /* media_stop@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = EFEE509F1B8D3C6600AFE97E /* media_stop@1x.png */; };
+		EFEE50A31B8D3C6600AFE97E /* media_stop@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EFEE50A01B8D3C6600AFE97E /* media_stop@2x.png */; };
+		EFEE50A41B8D3C6600AFE97E /* media_stop@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = EFEE50A11B8D3C6600AFE97E /* media_stop@3x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -92,8 +98,8 @@
 		284CBDA3182ADC2D007F65F9 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		284CBDAA182ADC2D007F65F9 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		284CC026182B0F9B007F65F9 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
-		284CC030182B1891007F65F9 /* ChromecastDeviceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ChromecastDeviceController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		284CC031182B1891007F65F9 /* ChromecastDeviceController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ChromecastDeviceController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		284CC030182B1891007F65F9 /* CastDeviceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CastDeviceController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		284CC031182B1891007F65F9 /* CastDeviceController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CastDeviceController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		284CC033182C3396007F65F9 /* CastViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CastViewController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		284CC034182C3396007F65F9 /* CastViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CastViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		491627AD184FBF9C00351397 /* SimpleImageFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleImageFetcher.h; sourceTree = "<group>"; };
@@ -110,10 +116,10 @@
 		5FA883B21B210940008D7840 /* playlist_white@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "playlist_white@3x.png"; sourceTree = "<group>"; };
 		5FA883B31B210940008D7840 /* playlist@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "playlist@2x.png"; sourceTree = "<group>"; };
 		5FA883B41B210940008D7840 /* playlist@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "playlist@3x.png"; sourceTree = "<group>"; };
-		5FA883BC1B2165F1008D7840 /* play_circle@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "play_circle@2x.png"; sourceTree = "<group>"; };
-		5FA883BD1B2165F1008D7840 /* play_circle@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "play_circle@3x.png"; sourceTree = "<group>"; };
 		5FA883B91B212991008D7840 /* AlertHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertHelper.h; sourceTree = "<group>"; };
 		5FA883BA1B212991008D7840 /* AlertHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertHelper.m; sourceTree = "<group>"; };
+		5FA883BC1B2165F1008D7840 /* play_circle@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "play_circle@2x.png"; sourceTree = "<group>"; };
+		5FA883BD1B2165F1008D7840 /* play_circle@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "play_circle@3x.png"; sourceTree = "<group>"; };
 		CCE5BD42196F037300016BAB /* MediaAccessibility.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaAccessibility.framework; path = System/Library/Frameworks/MediaAccessibility.framework; sourceTree = SDKROOT; };
 		CCE5BD44196F038400016BAB /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		EF110FAF19759BB30009410F /* CastInstructionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CastInstructionsViewController.h; sourceTree = "<group>"; };
@@ -124,12 +130,17 @@
 		EF23DBA819C0EF7F00DA5ABB /* closed_caption_white@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "closed_caption_white@2x.png"; sourceTree = "<group>"; };
 		EF23DBAB19C0FF2F00DA5ABB /* TracksTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TracksTableViewController.h; sourceTree = "<group>"; };
 		EF23DBAC19C0FF2F00DA5ABB /* TracksTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TracksTableViewController.m; sourceTree = "<group>"; };
+		EF548BBD1B73D5660026C33F /* CastUpNextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CastUpNextView.h; sourceTree = "<group>"; };
+		EF548BBE1B73D5660026C33F /* CastUpNextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CastUpNextView.m; sourceTree = "<group>"; };
+		EF548BC01B73D9200026C33F /* CastUpNextView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CastUpNextView.xib; sourceTree = "<group>"; };
+		EF548BC21B83DDCC0026C33F /* CastFrameworkAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = CastFrameworkAssets.xcassets; path = "Pods/google-cast-sdk/GoogleCastSDK-2.7.1-Release/CastFrameworkAssets.xcassets"; sourceTree = SOURCE_ROOT; };
+		EF548C2D1B87F3F00026C33F /* CastContainerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CastContainerController.h; sourceTree = "<group>"; };
+		EF548C2E1B87F3F00026C33F /* CastContainerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CastContainerController.m; sourceTree = "<group>"; };
 		EF60AA261A9D28A40036D4FA /* CastIconButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CastIconButton.h; sourceTree = "<group>"; };
 		EF60AA271A9D28A40036D4FA /* CastIconButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CastIconButton.m; sourceTree = "<group>"; };
 		EF775C5B1A49FE9E00995266 /* thumb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = thumb.png; sourceTree = "<group>"; };
 		EF775C5C1A49FE9E00995266 /* thumb@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "thumb@2x.png"; sourceTree = "<group>"; };
 		EF775C5D1A49FE9E00995266 /* thumb@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "thumb@3x.png"; sourceTree = "<group>"; };
-		EFB7D7091ADC52AE00628229 /* CastFrameworkAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = CastFrameworkAssets.xcassets; path = "Pods/google-cast-sdk/GoogleCastSDK-2.7.1-Release/CastFrameworkAssets.xcassets"; sourceTree = SOURCE_ROOT; };
 		EFD7C20119FE71AF00082842 /* LocalPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalPlayerView.h; sourceTree = "<group>"; };
 		EFD7C20219FE71AF00082842 /* LocalPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalPlayerView.m; sourceTree = "<group>"; };
 		EFD8A0E71AABD052005808B2 /* MediaTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTrack.h; sourceTree = "<group>"; };
@@ -141,6 +152,9 @@
 		EFD8A0F11AAE8EE3005808B2 /* CastMiniController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CastMiniController.h; sourceTree = "<group>"; };
 		EFD8A0F21AAE8EE3005808B2 /* CastMiniController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CastMiniController.m; sourceTree = "<group>"; };
 		EFE3184719C7D97B00C053EE /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		EFEE509F1B8D3C6600AFE97E /* media_stop@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "media_stop@1x.png"; sourceTree = "<group>"; };
+		EFEE50A01B8D3C6600AFE97E /* media_stop@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "media_stop@2x.png"; sourceTree = "<group>"; };
+		EFEE50A11B8D3C6600AFE97E /* media_stop@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "media_stop@3x.png"; sourceTree = "<group>"; };
 		FC9B5525AE0F00A7BF2F43E7 /* libPods-CastVideos.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CastVideos.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -245,6 +259,10 @@
 		284CC025182B0F9B007F65F9 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				EFEE509F1B8D3C6600AFE97E /* media_stop@1x.png */,
+				EFEE50A01B8D3C6600AFE97E /* media_stop@2x.png */,
+				EFEE50A11B8D3C6600AFE97E /* media_stop@3x.png */,
+				EF548BC21B83DDCC0026C33F /* CastFrameworkAssets.xcassets */,
 				EF110FB21976AA2C0009410F /* cling.png */,
 				EF110FB31976AA2C0009410F /* cling@2x.png */,
 				EF23DBA719C0EF7F00DA5ABB /* closed_caption_white.png */,
@@ -267,7 +285,6 @@
 				EF775C5D1A49FE9E00995266 /* thumb@3x.png */,
 				129886E11872348A00B013D2 /* video_thumb_mini.png */,
 				129886E21872348A00B013D2 /* video_thumb_mini@2x.png */,
-				EFB7D7091ADC52AE00628229 /* CastFrameworkAssets.xcassets */,
 			);
 			path = Images;
 			sourceTree = "<group>";
@@ -290,15 +307,20 @@
 				124377CF187CC2B500ADF736 /* DeviceTableViewController.m */,
 				EF23DBAB19C0FF2F00DA5ABB /* TracksTableViewController.h */,
 				EF23DBAC19C0FF2F00DA5ABB /* TracksTableViewController.m */,
-				284CC030182B1891007F65F9 /* ChromecastDeviceController.h */,
-				284CC031182B1891007F65F9 /* ChromecastDeviceController.m */,
+				284CC030182B1891007F65F9 /* CastDeviceController.h */,
+				284CC031182B1891007F65F9 /* CastDeviceController.m */,
 				EF60AA261A9D28A40036D4FA /* CastIconButton.h */,
 				EF60AA271A9D28A40036D4FA /* CastIconButton.m */,
 				EFD8A0F11AAE8EE3005808B2 /* CastMiniController.h */,
 				EFD8A0F21AAE8EE3005808B2 /* CastMiniController.m */,
+				EF548BBD1B73D5660026C33F /* CastUpNextView.h */,
+				EF548BBE1B73D5660026C33F /* CastUpNextView.m */,
 				284CC033182C3396007F65F9 /* CastViewController.h */,
 				284CC034182C3396007F65F9 /* CastViewController.m */,
 				EFD8A0EC1AACFCAF005808B2 /* CastComponents.storyboard */,
+				EF548BC01B73D9200026C33F /* CastUpNextView.xib */,
+				EF548C2D1B87F3F00026C33F /* CastContainerController.h */,
+				EF548C2E1B87F3F00026C33F /* CastContainerController.m */,
 			);
 			path = CastComponents;
 			sourceTree = "<group>";
@@ -313,8 +335,8 @@
 				03B5B1FD64413F4F6405893A /* Check Pods Manifest.lock */,
 				284CBD7E182ADC2D007F65F9 /* Sources */,
 				284CBD7F182ADC2D007F65F9 /* Frameworks */,
-				284CBD80182ADC2D007F65F9 /* Resources */,
 				7F026AC3CB929189D9022395 /* Copy Pods Resources */,
+				284CBD80182ADC2D007F65F9 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -364,7 +386,9 @@
 			files = (
 				EF775C601A49FE9E00995266 /* thumb@3x.png in Resources */,
 				EF110FB51976AA2C0009410F /* cling@2x.png in Resources */,
+				EF548BC11B73D9200026C33F /* CastUpNextView.xib in Resources */,
 				5FA883B61B210940008D7840 /* playlist_white@3x.png in Resources */,
+				EFEE50A41B8D3C6600AFE97E /* media_stop@3x.png in Resources */,
 				125F8FCA1880BA3300F14A9F /* logo_castvideos.png in Resources */,
 				125F8FCB1880BA3300F14A9F /* logo_castvideos@2x.png in Resources */,
 				EF110FB41976AA2C0009410F /* cling.png in Resources */,
@@ -380,10 +404,12 @@
 				284CBDA4182ADC2D007F65F9 /* Images.xcassets in Resources */,
 				5FA883B51B210940008D7840 /* playlist_white@2x.png in Resources */,
 				EF23DBA919C0EF7F00DA5ABB /* closed_caption_white.png in Resources */,
-				EFB7D70A1ADC52AE00628229 /* CastFrameworkAssets.xcassets in Resources */,
 				EF775C5E1A49FE9E00995266 /* thumb.png in Resources */,
+				EF548BC31B83DDCC0026C33F /* CastFrameworkAssets.xcassets in Resources */,
 				129886E31872348A00B013D2 /* video_thumb_mini.png in Resources */,
 				284CBD90182ADC2D007F65F9 /* InfoPlist.strings in Resources */,
+				EFEE50A31B8D3C6600AFE97E /* media_stop@2x.png in Resources */,
+				EFEE50A21B8D3C6600AFE97E /* media_stop@1x.png in Resources */,
 				EF23DBAA19C0EF7F00DA5ABB /* closed_caption_white@2x.png in Resources */,
 				12E0CD1918550A0700447896 /* list_outline_white.png in Resources */,
 				12E0CD1A18550A0700447896 /* list_outline_white@2x.png in Resources */,
@@ -433,10 +459,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				284CBD96182ADC2D007F65F9 /* AppDelegate.m in Sources */,
-				284CC032182B1891007F65F9 /* ChromecastDeviceController.m in Sources */,
+				284CC032182B1891007F65F9 /* CastDeviceController.m in Sources */,
 				284CBD9F182ADC2D007F65F9 /* MediaTableViewController.m in Sources */,
 				EF60AA281A9D28A40036D4FA /* CastIconButton.m in Sources */,
 				284CC035182C3396007F65F9 /* CastViewController.m in Sources */,
+				EF548BBF1B73D5660026C33F /* CastUpNextView.m in Sources */,
 				EFD7C20319FE71AF00082842 /* LocalPlayerView.m in Sources */,
 				284CBD92182ADC2D007F65F9 /* main.m in Sources */,
 				124377D0187CC2B500ADF736 /* DeviceTableViewController.m in Sources */,
@@ -446,6 +473,7 @@
 				EFD8A0F31AAE8EE3005808B2 /* CastMiniController.m in Sources */,
 				EF23DBAD19C0FF2F00DA5ABB /* TracksTableViewController.m in Sources */,
 				496D46FE182DBE9100343F72 /* Media.m in Sources */,
+				EF548C2F1B87F3F00026C33F /* CastContainerController.m in Sources */,
 				284CBDA2182ADC2D007F65F9 /* LocalPlayerViewController.m in Sources */,
 				EFD8A0E91AABD052005808B2 /* MediaTrack.m in Sources */,
 				496D4701182DBE9C00343F72 /* MediaListModel.m in Sources */,
@@ -546,8 +574,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					..,
@@ -570,8 +596,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					..,
