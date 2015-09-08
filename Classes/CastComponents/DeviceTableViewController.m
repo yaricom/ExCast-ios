@@ -14,6 +14,7 @@
 
 #import "AppDelegate.h"
 #import "DeviceTableViewController.h"
+#import "NotificationConstants.h"
 #import "SimpleImageFetcher.h"
 
 #import <GoogleCast/GCKDevice.h>
@@ -49,15 +50,15 @@ static NSString * const kVersionFooter = @"v";
 
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(mediaStatusDidChange)
-                                               name:@"castMediaStatusChange"
+                                               name:kCastMediaStatusChangeNotification
                                              object:nil];
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(volumeDidChange)
-                                               name:@"castVolumeChanged"
+                                               name:kCastVolumeChangedNotification
                                              object:nil];
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(scanDidChange)
-                                               name:@"castScanStatusUpdated"
+                                               name:kCastScanStatusUpdatedNotification
                                              object:nil];
 }
 

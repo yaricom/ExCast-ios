@@ -15,6 +15,7 @@
 #import "CastContainerController.h"
 #import "CastDeviceController.h"
 #import "CastUpNextView.h"
+#import "NotificationConstants.h"
 
 #import <GoogleCast/GoogleCast.h>
 
@@ -45,7 +46,7 @@ static const NSInteger kCastContainerUpNextDisplayHeight = 55;
 - (void)viewWillAppear:(BOOL)animated {
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(preloadStatusChange)
-                                               name:@"castPreloadStatusChange"
+                                               name:kCastPreloadStatusChangeNotification
                                              object:nil];
 
 }

@@ -18,6 +18,7 @@
 #import "CastViewController.h"
 #import "CastDeviceController.h"
 #import "DeviceTableViewController.h"
+#import "NotificationConstants.h"
 
 #import <GoogleCast/GoogleCast.h>
 
@@ -253,7 +254,7 @@ NSString * const kCastViewController = @"castViewController";
   [self.mediaControlChannel requestStatus];
 
   [self updateCastIconButtonStates];
-  [[NSNotificationCenter defaultCenter] postNotificationName:@"castApplicationConnected"
+  [[NSNotificationCenter defaultCenter] postNotificationName:kCastApplicationConnectedNotification
                                                       object:self];
 
   if ([_delegate respondsToSelector:@selector(didConnectToDevice:)]) {
@@ -271,7 +272,8 @@ NSString * const kCastViewController = @"castViewController";
 - (void)deviceManager:(GCKDeviceManager *)deviceManager
     volumeDidChangeToLevel:(float)volumeLevel
                    isMuted:(BOOL)isMuted {
-  [[NSNotificationCenter defaultCenter] postNotificationName:@"castVolumeChanged" object:self];
+  [[NSNotificationCenter defaultCenter] postNotificationName:kCastVolumeChangedNotification
+                                                      object:self];
 }
 
 - (void)deviceManager:(GCKDeviceManager *)deviceManager
@@ -348,18 +350,21 @@ NSString * const kCastViewController = @"castViewController";
     [_delegate didDiscoverDeviceOnNetwork];
   }
 
-  [[NSNotificationCenter defaultCenter] postNotificationName:@"castScanStatusUpdated" object:self];
+  [[NSNotificationCenter defaultCenter] postNotificationName:kCastScanStatusUpdatedNotification
+                                                      object:self];
   [self updateCastIconButtonStates];
 }
 
 - (void)deviceDidGoOffline:(GCKDevice *)device {
   NSLog(@"device went offline - %@", device.friendlyName);
-  [[NSNotificationCenter defaultCenter] postNotificationName:@"castScanStatusUpdated" object:self];
+  [[NSNotificationCenter defaultCenter] postNotificationName:kCastScanStatusUpdatedNotification
+                                                      object:self];
   [self updateCastIconButtonStates];
 }
 
 - (void)deviceDidChange:(GCKDevice *)device {
-  [[NSNotificationCenter defaultCenter] postNotificationName:@"castScanStatusUpdated" object:self];
+  [[NSNotificationCenter defaultCenter] postNotificationName:kCastScanStatusUpdatedNotification
+                                                      object:self];
 }
 
 #pragma mark - GCKMediaControlChannelDelegate methods
@@ -368,13 +373,15 @@ NSString * const kCastViewController = @"castViewController";
   NSLog(@"Media control channel status changed");
   _mediaInformation = mediaControlChannel.mediaStatus.mediaInformation;
   self.lastContentID = _mediaInformation.contentID;
-  [[NSNotificationCenter defaultCenter] postNotificationName:@"castMediaStatusChange" object:self];
+  [[NSNotificationCenter defaultCenter] postNotificationName:kCastMediaStatusChangeNotification
+                                                      object:self];
   [self updateCastIconButtonStates];
 }
 
 - (void)mediaControlChannelDidUpdateMetadata:(GCKMediaControlChannel *)mediaControlChannel {
   NSLog(@"Media control channel metadata changed");
-  [[NSNotificationCenter defaultCenter] postNotificationName:@"castMediaStatusChange" object:self];
+  [[NSNotificationCenter defaultCenter] postNotificationName:kCastMediaStatusChangeNotification
+                                                      object:self];
 }
 
 - (void)mediaControlChannelDidUpdateQueue:(GCKMediaControlChannel *)mediaControlChannel {
@@ -401,7 +408,7 @@ NSString * const kCastViewController = @"castViewController";
   }
 
   [[NSNotificationCenter defaultCenter]
-      postNotificationName:@"castPreloadStatusChange" object:self];
+      postNotificationName:kCastPreloadStatusChangeNotification object:self];
 }
 
 #pragma mark - Device & Media Management

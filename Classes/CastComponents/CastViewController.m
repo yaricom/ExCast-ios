@@ -16,6 +16,7 @@
 #import "CastViewController.h"
 #import "CastDeviceController.h"
 #import "CastUpNextView.h"
+#import "NotificationConstants.h"
 #import "SimpleImageFetcher.h"
 #import "TracksTableViewController.h"
 
@@ -124,12 +125,12 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
   // Listen for volume change notifications.
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(volumeDidChange)
-                                               name:@"castVolumeChanged"
+                                               name:kCastVolumeChangedNotification
                                              object:nil];
 
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(didReceiveMediaStateChange)
-                                               name:@"castMediaStatusChange"
+                                               name:kCastMediaStatusChangeNotification
                                              object:nil];
 
   // Add the cast icon to our nav bar.

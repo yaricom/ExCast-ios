@@ -42,6 +42,7 @@
 		5FA883BF1B2165F1008D7840 /* play_circle@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FA883BD1B2165F1008D7840 /* play_circle@3x.png */; };
 		CCE5BD43196F037300016BAB /* MediaAccessibility.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE5BD42196F037300016BAB /* MediaAccessibility.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		CCE5BD45196F038400016BAB /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE5BD44196F038400016BAB /* CoreText.framework */; };
+		EA64A2261B9F4AFF00A45576 /* NotificationConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = EA64A2251B9F4AFF00A45576 /* NotificationConstants.m */; };
 		EB0EAE502A661842D7221B79 /* libPods-CastVideos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FC9B5525AE0F00A7BF2F43E7 /* libPods-CastVideos.a */; };
 		EF110FB119759BB30009410F /* CastInstructionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EF110FB019759BB30009410F /* CastInstructionsViewController.m */; };
 		EF110FB41976AA2C0009410F /* cling.png in Resources */ = {isa = PBXBuildFile; fileRef = EF110FB21976AA2C0009410F /* cling.png */; };
@@ -122,6 +123,8 @@
 		5FA883BD1B2165F1008D7840 /* play_circle@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "play_circle@3x.png"; sourceTree = "<group>"; };
 		CCE5BD42196F037300016BAB /* MediaAccessibility.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaAccessibility.framework; path = System/Library/Frameworks/MediaAccessibility.framework; sourceTree = SDKROOT; };
 		CCE5BD44196F038400016BAB /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		EA64A2241B9F4AFF00A45576 /* NotificationConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotificationConstants.h; path = Classes/NotificationConstants.h; sourceTree = SOURCE_ROOT; };
+		EA64A2251B9F4AFF00A45576 /* NotificationConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NotificationConstants.m; path = Classes/NotificationConstants.m; sourceTree = SOURCE_ROOT; };
 		EF110FAF19759BB30009410F /* CastInstructionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CastInstructionsViewController.h; sourceTree = "<group>"; };
 		EF110FB019759BB30009410F /* CastInstructionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CastInstructionsViewController.m; sourceTree = "<group>"; };
 		EF110FB21976AA2C0009410F /* cling.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cling.png; sourceTree = "<group>"; };
@@ -321,6 +324,8 @@
 				EF548BC01B73D9200026C33F /* CastUpNextView.xib */,
 				EF548C2D1B87F3F00026C33F /* CastContainerController.h */,
 				EF548C2E1B87F3F00026C33F /* CastContainerController.m */,
+				EA64A2241B9F4AFF00A45576 /* NotificationConstants.h */,
+				EA64A2251B9F4AFF00A45576 /* NotificationConstants.m */,
 			);
 			path = CastComponents;
 			sourceTree = "<group>";
@@ -466,6 +471,7 @@
 				EF548BBF1B73D5660026C33F /* CastUpNextView.m in Sources */,
 				EFD7C20319FE71AF00082842 /* LocalPlayerView.m in Sources */,
 				284CBD92182ADC2D007F65F9 /* main.m in Sources */,
+				EA64A2261B9F4AFF00A45576 /* NotificationConstants.m in Sources */,
 				124377D0187CC2B500ADF736 /* DeviceTableViewController.m in Sources */,
 				EFD8A0F01AAE32AB005808B2 /* GCKMediaInformation+LocalMedia.m in Sources */,
 				5FA883B01B2102C5008D7840 /* QueueTableViewController.m in Sources */,
