@@ -429,12 +429,28 @@ NSString * const kCastViewController = @"castViewController";
 
 - (void)mediaPlayNow:(GCKMediaInformation *)media {
   GCKMediaStatus *status = _mediaControlChannel.mediaStatus;
+  // If there's nothing in the queue, just play the media.
   if ([status queueItemCount] == 0) {
     [_mediaControlChannel loadMedia:media autoplay:YES];
   } else {
-    // Insert the new media into the queue as the next item, and jump to it.
-    [self mediaPlayNext:media];
-    [_mediaControlChannel queueNextItem];
+    // Otherwise, explicitly create a queue item.
+    GCKMediaQueueItem *queueItem = [[GCKMediaQueueItem alloc] initWithMediaInformation:media
+                                                                              autoplay:YES
+                                                                             startTime:0
+                                                                           preloadTime:kPreloadTime
+                                                                        activeTrackIDs:nil
+                                                                            customData:nil];
+
+    // If this is the last item in the queue, insert it at the end.
+    if ([status queueItemAtIndex:[status queueItemCount]-1].itemID == status.currentItemID) {
+      [_mediaControlChannel queueInsertAndPlayItem:queueItem
+                                  beforeItemWithID:kGCKMediaQueueInvalidItemID];
+    } else {
+      // Otherwise, insert right after the current position.
+      NSUInteger candidatePosition = [status queueIndexForItemID:status.currentItemID] + 1;
+      GCKMediaQueueItem *candidate = [status queueItemAtIndex:candidatePosition];
+      [_mediaControlChannel queueInsertAndPlayItem:queueItem beforeItemWithID:candidate.itemID];
+    }
   }
 }
 
@@ -447,25 +463,16 @@ NSString * const kCastViewController = @"castViewController";
                                                                           customData:nil];
   GCKMediaStatus *status = _mediaControlChannel.mediaStatus;
 
-  // If the current item is the last one, insert at end.
+  // If this is the last item in the queue, insert it at the end.
   if ([status queueItemAtIndex:[status queueItemCount]-1].itemID == status.currentItemID) {
     [_mediaControlChannel queueInsertItem:queueItem beforeItemWithID:kGCKMediaQueueInvalidItemID];
-    return;
-  }
+  } else {
+    // Otherwise, insert right after the current position.
+    NSUInteger candidatePosition = [status queueIndexForItemID:status.currentItemID] + 1;
+    GCKMediaQueueItem *candidate = [status queueItemAtIndex:candidatePosition];
 
-  // Otherwise, find our position in the list and insert before the following item.
-  GCKMediaQueueItem *candidate;
-  BOOL found = NO;
-  for (NSUInteger i = 0; i < [status queueItemCount]; ++i) {
-    candidate = [status queueItemAtIndex:i];
-    if (found) {
-      break;
-    }
-    if (candidate.itemID == status.currentItemID) {
-      found = YES;
-    }
+    [_mediaControlChannel queueInsertItem:queueItem beforeItemWithID:candidate.itemID];
   }
-  [_mediaControlChannel queueInsertItem:queueItem beforeItemWithID:candidate.itemID];
 }
 
 - (void)mediaAddToQueue:(GCKMediaInformation *)media {
