@@ -16,11 +16,10 @@
 
 @class GCKMediaQueueItem;
 
-IB_DESIGNABLE
 @interface CastUpNextView : UIView
 
 @property (nonatomic) GCKMediaQueueItem *item;
-@property (weak, nonatomic) IBOutlet UIButton *stopButton;
-@property (weak, nonatomic) IBOutlet UIButton *playButton;
+@property (nonatomic) IBOutlet UIButton *stopButton;
+@property (nonatomic) IBOutlet UIButton *playButton;
 
 @end

@@ -154,7 +154,7 @@
                                 <rect key="frame" x="110" y="538" width="20" height="134"/>
                             </activityIndicatorView>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Waiting for Godot (2009)" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7DF-67-E6c">
-                                <rect key="frame" x="113" y="574" width="187.5" height="20.5"/>
+                                <rect key="frame" x="113" y="574" width="188" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
@@ -163,25 +163,25 @@
                                 <rect key="frame" x="102" y="43" width="210" height="106"/>
                                 <subviews>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Volume" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="190" translatesAutoresizingMaskIntoConstraints="NO" id="fR3-5N-Gmj">
-                                        <rect key="frame" x="10" y="10" width="190" height="20.5"/>
+                                        <rect key="frame" x="10" y="10" width="190" height="21"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="sZB-Tm-QVp">
+                                    <slider opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="sZB-Tm-QVp">
                                         <rect key="frame" x="38" y="45" width="134" height="31"/>
                                         <connections>
                                             <action selector="showVolumeSlider:" destination="mMm-2G-LeR" eventType="valueChanged" id="Ubw-60-Oyg"/>
                                         </connections>
                                     </slider>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_volume0.png" translatesAutoresizingMaskIntoConstraints="NO" id="I9M-7o-oeI">
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="icon_volume0.png" translatesAutoresizingMaskIntoConstraints="NO" id="I9M-7o-oeI">
                                         <rect key="frame" x="20" y="50" width="20" height="20"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="20" id="60e-rE-KYm"/>
                                             <constraint firstAttribute="height" constant="20" id="Zlx-AG-0R3"/>
                                         </constraints>
                                     </imageView>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_volume3.png" translatesAutoresizingMaskIntoConstraints="NO" id="7Hz-no-6O3">
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="icon_volume3.png" translatesAutoresizingMaskIntoConstraints="NO" id="7Hz-no-6O3">
                                         <rect key="frame" x="180" y="50" width="20" height="20"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="20" id="SFX-Gq-quB"/>
@@ -223,13 +223,13 @@
                                 </connections>
                             </slider>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="45:00" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fn7-Uc-9Vd" userLabel="Current Time">
-                                <rect key="frame" x="355" y="638" width="43" height="20.5"/>
+                                <rect key="frame" x="355" y="638" width="43" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2:12" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q8L-Jh-dbb" userLabel="Duration">
-                                <rect key="frame" x="16" y="639" width="43" height="20.5"/>
+                                <rect key="frame" x="16" y="639" width="43" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
@@ -282,7 +282,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="749" text="Casting to Chromecast" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="139" translatesAutoresizingMaskIntoConstraints="NO" id="fEv-89-Yk2">
-                                <rect key="frame" x="138" y="605" width="138.5" height="0.0"/>
+                                <rect key="frame" x="138" y="605" width="139" height="0.0"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                 <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
@@ -619,7 +619,7 @@
                                                 <size key="shadowOffset" width="0.0" height="1"/>
                                             </label>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cling.png" translatesAutoresizingMaskIntoConstraints="NO" id="saz-8H-qqO">
-                                                <rect key="frame" x="301" y="-10" width="165" height="192"/>
+                                                <rect key="frame" x="304" y="-9" width="165" height="192"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="saz-8H-qqO" secondAttribute="height" multiplier="154:179" id="wBf-5Y-rwN"/>
                                                     <constraint firstAttribute="width" constant="165" id="xfy-Yy-iYt"/>
@@ -636,7 +636,7 @@
                                                 </state>
                                             </button>
                                             <imageView userInteractionEnabled="NO" alpha="0.0" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cast_on" translatesAutoresizingMaskIntoConstraints="NO" id="Zzs-4N-gxB">
-                                                <rect key="frame" x="369" y="75" width="29" height="22"/>
+                                                <rect key="frame" x="374" y="75" width="24" height="24"/>
                                             </imageView>
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -693,8 +693,8 @@
         </scene>
     </scenes>
     <resources>
-        <image name="cast_off" width="29" height="22"/>
-        <image name="cast_on" width="29" height="22"/>
+        <image name="cast_off" width="24" height="24"/>
+        <image name="cast_on" width="24" height="24"/>
         <image name="cling.png" width="179" height="179"/>
         <image name="closed_caption_white.png" width="48" height="48"/>
         <image name="icon_volume0" width="30" height="30"/>

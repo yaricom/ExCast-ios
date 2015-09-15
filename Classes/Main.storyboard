@@ -211,30 +211,88 @@
                                     <segue destination="ueL-qa-znW" kind="embed" id="kDr-gA-J07"/>
                                 </connections>
                             </containerView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wGe-ii-dqu" customClass="CastUpNextView">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="G7P-od-AU5" customClass="CastUpNextView">
                                 <rect key="frame" x="0.0" y="681" width="414" height="55"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="video_thumb_mini.png" translatesAutoresizingMaskIntoConstraints="NO" id="gDv-Mg-HLS">
+                                        <rect key="frame" x="0.0" y="0.0" width="55" height="55"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="gDv-Mg-HLS" secondAttribute="height" multiplier="1:1" id="1hu-OW-Kai"/>
+                                            <constraint firstAttribute="height" constant="55" id="FCO-gL-tHZ"/>
+                                            <constraint firstAttribute="width" constant="55" id="gyU-67-55S"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2gC-pJ-aDP">
+                                        <rect key="frame" x="63" y="10" width="233" height="20"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t7j-QE-8fR">
+                                        <rect key="frame" x="359" y="10" width="35" height="35"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="35" id="OwQ-JN-TdC"/>
+                                            <constraint firstAttribute="width" constant="35" id="v78-Wg-zFQ"/>
+                                        </constraints>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <state key="normal" image="media_stop.png"/>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rWi-dL-AIp">
+                                        <rect key="frame" x="304" y="10" width="35" height="35"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="35" id="Rg8-PF-RLa"/>
+                                            <constraint firstAttribute="width" constant="35" id="zvz-h0-aNX"/>
+                                        </constraints>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <state key="normal" image="media_play"/>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Up Next" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LIH-uU-kHM">
+                                        <rect key="frame" x="63" y="33" width="43" height="14"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                                        <color key="textColor" red="0.77725128190000004" green="0.89971985480000005" blue="0.26894476020000002" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" red="0.058823529411764705" green="0.59999999999999998" blue="0.94901960784313721" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="55" id="OBN-8B-a8d"/>
+                                    <constraint firstItem="gDv-Mg-HLS" firstAttribute="top" secondItem="G7P-od-AU5" secondAttribute="top" id="2Ut-of-tpj"/>
+                                    <constraint firstAttribute="bottom" secondItem="gDv-Mg-HLS" secondAttribute="bottom" id="BjL-jR-WVh"/>
+                                    <constraint firstAttribute="height" constant="55" id="CSu-KH-eWF"/>
+                                    <constraint firstItem="LIH-uU-kHM" firstAttribute="leading" secondItem="gDv-Mg-HLS" secondAttribute="trailing" constant="8" id="HuU-b5-D0S"/>
+                                    <constraint firstAttribute="bottom" secondItem="LIH-uU-kHM" secondAttribute="bottom" constant="8" id="JfQ-B9-WFv"/>
+                                    <constraint firstItem="gDv-Mg-HLS" firstAttribute="leading" secondItem="G7P-od-AU5" secondAttribute="leading" id="LLh-Mb-MZc"/>
+                                    <constraint firstItem="rWi-dL-AIp" firstAttribute="leading" secondItem="2gC-pJ-aDP" secondAttribute="trailing" constant="8" id="PaP-aa-eEd"/>
+                                    <constraint firstItem="t7j-QE-8fR" firstAttribute="leading" secondItem="rWi-dL-AIp" secondAttribute="trailing" constant="20" id="QyS-ed-cVp"/>
+                                    <constraint firstAttribute="centerY" secondItem="rWi-dL-AIp" secondAttribute="centerY" id="UNL-8v-wPU"/>
+                                    <constraint firstAttribute="centerY" secondItem="t7j-QE-8fR" secondAttribute="centerY" constant="-0.5" id="ZDK-Fx-2o8"/>
+                                    <constraint firstAttribute="centerY" secondItem="2gC-pJ-aDP" secondAttribute="centerY" constant="8" id="jAI-Lq-VW5"/>
+                                    <constraint firstAttribute="trailing" secondItem="t7j-QE-8fR" secondAttribute="trailing" constant="20" id="nZs-3A-3qk"/>
+                                    <constraint firstItem="2gC-pJ-aDP" firstAttribute="leading" secondItem="gDv-Mg-HLS" secondAttribute="trailing" constant="8" id="uxl-I5-Lh9"/>
                                 </constraints>
+                                <connections>
+                                    <outlet property="image" destination="gDv-Mg-HLS" id="RzQ-JE-qGu"/>
+                                    <outlet property="playButton" destination="rWi-dL-AIp" id="b94-ky-Syf"/>
+                                    <outlet property="stopButton" destination="t7j-QE-8fR" id="2uC-Pi-i2b"/>
+                                    <outlet property="title" destination="2gC-pJ-aDP" id="WuJ-mV-L44"/>
+                                </connections>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="G7P-od-AU5" firstAttribute="leading" secondItem="MHf-eb-Ufj" secondAttribute="leadingMargin" constant="-16" id="0iK-cM-g5A"/>
                             <constraint firstAttribute="trailing" secondItem="dpj-nl-D6d" secondAttribute="trailing" id="2nK-jh-mUo"/>
                             <constraint firstItem="dpj-nl-D6d" firstAttribute="top" secondItem="MHf-eb-Ufj" secondAttribute="top" id="Wbc-Ec-dmH"/>
-                            <constraint firstAttribute="bottom" secondItem="wGe-ii-dqu" secondAttribute="bottom" id="cOc-Vd-W4i"/>
-                            <constraint firstAttribute="trailing" secondItem="wGe-ii-dqu" secondAttribute="trailing" id="fHN-CL-iQz"/>
-                            <constraint firstItem="wGe-ii-dqu" firstAttribute="top" secondItem="dpj-nl-D6d" secondAttribute="bottom" id="gfe-M4-mbX"/>
+                            <constraint firstItem="bGX-tx-PYf" firstAttribute="top" secondItem="G7P-od-AU5" secondAttribute="bottom" id="dwz-yv-bQu"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="G7P-od-AU5" secondAttribute="trailing" constant="-16" id="erK-1t-lnc"/>
                             <constraint firstItem="dpj-nl-D6d" firstAttribute="leading" secondItem="MHf-eb-Ufj" secondAttribute="leading" id="pdY-Nb-vjk"/>
-                            <constraint firstItem="wGe-ii-dqu" firstAttribute="leading" secondItem="MHf-eb-Ufj" secondAttribute="leading" id="wUp-M4-gtG"/>
+                            <constraint firstItem="G7P-od-AU5" firstAttribute="top" secondItem="dpj-nl-D6d" secondAttribute="bottom" id="vqD-8r-aod"/>
                         </constraints>
                     </view>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina55"/>
                     <connections>
                         <outlet property="containerView" destination="dpj-nl-D6d" id="GHk-zz-iOx"/>
-                        <outlet property="upnextHeight" destination="OBN-8B-a8d" id="TW4-9N-bmo"/>
-                        <outlet property="upnextView" destination="wGe-ii-dqu" id="L2S-XR-4Px"/>
+                        <outlet property="upnextHeight" destination="CSu-KH-eWF" id="UxP-GX-klZ"/>
+                        <outlet property="upnextView" destination="G7P-od-AU5" id="D4c-EA-8dA"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hb0-7n-zxf" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -263,7 +321,29 @@
             </objects>
             <point key="canvasLocation" x="159" y="-75"/>
         </scene>
+        <!--View Controller-->
+        <scene sceneID="vhb-N9-5Eo">
+            <objects>
+                <viewController id="Vfb-Cf-oya" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="X5e-0X-SEo"/>
+                        <viewControllerLayoutGuide type="bottom" id="Jqx-Dc-azX"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="wLV-Zk-OJa">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Qal-vD-X7J" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
     </scenes>
+    <resources>
+        <image name="media_play" width="49" height="49"/>
+        <image name="media_stop.png" width="49" height="49"/>
+        <image name="video_thumb_mini.png" width="75" height="42"/>
+    </resources>
     <inferredMetricsTieBreakers>
         <segue reference="oFk-xB-g6w"/>
     </inferredMetricsTieBreakers>

@@ -19,40 +19,13 @@
 #import <GoogleCast/GoogleCast.h>
 
 @interface CastUpNextView ()
-@property (weak, nonatomic) IBOutlet UIImageView *image;
-@property (weak, nonatomic) IBOutlet UILabel *title;
-@property (strong, nonatomic) UIView *subview;
+@property (nonatomic) IBOutlet UIImageView *image;
+@property (nonatomic) IBOutlet UILabel *title;
+@property (nonatomic) UIView *subview;
 
 @end
 
 @implementation CastUpNextView
-
-- (instancetype)initWithCoder:(NSCoder *)aDecoder {
-  self = [super initWithCoder:aDecoder];
-  if (self) {
-    [self sharedInit];
-  }
-  return self;
-}
-
-- (instancetype)initWithFrame:(CGRect)frame {
-  self = [super initWithFrame:frame];
-  if (self) {
-    [self sharedInit];
-  }
-  return self;
-}
-
-- (void)sharedInit {
-  NSArray *objects = [[NSBundle bundleForClass:[self class]] loadNibNamed:@"CastUpNextView"
-                                                   owner:self
-                                                 options:nil];
-  self.subview = [objects objectAtIndex:0];
-  _subview.frame = self.bounds;
-  _subview.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-
-  [self addSubview:_subview];
-}
 
 - (void)setItem:(GCKMediaQueueItem *)item {
   _item = item;
