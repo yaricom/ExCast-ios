@@ -53,11 +53,6 @@
   [self updateCurrentItem];
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-  [super viewDidAppear:animated];
-  [[CastDeviceController sharedInstance] updateToolbarForViewController:self];
-}
-
 - (void)viewWillDisappear:(BOOL)animated {
   [[NSNotificationCenter defaultCenter] removeObserver:self];
   [super viewWillDisappear:animated];

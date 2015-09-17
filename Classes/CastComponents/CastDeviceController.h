@@ -65,9 +65,7 @@ extern NSString * const kCastViewController;
 
 @end
 
-@interface CastDeviceController : NSObject <
-    GCKDeviceScannerListener
->
+@interface CastDeviceController : NSObject <GCKDeviceScannerListener>
 
 /**
  *  The storyboard contianing the Cast component views used by the controllers in
@@ -133,6 +131,11 @@ extern NSString * const kCastViewController;
 + (instancetype)sharedInstance;
 
 /**
+ *  Display the media currently being cast.
+ */
+- (void)displayCurrentlyPlayingMedia;
+
+/**
  *  Sets the position of the playback on the Cast device.
  *
  *  @param newPercent 0.0-1.0
@@ -179,14 +182,6 @@ extern NSString * const kCastViewController;
  *  @return item The decorated UIBarButtonItem, always non-nil
  */
 - (UIBarButtonItem *)queueItemForController:(UIViewController *)controller;
-
-/**
- *  Request an update for the minicontroller toolbar. Passed UIViewController must have a
- *  toolbar - for example if it is under a UINavigationBar.
- *
- *  @param viewController UIViewController to update the toolbar on.
- */
-- (void)updateToolbarForViewController:(UIViewController *)viewController;
 
 /**
  *  Return the last known stream position for the given contentID. This will generally only

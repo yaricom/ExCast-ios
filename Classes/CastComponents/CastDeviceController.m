@@ -14,7 +14,6 @@
 
 #import "CastIconButton.h"
 #import "CastInstructionsViewController.h"
-#import "CastMiniController.h"
 #import "CastViewController.h"
 #import "CastDeviceController.h"
 #import "DeviceTableViewController.h"
@@ -40,7 +39,6 @@ static NSInteger const kPreloadTime = 30;
 NSString * const kCastViewController = @"castViewController";
 
 @interface CastDeviceController() <
-    CastMiniControllerDelegate,
     DeviceTableViewControllerDelegate,
     GCKDeviceManagerDelegate,
     GCKLoggerDelegate,
@@ -61,16 +59,6 @@ NSString * const kCastViewController = @"castViewController";
  *  The Cast Icon Button controlled by this class.
  */
 @property(nonatomic) CastIconButton *castIconButton;
-
-/**
- *  The Cast Mini Controller controlled by this class.
- */
-@property(nonatomic) CastMiniController *castMiniController;
-
-/**
- *  Whether we are automatically adding the toolbar.
- */
-@property(nonatomic) BOOL manageToolbar;
 
 /**
  *  The information about the next item to be played in the autoplay queue.
@@ -112,7 +100,7 @@ NSString * const kCastViewController = @"castViewController";
 - (instancetype)init {
   self = [super init];
   if (self) {
-    // Initialize UI controls for navigation bar and tool bar.
+    // Initialize UI controls for navigation bar.
     [self initControls];
 
     // Load the storyboard for the Cast component UI.
@@ -207,10 +195,6 @@ NSString * const kCastViewController = @"castViewController";
       [CastInstructionsViewController showIfFirstTimeOverViewController:self.controller];
     }
   }
-
-  if (self.manageToolbar) {
-    [self updateToolbarForViewController:self.controller];
-  }
 }
 
 - (void)initControls {
@@ -218,7 +202,6 @@ NSString * const kCastViewController = @"castViewController";
   [_castIconButton addTarget:self
                       action:@selector(chooseDevice:)
             forControlEvents:UIControlEventTouchUpInside];
-  self.castMiniController = [[CastMiniController alloc] initWithDelegate:self];
 }
 
 - (void)displayCurrentlyPlayingMedia {
@@ -302,6 +285,9 @@ NSString * const kCastViewController = @"castViewController";
   _mediaInformation = nil;
   [self updateCastIconButtonStates];
 
+  [[NSNotificationCenter defaultCenter]
+      postNotificationName:kCastApplicationDisconnectedNotification object:self];
+
   if ([_delegate respondsToSelector:@selector(didDisconnect)]) {
     [_delegate didDisconnect];
   }
@@ -314,6 +300,9 @@ NSString * const kCastViewController = @"castViewController";
   if (error) {
     NSLog(@"Application disconnected with error: %@", error);
   }
+
+  [[NSNotificationCenter defaultCenter]
+      postNotificationName:kCastApplicationDisconnectedNotification object:self];
 
   // If we've lost the app connection, tear down the device connection.
   [deviceManager disconnect];
@@ -496,15 +485,7 @@ NSString * const kCastViewController = @"castViewController";
     return nil;
   }
 
-  _manageToolbar = NO;
   return [[UIBarButtonItem alloc] initWithCustomView:_castIconButton];
-}
-
-- (void)updateToolbarForViewController:(UIViewController *)viewController {
-  _manageToolbar = YES;
-  [self.castMiniController updateToolbarStateIn:viewController
-                            forMediaInformation:self.mediaInformation
-                                    playerState:self.playerState];
 }
 
 #pragma mark - GCKLoggerDelegate implementation

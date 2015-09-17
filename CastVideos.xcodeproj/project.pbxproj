@@ -62,7 +62,6 @@
 		EFD8A0EB1AABD632005808B2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EFD8A0EA1AABD632005808B2 /* Main.storyboard */; };
 		EFD8A0ED1AACFCAF005808B2 /* CastComponents.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EFD8A0EC1AACFCAF005808B2 /* CastComponents.storyboard */; };
 		EFD8A0F01AAE32AB005808B2 /* GCKMediaInformation+LocalMedia.m in Sources */ = {isa = PBXBuildFile; fileRef = EFD8A0EF1AAE32AB005808B2 /* GCKMediaInformation+LocalMedia.m */; };
-		EFD8A0F31AAE8EE3005808B2 /* CastMiniController.m in Sources */ = {isa = PBXBuildFile; fileRef = EFD8A0F21AAE8EE3005808B2 /* CastMiniController.m */; };
 		EFE3184819C7D97B00C053EE /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EFE3184719C7D97B00C053EE /* SystemConfiguration.framework */; };
 		EFEE50A21B8D3C6600AFE97E /* media_stop@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = EFEE509F1B8D3C6600AFE97E /* media_stop@1x.png */; };
 		EFEE50A31B8D3C6600AFE97E /* media_stop@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EFEE50A01B8D3C6600AFE97E /* media_stop@2x.png */; };
@@ -150,8 +149,6 @@
 		EFD8A0EC1AACFCAF005808B2 /* CastComponents.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = CastComponents.storyboard; sourceTree = "<group>"; };
 		EFD8A0EE1AAE32AB005808B2 /* GCKMediaInformation+LocalMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GCKMediaInformation+LocalMedia.h"; sourceTree = "<group>"; };
 		EFD8A0EF1AAE32AB005808B2 /* GCKMediaInformation+LocalMedia.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GCKMediaInformation+LocalMedia.m"; sourceTree = "<group>"; };
-		EFD8A0F11AAE8EE3005808B2 /* CastMiniController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CastMiniController.h; sourceTree = "<group>"; };
-		EFD8A0F21AAE8EE3005808B2 /* CastMiniController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CastMiniController.m; sourceTree = "<group>"; };
 		EFE3184719C7D97B00C053EE /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		EFEE509F1B8D3C6600AFE97E /* media_stop@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "media_stop@1x.png"; sourceTree = "<group>"; };
 		EFEE50A01B8D3C6600AFE97E /* media_stop@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "media_stop@2x.png"; sourceTree = "<group>"; };
@@ -312,8 +309,6 @@
 				284CC031182B1891007F65F9 /* CastDeviceController.m */,
 				EF60AA261A9D28A40036D4FA /* CastIconButton.h */,
 				EF60AA271A9D28A40036D4FA /* CastIconButton.m */,
-				EFD8A0F11AAE8EE3005808B2 /* CastMiniController.h */,
-				EFD8A0F21AAE8EE3005808B2 /* CastMiniController.m */,
 				EF548BBD1B73D5660026C33F /* CastUpNextView.h */,
 				EF548BBE1B73D5660026C33F /* CastUpNextView.m */,
 				284CC033182C3396007F65F9 /* CastViewController.h */,
@@ -472,7 +467,6 @@
 				EFD8A0F01AAE32AB005808B2 /* GCKMediaInformation+LocalMedia.m in Sources */,
 				5FA883B01B2102C5008D7840 /* QueueTableViewController.m in Sources */,
 				491627AF184FBF9C00351397 /* SimpleImageFetcher.m in Sources */,
-				EFD8A0F31AAE8EE3005808B2 /* CastMiniController.m in Sources */,
 				EF23DBAD19C0FF2F00DA5ABB /* TracksTableViewController.m in Sources */,
 				496D46FE182DBE9100343F72 /* Media.m in Sources */,
 				EF548C2F1B87F3F00026C33F /* CastContainerController.m in Sources */,

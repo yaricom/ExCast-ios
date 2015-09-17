@@ -74,11 +74,6 @@
   self.navigationItem.rightBarButtonItems = @[item, _showQueueButton];
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-  [super viewDidAppear:animated];
-  [[CastDeviceController sharedInstance] updateToolbarForViewController:self];
-}
-
 #pragma mark - CastDeviceControllerDelegate
 
 - (void)didConnectToDevice:(GCKDevice *)device {

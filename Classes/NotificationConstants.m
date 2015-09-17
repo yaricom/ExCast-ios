@@ -17,9 +17,11 @@
 @implementation NotificationConstants
 
 NSString *const kCastApplicationConnectedNotification = @"castApplicationConnected";
+NSString *const kCastApplicationDisconnectedNotification = @"castApplicationDisconnected";
 NSString *const kCastVolumeChangedNotification = @"castVolumeChanged";
 NSString *const kCastScanStatusUpdatedNotification = @"castScanStatusUpdated";
 NSString *const kCastMediaStatusChangeNotification = @"castMediaStatusChange";
 NSString *const kCastPreloadStatusChangeNotification = @"castPreloadStatusChange";
+NSString *const kCastViewControllerDisappearedNotification = @"castViewControllerDisappeared";
 
 @end

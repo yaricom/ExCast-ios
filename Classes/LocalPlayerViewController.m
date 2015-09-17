@@ -86,11 +86,6 @@
   [super viewWillDisappear:animated];
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-  [super viewDidAppear:animated];
-  [[CastDeviceController sharedInstance] updateToolbarForViewController:self];
-}
-
 - (void)dealloc {
   // Explicitly clear the playing media and release the AVPlayer.
   [_playerView setMedia:nil];

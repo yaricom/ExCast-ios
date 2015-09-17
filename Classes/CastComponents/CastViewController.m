@@ -186,6 +186,10 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
+  // Signal that this view is disappearing.
+  [[NSNotificationCenter defaultCenter]
+      postNotificationName:kCastViewControllerDisappearedNotification object:self];
+
   self.visible = false;
   [super viewDidDisappear:animated];
 }

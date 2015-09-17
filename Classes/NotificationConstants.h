@@ -17,9 +17,11 @@
 @interface NotificationConstants : NSObject
 
 extern NSString *const kCastApplicationConnectedNotification;
+extern NSString *const kCastApplicationDisconnectedNotification;
 extern NSString *const kCastVolumeChangedNotification;
 extern NSString *const kCastScanStatusUpdatedNotification;
 extern NSString *const kCastMediaStatusChangeNotification;
 extern NSString *const kCastPreloadStatusChangeNotification;
+extern NSString *const kCastViewControllerDisappearedNotification;
 
 @end
