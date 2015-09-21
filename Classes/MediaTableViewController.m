@@ -18,9 +18,11 @@
 #import "Media.h"
 #import "MediaListModel.h"
 #import "MediaTableViewController.h"
+#import "NotificationConstants.h"
 #import "SimpleImageFetcher.h"
 
 #import <GoogleCast/GCKDeviceManager.h>
+#import <GoogleCast/GCKMediaControlChannel.h>
 
 @interface MediaTableViewController () <CastDeviceControllerDelegate>
 
@@ -58,9 +60,6 @@
                                                       style:UIBarButtonItemStylePlain
                                                      target:self
                                                      action:@selector(showQueue:)];
-
-  GCKDeviceManager *manager = [CastDeviceController sharedInstance].deviceManager;
-  _showQueueButton.enabled = (manager.applicationConnectionState == GCKConnectionStateConnected);
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -71,17 +70,30 @@
   controller.delegate = self;
 
   UIBarButtonItem *item = [controller queueItemForController:self];
-  self.navigationItem.rightBarButtonItems = @[item, _showQueueButton];
+  self.navigationItem.rightBarButtonItems = @[item];
+
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(updateQueueButton)
+                                               name:kCastQueueUpdatedNotification
+                                             object:nil];
+
+  [self updateQueueButton];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+  [super viewWillDisappear:animated];
+
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 #pragma mark - CastDeviceControllerDelegate
 
 - (void)didConnectToDevice:(GCKDevice *)device {
-  _showQueueButton.enabled = YES;
+  [self updateQueueButton];
 }
 
 - (void)didDisconnect {
-  _showQueueButton.enabled = NO;
+  [self updateQueueButton];
 }
 
 #pragma mark - Interface
@@ -96,6 +108,24 @@
     Media *media = [self.mediaList mediaAtIndex:(int)indexPath.row];
     // Pass the currently selected media to the next controller if it needs it.
     [[segue destinationViewController] setMediaToPlay:media];
+  }
+}
+
+#pragma mark - Handling the queue button's display state
+
+- (void)updateQueueButton {
+  CastDeviceController *deviceController = [CastDeviceController sharedInstance];
+  if (deviceController.deviceManager.applicationConnectionState == GCKConnectionStateConnected
+      && [deviceController.mediaControlChannel.mediaStatus queueItemCount] > 0) {
+    if (![self.navigationItem.rightBarButtonItems containsObject:_showQueueButton]) {
+      NSMutableArray *rightBarButtons = [self.navigationItem.rightBarButtonItems mutableCopy];
+      [rightBarButtons addObject:_showQueueButton];
+      self.navigationItem.rightBarButtonItems = rightBarButtons;
+    }
+  } else {
+    NSMutableArray *rightBarButtons = [self.navigationItem.rightBarButtonItems mutableCopy];
+    [rightBarButtons removeObject:_showQueueButton];
+    self.navigationItem.rightBarButtonItems = rightBarButtons;
   }
 }
 

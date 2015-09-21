@@ -18,6 +18,7 @@
 #import "CastDeviceController.h"
 #import "GCKMediaInformation+LocalMedia.h"
 #import "LocalPlayerViewController.h"
+#import "NotificationConstants.h"
 #import "AlertHelper.h"
 
 #import <GoogleCast/GoogleCast.h>
@@ -45,9 +46,6 @@
                                                       style:UIBarButtonItemStylePlain
                                                      target:self
                                                      action:@selector(showQueue:)];
-
-  GCKDeviceManager *manager = [CastDeviceController sharedInstance].deviceManager;
-  _showQueueButton.enabled = (manager.applicationConnectionState == GCKConnectionStateConnected);
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -71,7 +69,13 @@
   CastDeviceController *controller = [CastDeviceController sharedInstance];
   controller.delegate = self;
   UIBarButtonItem *item = [controller queueItemForController:self];
-  self.navigationItem.rightBarButtonItems = @[item, _showQueueButton];
+  self.navigationItem.rightBarButtonItems = @[item];
+
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(updateQueueButton)
+                                               name:kCastQueueUpdatedNotification
+                                             object:nil];
+  [self updateQueueButton];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -83,6 +87,9 @@
   if (_resetEdgesOnDisappear) {
     [self setNavigationBarStyle:LPVNavBarDefault];
   }
+
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+
   [super viewWillDisappear:animated];
 }
 
@@ -125,6 +132,24 @@
   self.mediaTitle.text = self.mediaToPlay.title;
   self.mediaSubtitle.text = self.mediaToPlay.subtitle;
   self.mediaDescription.text = self.mediaToPlay.descrip;
+}
+
+#pragma mark - Handling the queue button's display state
+
+- (void)updateQueueButton {
+  CastDeviceController *deviceController = [CastDeviceController sharedInstance];
+  if (deviceController.deviceManager.applicationConnectionState == GCKConnectionStateConnected
+      && [deviceController.mediaControlChannel.mediaStatus queueItemCount] > 0) {
+    if (![self.navigationItem.rightBarButtonItems containsObject:_showQueueButton]) {
+      NSMutableArray *rightBarButtons = [self.navigationItem.rightBarButtonItems mutableCopy];
+      [rightBarButtons addObject:_showQueueButton];
+      self.navigationItem.rightBarButtonItems = rightBarButtons;
+    }
+  } else {
+    NSMutableArray *rightBarButtons = [self.navigationItem.rightBarButtonItems mutableCopy];
+    [rightBarButtons removeObject:_showQueueButton];
+    self.navigationItem.rightBarButtonItems = rightBarButtons;
+  }
 }
 
 #pragma mark - LocalPlayerController
@@ -208,7 +233,7 @@
  * @param device The device to which the connection was established.
  */
 - (void)didConnectToDevice:(GCKDevice *)device {
-  _showQueueButton.enabled = YES;
+  [self updateQueueButton];
 
   if (_playerView.playingLocally) {
     [_playerView pause];
@@ -227,7 +252,7 @@
 }
 
 - (void)didDisconnect {
-  _showQueueButton.enabled = NO;
+  [self updateQueueButton];
 }
 
 /**

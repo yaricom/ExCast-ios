@@ -376,6 +376,9 @@ NSString * const kCastViewController = @"castViewController";
 - (void)mediaControlChannelDidUpdateQueue:(GCKMediaControlChannel *)mediaControlChannel {
   NSLog(@"Media control channel queue changed");
 
+  [[NSNotificationCenter defaultCenter] postNotificationName:kCastQueueUpdatedNotification
+                                                      object:self];
+
   if ([_delegate respondsToSelector:@selector(didUpdateQueueForDevice:)]) {
     [_delegate didUpdateQueueForDevice:_deviceManager.device];
   }
