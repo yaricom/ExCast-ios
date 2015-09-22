@@ -19,6 +19,7 @@
 #import "CastViewController.h"
 #import "NotificationConstants.h"
 #import "SimpleImageFetcher.h"
+#import "Toast.h"
 
 #import <GoogleCast/GoogleCast.h>
 
@@ -87,6 +88,12 @@ static const NSInteger kCastContainerMiniViewDisplayHeight = 45;
                                                name:kCastViewControllerDisappearedNotification
                                              object:nil];
 
+  // Listen for queue events so we can publish toasts.
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(onItemQueued)
+                                               name:kCastItemQueuedNotification
+                                             object:nil];
+
   // Set initial upnext state based on current preload.
   [self preloadStatusChange];
 
@@ -139,6 +146,12 @@ static const NSInteger kCastContainerMiniViewDisplayHeight = 45;
 - (void)showMini {
   _miniView.hidden = NO;
   _miniHeight.constant = kCastContainerMiniViewDisplayHeight;
+}
+
+- (void)onItemQueued {
+  [Toast displayToastInView:_containerView
+                withMessage:@"Item added to queue."
+           forTimeInSeconds:3.5f];
 }
 
 - (void)onSkipToNextItem:(UIView *)sender {

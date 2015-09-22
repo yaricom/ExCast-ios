@@ -42,6 +42,7 @@
 		5FA883BF1B2165F1008D7840 /* play_circle@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FA883BD1B2165F1008D7840 /* play_circle@3x.png */; };
 		CCE5BD43196F037300016BAB /* MediaAccessibility.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE5BD42196F037300016BAB /* MediaAccessibility.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		CCE5BD45196F038400016BAB /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE5BD44196F038400016BAB /* CoreText.framework */; };
+		EA01BA6D1BB0D2860003EF32 /* Toast.m in Sources */ = {isa = PBXBuildFile; fileRef = EA01BA6C1BB0D2860003EF32 /* Toast.m */; };
 		EA64A2261B9F4AFF00A45576 /* NotificationConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = EA64A2251B9F4AFF00A45576 /* NotificationConstants.m */; };
 		EB0EAE502A661842D7221B79 /* libPods-CastVideos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FC9B5525AE0F00A7BF2F43E7 /* libPods-CastVideos.a */; };
 		EF110FB119759BB30009410F /* CastInstructionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EF110FB019759BB30009410F /* CastInstructionsViewController.m */; };
@@ -121,6 +122,8 @@
 		5FA883BD1B2165F1008D7840 /* play_circle@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "play_circle@3x.png"; sourceTree = "<group>"; };
 		CCE5BD42196F037300016BAB /* MediaAccessibility.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaAccessibility.framework; path = System/Library/Frameworks/MediaAccessibility.framework; sourceTree = SDKROOT; };
 		CCE5BD44196F038400016BAB /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		EA01BA6B1BB0D2860003EF32 /* Toast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Toast.h; sourceTree = "<group>"; };
+		EA01BA6C1BB0D2860003EF32 /* Toast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Toast.m; sourceTree = "<group>"; };
 		EA64A2241B9F4AFF00A45576 /* NotificationConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotificationConstants.h; path = Classes/NotificationConstants.h; sourceTree = SOURCE_ROOT; };
 		EA64A2251B9F4AFF00A45576 /* NotificationConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NotificationConstants.m; path = Classes/NotificationConstants.m; sourceTree = SOURCE_ROOT; };
 		EF110FAF19759BB30009410F /* CastInstructionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CastInstructionsViewController.h; sourceTree = "<group>"; };
@@ -238,6 +241,8 @@
 				EFD8A0EE1AAE32AB005808B2 /* GCKMediaInformation+LocalMedia.h */,
 				EFD8A0EF1AAE32AB005808B2 /* GCKMediaInformation+LocalMedia.m */,
 				284CBDA3182ADC2D007F65F9 /* Images.xcassets */,
+				EA01BA6B1BB0D2860003EF32 /* Toast.h */,
+				EA01BA6C1BB0D2860003EF32 /* Toast.m */,
 				284CBD8C182ADC2D007F65F9 /* Supporting Files */,
 			);
 			path = Classes;
@@ -471,6 +476,7 @@
 				496D46FE182DBE9100343F72 /* Media.m in Sources */,
 				EF548C2F1B87F3F00026C33F /* CastContainerController.m in Sources */,
 				284CBDA2182ADC2D007F65F9 /* LocalPlayerViewController.m in Sources */,
+				EA01BA6D1BB0D2860003EF32 /* Toast.m in Sources */,
 				EFD8A0E91AABD052005808B2 /* MediaTrack.m in Sources */,
 				496D4701182DBE9C00343F72 /* MediaListModel.m in Sources */,
 				EF110FB119759BB30009410F /* CastInstructionsViewController.m in Sources */,

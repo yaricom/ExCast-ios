@@ -12,18 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
-@interface NotificationConstants : NSObject
+@interface Toast : UIView
 
-extern NSString *const kCastApplicationConnectedNotification;
-extern NSString *const kCastApplicationDisconnectedNotification;
-extern NSString *const kCastVolumeChangedNotification;
-extern NSString *const kCastScanStatusUpdatedNotification;
-extern NSString *const kCastMediaStatusChangeNotification;
-extern NSString *const kCastPreloadStatusChangeNotification;
-extern NSString *const kCastViewControllerDisappearedNotification;
-extern NSString *const kCastItemQueuedNotification;
-extern NSString *const kCastQueueUpdatedNotification;
++ (void)displayToastInView:(UIView*)hostView
+                withMessage:(NSString*)message
+           forTimeInSeconds:(float)time;
 
 @end

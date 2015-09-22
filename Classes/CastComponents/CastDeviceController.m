@@ -479,6 +479,9 @@ NSString * const kCastViewController = @"castViewController";
 
   if (requestID == kGCKInvalidRequestID) {
     NSLog(@"Failed to add to queue.");
+  } else {
+    [[NSNotificationCenter defaultCenter] postNotificationName:kCastItemQueuedNotification
+                                                        object:self];
   }
 }
 
