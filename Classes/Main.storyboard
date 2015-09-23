@@ -226,7 +226,7 @@
                                         <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Wsc-CO-kvo">
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Wsc-CO-kvo">
                                         <rect key="frame" x="357" y="-2" width="49" height="49"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="Wsc-CO-kvo" secondAttribute="height" multiplier="1:1" id="9cm-s5-7GU"/>

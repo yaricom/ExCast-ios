@@ -43,6 +43,7 @@
 		CCE5BD43196F037300016BAB /* MediaAccessibility.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE5BD42196F037300016BAB /* MediaAccessibility.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		CCE5BD45196F038400016BAB /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE5BD44196F038400016BAB /* CoreText.framework */; };
 		EA64A2261B9F4AFF00A45576 /* NotificationConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = EA64A2251B9F4AFF00A45576 /* NotificationConstants.m */; };
+		EADEB9841BB46D7000680739 /* RepeatingTimerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EADEB9831BB46D7000680739 /* RepeatingTimerManager.m */; };
 		EB0EAE502A661842D7221B79 /* libPods-CastVideos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FC9B5525AE0F00A7BF2F43E7 /* libPods-CastVideos.a */; };
 		EF110FB119759BB30009410F /* CastInstructionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EF110FB019759BB30009410F /* CastInstructionsViewController.m */; };
 		EF110FB41976AA2C0009410F /* cling.png in Resources */ = {isa = PBXBuildFile; fileRef = EF110FB21976AA2C0009410F /* cling.png */; };
@@ -123,6 +124,8 @@
 		CCE5BD44196F038400016BAB /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		EA64A2241B9F4AFF00A45576 /* NotificationConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotificationConstants.h; path = Classes/NotificationConstants.h; sourceTree = SOURCE_ROOT; };
 		EA64A2251B9F4AFF00A45576 /* NotificationConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NotificationConstants.m; path = Classes/NotificationConstants.m; sourceTree = SOURCE_ROOT; };
+		EADEB9821BB46D7000680739 /* RepeatingTimerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RepeatingTimerManager.h; sourceTree = "<group>"; };
+		EADEB9831BB46D7000680739 /* RepeatingTimerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RepeatingTimerManager.m; sourceTree = "<group>"; };
 		EF110FAF19759BB30009410F /* CastInstructionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CastInstructionsViewController.h; sourceTree = "<group>"; };
 		EF110FB019759BB30009410F /* CastInstructionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CastInstructionsViewController.m; sourceTree = "<group>"; };
 		EF110FB21976AA2C0009410F /* cling.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cling.png; sourceTree = "<group>"; };
@@ -318,6 +321,8 @@
 				EF548C2E1B87F3F00026C33F /* CastContainerController.m */,
 				EA64A2241B9F4AFF00A45576 /* NotificationConstants.h */,
 				EA64A2251B9F4AFF00A45576 /* NotificationConstants.m */,
+				EADEB9821BB46D7000680739 /* RepeatingTimerManager.h */,
+				EADEB9831BB46D7000680739 /* RepeatingTimerManager.m */,
 			);
 			path = CastComponents;
 			sourceTree = "<group>";
@@ -455,6 +460,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				284CBD96182ADC2D007F65F9 /* AppDelegate.m in Sources */,
+				EADEB9841BB46D7000680739 /* RepeatingTimerManager.m in Sources */,
 				284CC032182B1891007F65F9 /* CastDeviceController.m in Sources */,
 				284CBD9F182ADC2D007F65F9 /* MediaTableViewController.m in Sources */,
 				EF60AA281A9D28A40036D4FA /* CastIconButton.m in Sources */,

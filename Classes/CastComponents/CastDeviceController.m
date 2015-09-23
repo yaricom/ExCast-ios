@@ -18,6 +18,7 @@
 #import "CastDeviceController.h"
 #import "DeviceTableViewController.h"
 #import "NotificationConstants.h"
+#import "RepeatingTimerManager.h"
 
 #import <GoogleCast/GoogleCast.h>
 
@@ -80,6 +81,12 @@ NSString * const kCastViewController = @"castViewController";
  */
 @property(nonatomic) NSTimeInterval lastPosition;
 
+/**
+ * The timer manager responsible for keeping the record of the stream's last known
+ * position up to date.
+ */
+@property(nonatomic) RepeatingTimerManager *streamPositionUpdateTimer;
+
 @end
 
 @implementation CastDeviceController
@@ -109,7 +116,19 @@ NSString * const kCastViewController = @"castViewController";
   return self;
 }
 
-# pragma mark - Acessors
+- (void)dealloc {
+  // Stop the position tracker.
+  [_streamPositionUpdateTimer invalidateTimer];
+  self.streamPositionUpdateTimer = nil;
+}
+
+# pragma mark - Internals
+
+- (void)updateLastPosition {
+  self.lastPosition = [_mediaControlChannel approximateStreamPosition];
+}
+
+# pragma mark - Accessors
 
 - (GCKMediaPlayerState)playerState {
   return _mediaControlChannel.mediaStatus.playerState;
@@ -120,8 +139,7 @@ NSString * const kCastViewController = @"castViewController";
 }
 
 - (NSTimeInterval)streamPosition {
-  self.lastPosition = [_mediaControlChannel approximateStreamPosition];
-  return self.lastPosition;
+  return _lastPosition;
 }
 
 - (void)setPlaybackPercent:(float)newPercent {
@@ -275,6 +293,10 @@ NSString * const kCastViewController = @"castViewController";
 - (void)deviceManager:(GCKDeviceManager *)deviceManager didDisconnectWithError:(GCKError *)error {
   NSLog(@"Received notification that device disconnected");
 
+  // Stop the position tracker.
+  [_streamPositionUpdateTimer invalidateTimer];
+  self.streamPositionUpdateTimer = nil;
+
   if (!error || (
       error.code == GCKErrorCodeDeviceAuthenticationFailure ||
       error.code == GCKErrorCodeDisconnected ||
@@ -296,6 +318,10 @@ NSString * const kCastViewController = @"castViewController";
 - (void)deviceManager:(GCKDeviceManager *)deviceManager
     didDisconnectFromApplicationWithError:(NSError *)error {
   NSLog(@"Received notification that app disconnected");
+
+  // Stop the position tracker.
+  [_streamPositionUpdateTimer invalidateTimer];
+  self.streamPositionUpdateTimer = nil;
 
   if (error) {
     NSLog(@"Application disconnected with error: %@", error);
@@ -361,7 +387,21 @@ NSString * const kCastViewController = @"castViewController";
 - (void)mediaControlChannelDidUpdateStatus:(GCKMediaControlChannel *)mediaControlChannel {
   NSLog(@"Media control channel status changed");
   _mediaInformation = mediaControlChannel.mediaStatus.mediaInformation;
+
+  if (!_lastContentID && _mediaInformation.contentID) {
+    // If we went from nothing playing to something playing, start the position tracker.
+    self.streamPositionUpdateTimer =
+        [[RepeatingTimerManager alloc] initWithTarget:self
+                                             selector:@selector(updateLastPosition)
+                                            frequency:1.0];
+  } else if ( _lastContentID && !(_mediaInformation.contentID)) {
+    // If we went from something playing to nothing playing, stop the position tracker.
+    [_streamPositionUpdateTimer invalidateTimer];
+    self.streamPositionUpdateTimer = nil;
+  }
+
   self.lastContentID = _mediaInformation.contentID;
+
   [[NSNotificationCenter defaultCenter] postNotificationName:kCastMediaStatusChangeNotification
                                                       object:self];
   [self updateCastIconButtonStates];

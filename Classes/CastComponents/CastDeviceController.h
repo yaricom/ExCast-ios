@@ -195,6 +195,12 @@ extern NSString * const kCastViewController;
 - (NSTimeInterval)streamPositionForPreviouslyCastMedia:(NSString *)contentID;
 
 /**
+ * Update the stored last known stream position to the current stream position. This must be
+ * called regularly to ensure the value tracks the actual stream position.
+ */
+- (void)updateLastPosition;
+
+/**
  *  Prevent automatically reconnecting to the Cast device if we see it again.
  */
 - (void)clearPreviousSession;
