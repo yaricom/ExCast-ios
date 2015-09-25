@@ -164,14 +164,11 @@ static const NSInteger kCastContainerMiniViewDisplayHeight = 45;
   GCKMediaStatus *mediaStatus = castDeviceController.mediaControlChannel.mediaStatus;
   NSInteger count = [mediaStatus queueItemCount];
 
-  BOOL foundCurrent = NO;
-  for (NSInteger i = 0; i < count; ++i) {
+  NSInteger currentLocation = [mediaStatus queueIndexForItemID:mediaStatus.currentItemID];
+
+  for(NSInteger i = currentLocation + 1; i < count; ++i) {
     GCKMediaQueueItem *item = [mediaStatus queueItemAtIndex:i];
-    if (foundCurrent) {
-      [ids addObject:@(item.itemID)];
-    } else if (item.itemID == mediaStatus.currentItemID) {
-      foundCurrent = YES;
-    }
+    [ids addObject:@(item.itemID)];
   }
 
   [castDeviceController.mediaControlChannel queueRemoveItemsWithIDs:ids];
