@@ -268,7 +268,7 @@
                                     <constraint firstAttribute="centerY" secondItem="fdr-6j-3OU" secondAttribute="centerY" id="lsc-zB-9sN"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="G7P-od-AU5" customClass="CastUpNextView">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="G7P-od-AU5">
                                 <rect key="frame" x="4" y="636" width="406" height="55"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="video_thumb_mini.png" translatesAutoresizingMaskIntoConstraints="NO" id="gDv-Mg-HLS">
@@ -327,12 +327,6 @@
                                     <constraint firstItem="2gC-pJ-aDP" firstAttribute="leading" secondItem="gDv-Mg-HLS" secondAttribute="trailing" constant="8" id="uxl-I5-Lh9"/>
                                     <constraint firstItem="t7j-QE-8fR" firstAttribute="centerY" secondItem="G7P-od-AU5" secondAttribute="centerY" id="w9X-0V-Gfr"/>
                                 </constraints>
-                                <connections>
-                                    <outlet property="image" destination="gDv-Mg-HLS" id="RzQ-JE-qGu"/>
-                                    <outlet property="playButton" destination="rWi-dL-AIp" id="b94-ky-Syf"/>
-                                    <outlet property="stopButton" destination="t7j-QE-8fR" id="2uC-Pi-i2b"/>
-                                    <outlet property="title" destination="2gC-pJ-aDP" id="WuJ-mV-L44"/>
-                                </connections>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -358,8 +352,12 @@
                         <outlet property="miniTitle" destination="jnY-sa-O58" id="cKn-yh-vQI"/>
                         <outlet property="miniView" destination="HBN-Hl-9B9" id="jOo-ox-xCb"/>
                         <outlet property="thumbnailImage" destination="fdr-6j-3OU" id="Gmi-bI-KRu"/>
-                        <outlet property="upnextHeight" destination="03U-8e-b1o" id="7cm-fG-9Ec"/>
-                        <outlet property="upnextView" destination="G7P-od-AU5" id="D4c-EA-8dA"/>
+                        <outlet property="upNextHeight" destination="03U-8e-b1o" id="g6t-p8-vot"/>
+                        <outlet property="upNextImage" destination="gDv-Mg-HLS" id="qYe-Aa-asa"/>
+                        <outlet property="upNextPlayButton" destination="rWi-dL-AIp" id="ihG-uJ-cSO"/>
+                        <outlet property="upNextStopButton" destination="t7j-QE-8fR" id="iGC-1M-mf6"/>
+                        <outlet property="upNextTitle" destination="2gC-pJ-aDP" id="UeW-N2-P2o"/>
+                        <outlet property="upNextView" destination="G7P-od-AU5" id="s31-rg-eiL"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hb0-7n-zxf" userLabel="First Responder" sceneMemberID="firstResponder"/>

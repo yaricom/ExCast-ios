@@ -15,7 +15,6 @@
 #import "AppDelegate.h"
 #import "CastContainerController.h"
 #import "CastDeviceController.h"
-#import "CastUpNextView.h"
 #import "CastViewController.h"
 #import "NotificationConstants.h"
 #import "SimpleImageFetcher.h"
@@ -28,10 +27,15 @@ static const NSInteger kCastContainerMiniViewDisplayHeight = 45;
 
 @interface CastContainerController ()
 @property (weak, nonatomic) IBOutlet UIView *containerView;
-@property (weak, nonatomic) IBOutlet CastUpNextView *upnextView;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *upnextHeight;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *upNextHeight;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *miniHeight;
 
+@property (weak, nonatomic) IBOutlet UIView *upNextView;
+@property (nonatomic) IBOutlet UIButton *upNextStopButton;
+@property (nonatomic) IBOutlet UIButton *upNextPlayButton;
+@property (nonatomic) IBOutlet UIImageView *upNextImage;
+@property (nonatomic) IBOutlet UILabel *upNextTitle;
+@property (nonatomic) GCKMediaQueueItem *upNextItem;
 
 @property (weak, nonatomic) IBOutlet UIView *miniView;
 @property (weak, nonatomic) IBOutlet UIButton *thumbnailImage;
@@ -47,10 +51,10 @@ static const NSInteger kCastContainerMiniViewDisplayHeight = 45;
   [super viewDidLoad];
 
   // Add actions to bar buttons.
-  [_upnextView.playButton addTarget:self
+  [_upNextPlayButton addTarget:self
                              action:@selector(onSkipToNextItem:)
                    forControlEvents:UIControlEventTouchUpInside];
-  [_upnextView.stopButton addTarget:self
+  [_upNextStopButton addTarget:self
                              action:@selector(onStopAutoplay:)
                    forControlEvents:UIControlEventTouchUpInside];
   [_thumbnailImage addTarget:self
@@ -120,22 +124,44 @@ static const NSInteger kCastContainerMiniViewDisplayHeight = 45;
  */
 - (void)preloadStatusChange {
   GCKMediaQueueItem *preload = [CastDeviceController sharedInstance].preloadingItem;
+
+  // If we have a preloaded item, configure the UpNext bar to display it.
   if (!preload) {
     [self hideUpNext];
   } else {
-    _upnextView.item = preload;
+    self.upNextItem = preload;
+
+    self.upNextTitle.text = [_upNextItem.mediaInformation.metadata
+                             stringForKey:kGCKMetadataKeyTitle];
     [self showUpNext];
+
+    // Load the thumbnail image asynchronously.
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+      NSString *posterURL = [_upNextItem.mediaInformation.metadata
+                             stringForKey:kCastComponentPosterURL];
+      if (posterURL) {
+        UIImage *image =
+        [UIImage imageWithData:
+         [SimpleImageFetcher getDataFromImageURL:[NSURL URLWithString:posterURL]]];
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+          NSLog(@"Loaded thumbnail image");
+          self.upNextImage.image = image;
+          [_upNextView setNeedsLayout];
+        });
+      }
+    });
   }
 }
 
 - (void)hideUpNext {
-  _upnextView.hidden = YES;
-  _upnextHeight.constant = 0;
+  _upNextView.hidden = YES;
+  _upNextHeight.constant = 0;
 }
 
 - (void)showUpNext {
-  _upnextView.hidden = NO;
-  _upnextHeight.constant = kCastContainerUpNextDisplayHeight;
+  _upNextView.hidden = NO;
+  _upNextHeight.constant = kCastContainerUpNextDisplayHeight;
 }
 
 - (void)hideMini {

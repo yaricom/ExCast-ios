@@ -15,7 +15,6 @@
 #import "AppDelegate.h"
 #import "CastViewController.h"
 #import "CastDeviceController.h"
-#import "CastUpNextView.h"
 #import "NotificationConstants.h"
 #import "SimpleImageFetcher.h"
 #import "TracksTableViewController.h"
