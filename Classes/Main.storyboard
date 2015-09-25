@@ -347,7 +347,7 @@
                     <connections>
                         <outlet property="containerView" destination="dpj-nl-D6d" id="GHk-zz-iOx"/>
                         <outlet property="mediaStateButton" destination="Wsc-CO-kvo" id="uT2-yY-RRf"/>
-                        <outlet property="miniHeight" destination="Zdz-LJ-FLr" id="AZQ-1j-EUE"/>
+                        <outlet property="miniHeight" destination="Zdz-LJ-FLr" id="ivY-hR-thK"/>
                         <outlet property="miniSubtitle" destination="Z3T-vN-bxG" id="d9a-LY-joG"/>
                         <outlet property="miniTitle" destination="jnY-sa-O58" id="cKn-yh-vQI"/>
                         <outlet property="miniView" destination="HBN-Hl-9B9" id="jOo-ox-xCb"/>

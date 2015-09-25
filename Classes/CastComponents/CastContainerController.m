@@ -59,19 +59,16 @@ static const NSInteger kCastContainerMiniViewDisplayHeight = 45;
                                  action:@selector(onToggleMediaState:)
                        forControlEvents:UIControlEventTouchUpInside];
 
-  // Set initial upnext state based on current preload.
-  [self preloadStatusChange];
-
-  // Set initial mini toolbar state.
-  [self hideMini];
-}
-
-- (void)viewWillAppear:(BOOL)animated {
   // Listen for changes to the upnext bar.
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(preloadStatusChange)
                                                name:kCastPreloadStatusChangeNotification
                                              object:nil];
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(hideUpNext)
+                                               name:kCastApplicationDisconnectedNotification
+                                             object:nil];
+
   // Listen for changes to the mini toolbar.
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(updateMiniToolbar)
@@ -89,11 +86,12 @@ static const NSInteger kCastContainerMiniViewDisplayHeight = 45;
                                            selector:@selector(showMini)
                                                name:kCastViewControllerDisappearedNotification
                                              object:nil];
-}
 
-- (void)viewWillDisappear:(BOOL)animated {
-  [[NSNotificationCenter defaultCenter] removeObserver:self];
-  [super viewWillDisappear:animated];
+  // Set initial upnext state based on current preload.
+  [self preloadStatusChange];
+
+  // Set initial mini toolbar state.
+  [self hideMini];
 }
 
 - (instancetype)initWithViewController:(UIViewController *)viewController {
@@ -104,6 +102,10 @@ static const NSInteger kCastContainerMiniViewDisplayHeight = 45;
     [viewController didMoveToParentViewController:self];
   }
   return self;
+}
+
+- (void) dealloc {
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 /**
