@@ -34,6 +34,11 @@ static BOOL isToastActive;
   return self;
 }
 
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+  [self removeFromSuperview];
+  isToastActive = false;
+}
+
 + (void)displayToastInView:(UIView*)hostView
                withMessage:(NSString*)message
           forTimeInSeconds:(float)timeInSeconds {

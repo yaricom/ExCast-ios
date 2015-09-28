@@ -175,7 +175,7 @@ static const NSInteger kCastContainerMiniViewDisplayHeight = 45;
 }
 
 - (void)onItemQueued {
-  [Toast displayToastInView:_containerView
+  [Toast displayToastInView:[UIApplication sharedApplication].delegate.window
                 withMessage:@"Item added to queue."
            forTimeInSeconds:3.5f];
 }
