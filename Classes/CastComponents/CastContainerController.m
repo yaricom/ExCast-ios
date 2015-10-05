@@ -266,7 +266,8 @@ static const NSInteger kCastContainerMiniViewDisplayHeight = 45;
 
   // Update the text.
   [_miniTitle setText:[info.metadata stringForKey:kGCKMetadataKeyTitle]];
-  [_miniSubtitle setText:[info.metadata stringForKey:kGCKMetadataKeySubtitle]];
+  [_miniSubtitle setText:[NSString stringWithFormat:@"Casting to %@",
+      castDeviceController.deviceManager.device.friendlyName]];
 
   // Update the image.
   GCKImage *img = [info.metadata.images objectAtIndex:0];
