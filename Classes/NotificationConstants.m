@@ -22,6 +22,7 @@ NSString *const kCastVolumeChangedNotification = @"castVolumeChanged";
 NSString *const kCastScanStatusUpdatedNotification = @"castScanStatusUpdated";
 NSString *const kCastMediaStatusChangeNotification = @"castMediaStatusChange";
 NSString *const kCastPreloadStatusChangeNotification = @"castPreloadStatusChange";
+NSString *const kCastViewControllerAppearedNotification = @"castViewControllerAppeared";
 NSString *const kCastViewControllerDisappearedNotification = @"castViewControllerDisappeared";
 NSString *const kCastItemQueuedNotification = @"castItemQueued";
 NSString *const kCastQueueUpdatedNotification = @"castQueueUpdated";

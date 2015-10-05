@@ -43,12 +43,15 @@ static const NSInteger kCastContainerMiniViewDisplayHeight = 45;
 @property (weak, nonatomic) IBOutlet UILabel *miniTitle;
 @property (weak, nonatomic) IBOutlet UILabel *miniSubtitle;
 @property (nonatomic) NSURL *imageUrl;
+@property (nonatomic) BOOL extendedControlsVisible;
 @end
 
 @implementation CastContainerController
 
 - (void)viewDidLoad {
   [super viewDidLoad];
+
+  self.extendedControlsVisible = NO;
 
   // Add actions to bar buttons.
   [_upNextPlayButton addTarget:self
@@ -88,7 +91,11 @@ static const NSInteger kCastContainerMiniViewDisplayHeight = 45;
                                                name:kCastApplicationDisconnectedNotification
                                              object:nil];
   [[NSNotificationCenter defaultCenter] addObserver:self
-                                           selector:@selector(showMini)
+                                           selector:@selector(onExtendedControlsAppeared)
+                                               name:kCastViewControllerAppearedNotification
+                                             object:nil];
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(onExtendedControlsDisappeared)
                                                name:kCastViewControllerDisappearedNotification
                                              object:nil];
 
@@ -223,6 +230,16 @@ static const NSInteger kCastContainerMiniViewDisplayHeight = 45;
   }
 }
 
+- (void)onExtendedControlsAppeared {
+  self.extendedControlsVisible = YES;
+  [self updateMiniToolbar];
+}
+
+- (void)onExtendedControlsDisappeared {
+  self.extendedControlsVisible = NO;
+  [self updateMiniToolbar];
+}
+
 - (void)updateMiniToolbar {
   CastDeviceController *castDeviceController = [CastDeviceController sharedInstance];
 
@@ -230,7 +247,9 @@ static const NSInteger kCastContainerMiniViewDisplayHeight = 45;
   GCKMediaPlayerState state = castDeviceController.playerState;
 
   // Update the play/pause state.
-  if (state == GCKMediaPlayerStateUnknown || state == GCKMediaPlayerStateIdle) {
+  if (state == GCKMediaPlayerStateUnknown ||
+      state == GCKMediaPlayerStateIdle ||
+      _extendedControlsVisible) {
     [_mediaStateButton setImage:nil forState:UIControlStateNormal];
     [self hideMini];
   } else {

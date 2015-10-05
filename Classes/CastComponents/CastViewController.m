@@ -121,6 +121,10 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
 
+  // Signal that this view appeared.
+  [[NSNotificationCenter defaultCenter]
+      postNotificationName:kCastViewControllerAppearedNotification object:self];
+
   // Listen for volume change notifications.
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(volumeDidChange)
@@ -185,7 +189,7 @@ NSString * const kCastComponentPosterURL = @"castComponentPosterURL";
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
-  // Signal that this view is disappearing.
+  // Signal that this view disappeared.
   [[NSNotificationCenter defaultCenter]
       postNotificationName:kCastViewControllerDisappearedNotification object:self];
 
