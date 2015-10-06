@@ -388,16 +388,15 @@ NSString * const kCastViewController = @"castViewController";
   NSLog(@"Media control channel status changed");
   _mediaInformation = mediaControlChannel.mediaStatus.mediaInformation;
 
-  if (!_lastContentID && _mediaInformation.contentID) {
-    // If we went from nothing playing to something playing, start the position tracker.
+  // Always invalidate the existing stream position timer; we can get a new one later if necessary.
+  [_streamPositionUpdateTimer invalidateTimer];
+  self.streamPositionUpdateTimer = nil;
+  // Start a new stream position timer if there's content playing.
+  if (_mediaInformation.contentID) {
     self.streamPositionUpdateTimer =
-        [[RepeatingTimerManager alloc] initWithTarget:self
-                                             selector:@selector(updateLastPosition)
-                                            frequency:1.0];
-  } else if ( _lastContentID && !(_mediaInformation.contentID)) {
-    // If we went from something playing to nothing playing, stop the position tracker.
-    [_streamPositionUpdateTimer invalidateTimer];
-    self.streamPositionUpdateTimer = nil;
+    [[RepeatingTimerManager alloc] initWithTarget:self
+                                         selector:@selector(updateLastPosition)
+                                        frequency:1.0];
   }
 
   self.lastContentID = _mediaInformation.contentID;

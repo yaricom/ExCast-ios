@@ -22,6 +22,7 @@ extern NSString *const kCastVolumeChangedNotification;
 extern NSString *const kCastScanStatusUpdatedNotification;
 extern NSString *const kCastMediaStatusChangeNotification;
 extern NSString *const kCastPreloadStatusChangeNotification;
+extern NSString *const kCastViewControllerAppearedNotification;
 extern NSString *const kCastViewControllerDisappearedNotification;
 extern NSString *const kCastItemQueuedNotification;
 extern NSString *const kCastQueueUpdatedNotification;
