@@ -47,8 +47,6 @@
 		EADEB9841BB46D7000680739 /* RepeatingTimerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EADEB9831BB46D7000680739 /* RepeatingTimerManager.m */; };
 		EB0EAE502A661842D7221B79 /* libPods-CastVideos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FC9B5525AE0F00A7BF2F43E7 /* libPods-CastVideos.a */; };
 		EF110FB119759BB30009410F /* CastInstructionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EF110FB019759BB30009410F /* CastInstructionsViewController.m */; };
-		EF110FB41976AA2C0009410F /* cling.png in Resources */ = {isa = PBXBuildFile; fileRef = EF110FB21976AA2C0009410F /* cling.png */; };
-		EF110FB51976AA2C0009410F /* cling@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EF110FB31976AA2C0009410F /* cling@2x.png */; };
 		EF23DBA919C0EF7F00DA5ABB /* closed_caption_white.png in Resources */ = {isa = PBXBuildFile; fileRef = EF23DBA719C0EF7F00DA5ABB /* closed_caption_white.png */; };
 		EF23DBAA19C0EF7F00DA5ABB /* closed_caption_white@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EF23DBA819C0EF7F00DA5ABB /* closed_caption_white@2x.png */; };
 		EF23DBAD19C0FF2F00DA5ABB /* TracksTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EF23DBAC19C0FF2F00DA5ABB /* TracksTableViewController.m */; };
@@ -130,8 +128,6 @@
 		EADEB9831BB46D7000680739 /* RepeatingTimerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RepeatingTimerManager.m; sourceTree = "<group>"; };
 		EF110FAF19759BB30009410F /* CastInstructionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CastInstructionsViewController.h; sourceTree = "<group>"; };
 		EF110FB019759BB30009410F /* CastInstructionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CastInstructionsViewController.m; sourceTree = "<group>"; };
-		EF110FB21976AA2C0009410F /* cling.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cling.png; sourceTree = "<group>"; };
-		EF110FB31976AA2C0009410F /* cling@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cling@2x.png"; sourceTree = "<group>"; };
 		EF23DBA719C0EF7F00DA5ABB /* closed_caption_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = closed_caption_white.png; sourceTree = "<group>"; };
 		EF23DBA819C0EF7F00DA5ABB /* closed_caption_white@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "closed_caption_white@2x.png"; sourceTree = "<group>"; };
 		EF23DBAB19C0FF2F00DA5ABB /* TracksTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TracksTableViewController.h; sourceTree = "<group>"; };
@@ -266,8 +262,6 @@
 				EFEE50A01B8D3C6600AFE97E /* media_stop@2x.png */,
 				EFEE50A11B8D3C6600AFE97E /* media_stop@3x.png */,
 				EF548BC21B83DDCC0026C33F /* CastFrameworkAssets.xcassets */,
-				EF110FB21976AA2C0009410F /* cling.png */,
-				EF110FB31976AA2C0009410F /* cling@2x.png */,
 				EF23DBA719C0EF7F00DA5ABB /* closed_caption_white.png */,
 				EF23DBA819C0EF7F00DA5ABB /* closed_caption_white@2x.png */,
 				284CC026182B0F9B007F65F9 /* Default-568h@2x.png */,
@@ -339,6 +333,7 @@
 				284CBD7F182ADC2D007F65F9 /* Frameworks */,
 				7F026AC3CB929189D9022395 /* Copy Pods Resources */,
 				284CBD80182ADC2D007F65F9 /* Resources */,
+				F6B58421ACD4DF189C782074 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -355,11 +350,11 @@
 		284CBD7A182ADC2D007F65F9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = "Google inc";
 				TargetAttributes = {
 					284CBD81182ADC2D007F65F9 = {
-						DevelopmentTeam = EQHXZ8M8AV;
+						DevelopmentTeam = TNSVT26X2M;
 					};
 				};
 			};
@@ -387,12 +382,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				EF775C601A49FE9E00995266 /* thumb@3x.png in Resources */,
-				EF110FB51976AA2C0009410F /* cling@2x.png in Resources */,
 				5FA883B61B210940008D7840 /* playlist_white@3x.png in Resources */,
 				EFEE50A41B8D3C6600AFE97E /* media_stop@3x.png in Resources */,
 				125F8FCA1880BA3300F14A9F /* logo_castvideos.png in Resources */,
 				125F8FCB1880BA3300F14A9F /* logo_castvideos@2x.png in Resources */,
-				EF110FB41976AA2C0009410F /* cling.png in Resources */,
 				12E0CD1C18550A0700447896 /* list_outline@2x.png in Resources */,
 				129886E41872348A00B013D2 /* video_thumb_mini@2x.png in Resources */,
 				12E0CD1B18550A0700447896 /* list_outline.png in Resources */,
@@ -450,6 +443,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CastVideos/Pods-CastVideos-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F6B58421ACD4DF189C782074 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CastVideos/Pods-CastVideos-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -517,6 +525,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_BITCODE = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -578,6 +587,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					..,
@@ -586,7 +596,8 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Classes/CastVideos-Prefix.pch";
 				INFOPLIST_FILE = "Classes/CastVideos-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ua.nologin.ChromeCastExCast;
 				PRODUCT_NAME = CastVideos;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -600,6 +611,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					..,
@@ -608,7 +620,8 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Classes/CastVideos-Prefix.pch";
 				INFOPLIST_FILE = "Classes/CastVideos-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ua.nologin.ChromeCastExCast;
 				PRODUCT_NAME = CastVideos;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";

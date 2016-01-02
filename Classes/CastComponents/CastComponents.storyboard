@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
@@ -150,7 +150,7 @@
                             <imageView userInteractionEnabled="NO" alpha="0.60000002384185791" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="A1y-2N-6w2" userLabel="Background Image">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                             </imageView>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" ambiguous="YES" text="Waiting for Godot (2009)" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7DF-67-E6c">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Waiting for Godot (2009)" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7DF-67-E6c">
                                 <rect key="frame" x="111" y="560" width="192" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
@@ -204,7 +204,7 @@
                                     <constraint firstItem="7Hz-no-6O3" firstAttribute="top" secondItem="fR3-5N-Gmj" secondAttribute="bottom" constant="20" id="tPd-1d-hLT"/>
                                 </constraints>
                             </view>
-                            <slider opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="y0q-ze-fOi" userLabel="Slider">
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="y0q-ze-fOi" userLabel="Slider">
                                 <rect key="frame" x="77" y="635" width="259" height="31"/>
                                 <color key="tintColor" red="0.88820241846434378" green="0.89971985479797978" blue="0.17759797637301358" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
@@ -219,19 +219,19 @@
                                     <action selector="onTouchUpOutside:" destination="grf-ij-PNR" eventType="touchUpOutside" id="szX-oc-EOd"/>
                                 </connections>
                             </slider>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="45:00" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fn7-Uc-9Vd" userLabel="Current Time">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="45:00" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fn7-Uc-9Vd" userLabel="Current Time">
                                 <rect key="frame" x="348" y="638" width="46" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="2:12" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q8L-Jh-dbb" userLabel="Duration">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2:12" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q8L-Jh-dbb" userLabel="Duration">
                                 <rect key="frame" x="20" y="639" width="46" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aVm-B0-DTK" userLabel="Next">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aVm-B0-DTK" userLabel="Next">
                                 <rect key="frame" x="259" y="675" width="49" height="49"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <state key="normal" image="media_next"/>
@@ -239,7 +239,7 @@
                                     <action selector="nextButtonClicked:" destination="grf-ij-PNR" eventType="touchUpInside" id="6tB-ZJ-twj"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QPg-Wd-cJq" userLabel="Play">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QPg-Wd-cJq" userLabel="Play">
                                 <rect key="frame" x="175" y="667" width="64" height="64"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="64" id="VFZ-pG-0Yf"/>
@@ -251,7 +251,7 @@
                                     <action selector="playButtonClicked:" destination="grf-ij-PNR" eventType="touchUpInside" id="ktU-7v-tgL"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ruf-lM-fF7" userLabel="Prev">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ruf-lM-fF7" userLabel="Prev">
                                 <rect key="frame" x="106" y="675" width="49" height="49"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <state key="normal" image="media_prev"/>
@@ -259,7 +259,7 @@
                                     <action selector="previousButtonClicked:" destination="grf-ij-PNR" eventType="touchUpInside" id="Ro4-zn-cVF"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="L3q-rO-HgP" userLabel="Volume">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="L3q-rO-HgP" userLabel="Volume">
                                 <rect key="frame" x="364" y="684" width="30" height="30"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <state key="normal" image="icon_volume0"/>
@@ -267,7 +267,7 @@
                                     <action selector="showVolumeSlider:" destination="grf-ij-PNR" eventType="touchUpInside" id="TXw-DJ-8Kg"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Szj-Qh-v67" userLabel="CC">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Szj-Qh-v67" userLabel="CC">
                                 <rect key="frame" x="20" y="676" width="48" height="48"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="48" id="XbT-Ez-hyn"/>
@@ -278,7 +278,7 @@
                                     <action selector="subtitleButtonClicked:" destination="grf-ij-PNR" eventType="touchUpInside" id="O1J-fc-5gf"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="749" ambiguous="YES" text="Casting to Chromecast" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="139" translatesAutoresizingMaskIntoConstraints="NO" id="fEv-89-Yk2">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="749" text="Casting to Chromecast" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="139" translatesAutoresizingMaskIntoConstraints="NO" id="fEv-89-Yk2">
                                 <rect key="frame" x="138" y="589" width="139" height="16"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                 <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -295,7 +295,7 @@
                             <constraint firstItem="I9z-7Q-RkO" firstAttribute="centerX" secondItem="CQK-gQ-tj1" secondAttribute="centerX" id="5TR-kg-qb4"/>
                             <constraint firstItem="7DF-67-E6c" firstAttribute="leading" secondItem="CQK-gQ-tj1" secondAttribute="leading" constant="20" symbolic="YES" id="6sD-9A-jkO"/>
                             <constraint firstItem="L3q-rO-HgP" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="aVm-B0-DTK" secondAttribute="trailing" constant="5" id="8Et-nG-Rkm"/>
-                            <constraint firstItem="gC1-zh-BRg" firstAttribute="top" relation="greaterThanOrEqual" secondItem="QPg-Wd-cJq" secondAttribute="bottom" constant="5" id="AR5-N9-apN"/>
+                            <constraint firstItem="gC1-zh-BRg" firstAttribute="top" secondItem="QPg-Wd-cJq" secondAttribute="bottom" constant="5" id="AR5-N9-apN"/>
                             <constraint firstItem="ruf-lM-fF7" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Szj-Qh-v67" secondAttribute="trailing" constant="5" id="Buy-gq-hel"/>
                             <constraint firstItem="Szj-Qh-v67" firstAttribute="leading" secondItem="CQK-gQ-tj1" secondAttribute="leadingMargin" id="CMH-G1-i6Z"/>
                             <constraint firstItem="A1y-2N-6w2" firstAttribute="leading" secondItem="CQK-gQ-tj1" secondAttribute="leading" id="Dk7-uk-b19"/>
@@ -620,7 +620,7 @@
                                                 <nil key="highlightedColor"/>
                                                 <size key="shadowOffset" width="0.0" height="1"/>
                                             </label>
-                                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cling.png" translatesAutoresizingMaskIntoConstraints="NO" id="saz-8H-qqO">
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cling" translatesAutoresizingMaskIntoConstraints="NO" id="saz-8H-qqO">
                                                 <rect key="frame" x="304" y="-9" width="165" height="192"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="saz-8H-qqO" secondAttribute="height" multiplier="154:179" id="wBf-5Y-rwN"/>
@@ -697,7 +697,7 @@
     <resources>
         <image name="cast_off" width="24" height="24"/>
         <image name="cast_on" width="24" height="24"/>
-        <image name="cling.png" width="179" height="179"/>
+        <image name="cling" width="179" height="179"/>
         <image name="closed_caption_white.png" width="48" height="48"/>
         <image name="icon_volume0" width="30" height="30"/>
         <image name="icon_volume0.png" width="30" height="30"/>
