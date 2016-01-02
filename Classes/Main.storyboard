@@ -15,9 +15,34 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <view key="tableHeaderView" contentMode="scaleToFill" id="6SA-eP-Ymg" userLabel="header">
+                            <rect key="frame" x="0.0" y="44" width="414" height="63"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <subviews>
+                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="y6w-V0-j4T">
+                                    <rect key="frame" x="197" y="8" width="20" height="20"/>
+                                </activityIndicatorView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="boD-fw-4M6">
+                                    <rect key="frame" x="8" y="34" width="398" height="21"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                            <color key="backgroundColor" red="0.87450980389999999" green="0.8862745098" blue="0.90588235289999997" alpha="1" colorSpace="deviceRGB"/>
+                            <constraints>
+                                <constraint firstItem="y6w-V0-j4T" firstAttribute="top" secondItem="6SA-eP-Ymg" secondAttribute="top" constant="8" id="4cJ-Gf-S2u"/>
+                                <constraint firstAttribute="trailing" secondItem="boD-fw-4M6" secondAttribute="trailing" constant="8" id="BN7-Y6-hXH"/>
+                                <constraint firstItem="y6w-V0-j4T" firstAttribute="centerX" secondItem="6SA-eP-Ymg" secondAttribute="centerX" id="IfM-Hp-vFo"/>
+                                <constraint firstItem="boD-fw-4M6" firstAttribute="leading" secondItem="6SA-eP-Ymg" secondAttribute="leading" constant="8" id="SFQ-Ek-lUB"/>
+                                <constraint firstItem="boD-fw-4M6" firstAttribute="top" secondItem="y6w-V0-j4T" secondAttribute="bottom" constant="6" id="TG0-VQ-K35"/>
+                                <constraint firstItem="boD-fw-4M6" firstAttribute="centerX" secondItem="6SA-eP-Ymg" secondAttribute="centerX" id="W7I-qL-5dR"/>
+                                <constraint firstAttribute="bottom" secondItem="boD-fw-4M6" secondAttribute="bottom" constant="8" id="a3U-i2-0rj"/>
+                            </constraints>
+                        </view>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" rowHeight="80" id="KCo-OO-8eh">
-                                <rect key="frame" x="0.0" y="66" width="414" height="80"/>
+                                <rect key="frame" x="0.0" y="129" width="414" height="80"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KCo-OO-8eh" id="N4p-iz-RUX">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="79"/>
@@ -49,6 +74,8 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Movies" id="TtT-MQ-asq"/>
                     <connections>
+                        <outlet property="headerView" destination="6SA-eP-Ymg" id="4vM-AH-qFv"/>
+                        <outlet property="loadingText" destination="boD-fw-4M6" id="vbM-9d-CVK"/>
                         <segue destination="z7F-cd-Xed" kind="show" identifier="playMedia" id="ooZ-Rc-7xw"/>
                         <segue destination="FrP-5o-Gla" kind="show" identifier="showQueue" id="oFk-xB-g6w"/>
                     </connections>

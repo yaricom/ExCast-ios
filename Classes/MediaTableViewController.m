@@ -15,11 +15,12 @@
 #import "AppDelegate.h"
 #import "CastDeviceController.h"
 #import "LocalPlayerViewController.h"
-#import "Media.h"
+#import "Media+Ex.h"
 #import "MediaListModel.h"
 #import "MediaTableViewController.h"
 #import "NotificationConstants.h"
 #import "SimpleImageFetcher.h"
+#import "AlertHelper.h"
 
 #import <GoogleCast/GCKDeviceManager.h>
 #import <GoogleCast/GCKMediaControlChannel.h>
@@ -31,6 +32,8 @@
 
 /** The queue button. */
 @property(nonatomic, strong) UIBarButtonItem *showQueueButton;
+@property (strong, nonatomic) IBOutlet UIView *headerView;
+@property (weak, nonatomic) IBOutlet UILabel *loadingText;
 
 @end
 
@@ -55,11 +58,19 @@
   }];
 
   // Create the queue button.
-  UIImage *playlistImage = [UIImage imageNamed:@"playlist_white.png"];
-  _showQueueButton = [[UIBarButtonItem alloc] initWithImage:playlistImage
+  _showQueueButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"playlist_white.png"]
                                                       style:UIBarButtonItemStylePlain
                                                      target:self
                                                      action:@selector(showQueue:)];
+    
+    // Hide table header by default
+    self.tableView.tableHeaderView = nil;
+    
+    // create toolbar
+    UIBarButtonItem *spaceItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    UIBarButtonItem *addItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(onAddURLAction:)];
+    self.toolbarItems = @[spaceItem, addItem];
+    self.navigationController.toolbarHidden = NO;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -173,4 +184,72 @@
   [self performSegueWithIdentifier:@"playMedia" sender:self];
 }
 
+#pragma mark - populate table
+- (void)addMediaFromURL:(NSURL *) url {
+    [Media mediaFromExURL:url
+           withCompletion:^(Media * _Nullable media, NSError * _Nullable error) {
+               dispatch_async(dispatch_get_main_queue(), ^{
+                   // execute on main UI thread
+                   if (error) {
+                       NSLog(@"Failed to load data, reason: %@", error);
+                       AlertHelper *alert = [[AlertHelper alloc] init];
+                       alert.title = @"Failed to load page info";
+                       alert.message = @"Please make sure that correct page address provided";
+                       alert.cancelButtonTitle = @"OK";
+                   } else {
+                       // populate table
+                       [self addMediaToTable:media];
+                   }
+                   // hide progress
+                   [self showLoadingEnabled:NO withTitle:nil];
+               });
+           }];
+}
+
+- (void) addMediaToTable:(Media *) media {
+#warning implement this
+}
+
+#pragma mark - Toolbar actions
+- (IBAction)onAddURLAction:(id)sender {
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Enter page address"
+                                                                   message:@"Enter page address as shown in browser"
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    [alert addTextFieldWithConfigurationHandler:^(UITextField * textField) {
+        textField.borderStyle = UITextBorderStyleNone;
+        textField.text = @"http://www.ex.ua/96457556";
+    }];
+    
+    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+        NSString *urlText = [alert.textFields[0] text];
+        if ([urlText length] > 0) {
+            NSURL *url = [NSURL URLWithString:urlText];
+            if (url) {
+                [self showLoadingEnabled:YES withTitle:[NSString stringWithFormat:@"loading: %@", urlText]];
+                [self addMediaFromURL:url];
+            } else {
+                AlertHelper *alert = [[AlertHelper alloc] init];
+                alert.title = @"Wrong page address";
+                alert.message = @"Please make sure that correct page address provided";
+                alert.cancelButtonTitle = @"Cancel";
+            }
+        }
+    }];
+    
+    [alert addAction:defaultAction];
+    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
+                                            handler:^(UIAlertAction * action) {}]];
+    [self presentViewController:alert animated:YES completion:nil];
+
+}
+
+- (void) showLoadingEnabled:(BOOL)enabled withTitle:(NSString*)title{
+    if (enabled) {
+        [self.loadingText setText:title];
+        self.tableView.tableHeaderView = self.headerView;
+        [self.tableView.tableHeaderView sizeToFit];
+    } else {
+        self.tableView.tableHeaderView = nil;
+    }
+}
 @end

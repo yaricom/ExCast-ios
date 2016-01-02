@@ -40,6 +40,8 @@
 		5FA883BB1B212991008D7840 /* AlertHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA883BA1B212991008D7840 /* AlertHelper.m */; };
 		5FA883BE1B2165F1008D7840 /* play_circle@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FA883BC1B2165F1008D7840 /* play_circle@2x.png */; };
 		5FA883BF1B2165F1008D7840 /* play_circle@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FA883BD1B2165F1008D7840 /* play_circle@3x.png */; };
+		78C585F81C386FCC009305C7 /* Media+Ex.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C585F71C386FCC009305C7 /* Media+Ex.m */; };
+		78C585FE1C38991E009305C7 /* PersistentMediaListModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C585FD1C38991E009305C7 /* PersistentMediaListModel.m */; };
 		CCE5BD43196F037300016BAB /* MediaAccessibility.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE5BD42196F037300016BAB /* MediaAccessibility.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		CCE5BD45196F038400016BAB /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE5BD44196F038400016BAB /* CoreText.framework */; };
 		EA01BA6D1BB0D2860003EF32 /* Toast.m in Sources */ = {isa = PBXBuildFile; fileRef = EA01BA6C1BB0D2860003EF32 /* Toast.m */; };
@@ -118,6 +120,10 @@
 		5FA883BA1B212991008D7840 /* AlertHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertHelper.m; sourceTree = "<group>"; };
 		5FA883BC1B2165F1008D7840 /* play_circle@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "play_circle@2x.png"; sourceTree = "<group>"; };
 		5FA883BD1B2165F1008D7840 /* play_circle@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "play_circle@3x.png"; sourceTree = "<group>"; };
+		78C585F61C386FCC009305C7 /* Media+Ex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Media+Ex.h"; sourceTree = "<group>"; };
+		78C585F71C386FCC009305C7 /* Media+Ex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Media+Ex.m"; sourceTree = "<group>"; };
+		78C585FC1C38991E009305C7 /* PersistentMediaListModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistentMediaListModel.h; sourceTree = "<group>"; };
+		78C585FD1C38991E009305C7 /* PersistentMediaListModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersistentMediaListModel.m; sourceTree = "<group>"; };
 		CCE5BD42196F037300016BAB /* MediaAccessibility.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaAccessibility.framework; path = System/Library/Frameworks/MediaAccessibility.framework; sourceTree = SDKROOT; };
 		CCE5BD44196F038400016BAB /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		EA01BA6B1BB0D2860003EF32 /* Toast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Toast.h; sourceTree = "<group>"; };
@@ -218,12 +224,16 @@
 				5FA883BA1B212991008D7840 /* AlertHelper.m */,
 				284CBD94182ADC2D007F65F9 /* AppDelegate.h */,
 				284CBD95182ADC2D007F65F9 /* AppDelegate.m */,
+				78C585F61C386FCC009305C7 /* Media+Ex.h */,
+				78C585F71C386FCC009305C7 /* Media+Ex.m */,
 				496D46FC182DBE9100343F72 /* Media.h */,
 				496D46FD182DBE9100343F72 /* Media.m */,
 				EFD8A0E71AABD052005808B2 /* MediaTrack.h */,
 				EFD8A0E81AABD052005808B2 /* MediaTrack.m */,
 				496D46FF182DBE9C00343F72 /* MediaListModel.h */,
 				496D4700182DBE9C00343F72 /* MediaListModel.m */,
+				78C585FC1C38991E009305C7 /* PersistentMediaListModel.h */,
+				78C585FD1C38991E009305C7 /* PersistentMediaListModel.m */,
 				284CBD9D182ADC2D007F65F9 /* MediaTableViewController.h */,
 				284CBD9E182ADC2D007F65F9 /* MediaTableViewController.m */,
 				EFD7C20119FE71AF00082842 /* LocalPlayerView.h */,
@@ -477,6 +487,8 @@
 				284CBD92182ADC2D007F65F9 /* main.m in Sources */,
 				EA64A2261B9F4AFF00A45576 /* NotificationConstants.m in Sources */,
 				124377D0187CC2B500ADF736 /* DeviceTableViewController.m in Sources */,
+				78C585F81C386FCC009305C7 /* Media+Ex.m in Sources */,
+				78C585FE1C38991E009305C7 /* PersistentMediaListModel.m in Sources */,
 				EFD8A0F01AAE32AB005808B2 /* GCKMediaInformation+LocalMedia.m in Sources */,
 				5FA883B01B2102C5008D7840 /* QueueTableViewController.m in Sources */,
 				491627AF184FBF9C00351397 /* SimpleImageFetcher.m in Sources */,

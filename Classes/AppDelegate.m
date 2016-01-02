@@ -17,6 +17,8 @@
 
 #import <AVFoundation/AVFoundation.h>
 
+#import <GoogleCast/GoogleCast.h>
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application
@@ -27,8 +29,7 @@
   // Turn on the Cast logging for debug purposes.
   [[CastDeviceController sharedInstance] enableLogging];
   // Set the receiver application ID to initialise scanning.
-  [CastDeviceController sharedInstance].applicationID = @"BE13B491";
-  // Replace the value above with your app id.
+  [CastDeviceController sharedInstance].applicationID = kGCKMediaDefaultReceiverApplicationID;
 
   // Set playback category mode to allow playing audio on the video files even when the ringer
   // mute switch is on.
