@@ -23,15 +23,13 @@
  *  @param completeBlock The completion handler
  *  @param errorBlock The error block or nil
  */
-+ (void)mediaFromExURL:(NSURL *__nonnull)url
++ (void) mediaFromExURL:(NSURL *__nonnull)url
         withCompletion:(void (^__nonnull)(ExMedia* __nullable media, NSError * __nullable error))completeBlock;
 
 /**
- *  Creates a Media object given a page URL.
- *
- *  @param url The media page URL
- *  @param error The pointer to error holder
+ *  Invoked to reload remote media info
+ *  @param completeBlock The completion handler
  */
-+ (ExMedia *__nonnull)createFromExURL:(NSURL*__nonnull)url withError:(NSError *__nullable*__nullable) error;
+- (void) reloadWithCompletion:(void (^__nonnull)(NSError * __nullable error))completeBlock;
 
 @end

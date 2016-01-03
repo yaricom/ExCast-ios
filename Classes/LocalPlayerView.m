@@ -225,6 +225,10 @@ static NSInteger kToolbarHeight = 44;
   [self movieDidFinish];
 }
 
+- (void)playbackEnabled:(BOOL) enabled {
+    self.splashPlayButton.enabled = enabled;
+}
+
 # pragma mark - Video management
 
 /* Asynchronously load the splash screen image. */

@@ -142,8 +142,8 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OIc-H0-MpQ">
-                                <rect key="frame" x="16" y="348" width="378" height="388"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <rect key="frame" x="20" y="348" width="374" height="380"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -159,14 +159,17 @@
                                 </connections>
                             </view>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="OIc-H0-MpQ" firstAttribute="leading" secondItem="BsC-ig-BrT" secondAttribute="leadingMargin" constant="-4" id="7sk-4C-psn"/>
+                            <constraint firstItem="OIc-H0-MpQ" firstAttribute="top" secondItem="aec-JW-8Z3" secondAttribute="bottom" constant="6" id="0vM-9A-0Ks"/>
+                            <constraint firstItem="OIc-H0-MpQ" firstAttribute="leading" secondItem="BsC-ig-BrT" secondAttribute="leadingMargin" id="63h-kp-VL4"/>
+                            <constraint firstItem="OIc-H0-MpQ" firstAttribute="leading" secondItem="BsC-ig-BrT" secondAttribute="leadingMargin" id="7sk-4C-psn"/>
                             <constraint firstAttribute="trailingMargin" secondItem="OIc-H0-MpQ" secondAttribute="trailing" id="ANt-st-iiF"/>
                             <constraint firstAttribute="trailingMargin" secondItem="aec-JW-8Z3" secondAttribute="trailing" id="OPM-6y-WxY"/>
                             <constraint firstItem="aec-JW-8Z3" firstAttribute="leading" secondItem="BsC-ig-BrT" secondAttribute="leadingMargin" id="XOB-ug-WTx"/>
                             <constraint firstItem="aec-JW-8Z3" firstAttribute="top" secondItem="G9L-kn-GJY" secondAttribute="bottom" constant="3" id="YBa-li-yDB"/>
                             <constraint firstItem="OIc-H0-MpQ" firstAttribute="top" secondItem="aec-JW-8Z3" secondAttribute="bottom" constant="6" id="dMm-TC-g1L"/>
+                            <constraint firstItem="0eq-el-50y" firstAttribute="top" secondItem="OIc-H0-MpQ" secondAttribute="bottom" constant="8" id="fhO-zE-4k2"/>
                             <constraint firstAttribute="trailing" secondItem="QPv-ly-jAJ" secondAttribute="trailing" id="iT8-RH-AuL"/>
                             <constraint firstItem="QPv-ly-jAJ" firstAttribute="top" secondItem="5iT-9h-fPh" secondAttribute="bottom" id="nW2-4W-egy"/>
                             <constraint firstItem="QPv-ly-jAJ" firstAttribute="leading" secondItem="BsC-ig-BrT" secondAttribute="leading" id="syW-jf-mWt"/>
@@ -174,7 +177,14 @@
                             <constraint firstAttribute="trailingMargin" secondItem="G9L-kn-GJY" secondAttribute="trailing" id="uwV-dZ-ASL"/>
                             <constraint firstItem="QPv-ly-jAJ" firstAttribute="bottom" secondItem="G9L-kn-GJY" secondAttribute="top" constant="-20" id="v2m-iz-Mmt"/>
                             <constraint firstItem="G9L-kn-GJY" firstAttribute="leading" secondItem="BsC-ig-BrT" secondAttribute="leadingMargin" id="x0K-IK-2Ka"/>
+                            <constraint firstItem="OIc-H0-MpQ" firstAttribute="trailing" secondItem="BsC-ig-BrT" secondAttribute="trailingMargin" id="xIv-ZA-6xf"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="dMm-TC-g1L"/>
+                                <exclude reference="tR1-YD-Grw"/>
+                            </mask>
+                        </variation>
                     </view>
                     <connections>
                         <outlet property="mediaDescription" destination="OIc-H0-MpQ" id="cnK-oo-3jA"/>
@@ -454,6 +464,6 @@
         <image name="video_thumb_mini.png" width="75" height="42"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="oFk-xB-g6w"/>
+        <segue reference="wW8-GZ-Xjx"/>
     </inferredMetricsTieBreakers>
 </document>

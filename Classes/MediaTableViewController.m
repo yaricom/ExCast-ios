@@ -215,9 +215,9 @@
                      if (error) {
                          NSLog(@"Failed to load data, reason: %@", error);
                          AlertHelper *alert = [[AlertHelper alloc] init];
-                         alert.title = @"Failed to load page info";
-                         alert.message = @"Please make sure that correct page address provided";
-                         alert.cancelButtonTitle = @"OK";
+                         alert.title = NSLocalizedString(@"Failed to load page info", nil);
+                         alert.message = NSLocalizedString(@"Please make sure that correct page address provided", nil);
+                         alert.cancelButtonTitle = NSLocalizedString(@"OK", nil);
                      } else {
                          // populate table
                          [self addMediaToTable:media];
@@ -254,15 +254,14 @@
 
 #pragma mark - Toolbar actions
 - (IBAction)onAddURLAction:(id)sender {
-    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Enter page address"
-                                                                   message:@"Enter page address as shown in browser"
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Enter page address", nil)
+                                                                   message:NSLocalizedString(@"Enter page address as shown in browser", nil)
                                                             preferredStyle:UIAlertControllerStyleAlert];
     [alert addTextFieldWithConfigurationHandler:^(UITextField * textField) {
         textField.borderStyle = UITextBorderStyleNone;
-        textField.text = @"http://www.ex.ua/96457556";
     }];
     
-    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
         NSString *urlText = [alert.textFields[0] text];
         if ([urlText length] > 0) {
             NSURL *url = [NSURL URLWithString:urlText];
@@ -272,15 +271,15 @@
                 [self addMediaFromURL:url];
             } else {
                 AlertHelper *alert = [[AlertHelper alloc] init];
-                alert.title = @"Wrong page address";
-                alert.message = @"Please make sure that correct page address provided";
-                alert.cancelButtonTitle = @"Cancel";
+                alert.title = NSLocalizedString(@"Wrong page address", nil);
+                alert.message = NSLocalizedString(@"Please make sure that correct page address provided", nil);
+                alert.cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
             }
         }
     }];
     
     [alert addAction:defaultAction];
-    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", nil) style:UIAlertActionStyleCancel
                                             handler:^(UIAlertAction * action) {}]];
     [self presentViewController:alert animated:YES completion:nil];
     

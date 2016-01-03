@@ -31,41 +31,61 @@
                     }
                     HTMLDocument *home = [HTMLDocument documentWithData:data
                                                       contentTypeHeader:contentType];
-                    ExMedia *m = [[ExMedia alloc] initWithHTMLDocument:home];
+                    ExMedia *m = [[ExMedia alloc] init];
+                    [m loadFromHTMLDocument:home];
                     m.subtitle = [url absoluteString];
                     m.pageUrl = url;
                     completeBlock(m, nil);
                 }] resume];
 }
 
-- (id)initWithHTMLDocument:(HTMLDocument *) document {
-    self = [super init];
-    if (self) {
-        HTMLElement *h1 = [document firstNodeMatchingSelector:@"h1"];
-        self.title = [h1 textContent];
-        
-        // get thumbnail URL
-        NSArray *imgs = [document nodesMatchingSelector:@"img"];
-        for (HTMLElement *img in imgs) {
-            // find appropriate URL
-            NSString *alt = [img.attributes objectForKey:@"alt"];
-            if (alt && [alt isEqualToString:self.title]) {
-                self.thumbnailURL = [NSURL URLWithString:[img.attributes objectForKey:@"src"]];
-                break;
-            }
-        }
-        
-        // get media URL
-        NSArray *scripts = [document nodesMatchingSelector:@"script"];
-        for (HTMLElement *node in scripts) {
-            NSURL *url = [self findMediaInElement:node];
-            if (url) {
-                self.URL = url;
-                break;
-            }
+- (void) reloadWithCompletion:(void (^__nonnull)(NSError * __nullable error))completeBlock {
+    // Load a web page.
+    NSURLSession *session = [NSURLSession sharedSession];
+    [[session dataTaskWithRequest:[NSURLRequest requestWithURL:self.pageUrl]
+                completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+                    // parse response
+                    if (error) {
+                        // error occured
+                        completeBlock(error);
+                        return;
+                    }
+                    NSString *contentType = nil;
+                    if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                        NSDictionary *headers = [(NSHTTPURLResponse *)response allHeaderFields];
+                        contentType = headers[@"Content-Type"];
+                    }
+                    HTMLDocument *home = [HTMLDocument documentWithData:data
+                                                      contentTypeHeader:contentType];
+                    [self loadFromHTMLDocument:home];
+                    completeBlock(nil);
+                }] resume];
+}
+
+- (void)loadFromHTMLDocument:(HTMLDocument *) document {
+    HTMLElement *h1 = [document firstNodeMatchingSelector:@"h1"];
+    self.title = [h1 textContent];
+    
+    // get thumbnail URL
+    NSArray *imgs = [document nodesMatchingSelector:@"img"];
+    for (HTMLElement *img in imgs) {
+        // find appropriate URL
+        NSString *alt = [img.attributes objectForKey:@"alt"];
+        if (alt && [alt isEqualToString:self.title]) {
+            self.thumbnailURL = [NSURL URLWithString:[img.attributes objectForKey:@"src"]];
+            break;
         }
     }
-    return self;
+    
+    // get media URL
+    NSArray *scripts = [document nodesMatchingSelector:@"script"];
+    for (HTMLElement *node in scripts) {
+        NSURL *url = [self findMediaInElement:node];
+        if (url) {
+            self.URL = url;
+            break;
+        }
+    }
 }
 
 - (NSURL *)findMediaInElement:(HTMLElement*) script {

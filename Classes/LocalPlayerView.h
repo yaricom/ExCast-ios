@@ -68,4 +68,7 @@ typedef NS_ENUM(NSUInteger, LPVNavBarStyle) {
 /* Reset the state of the player to show the splash screen. */
 - (void)showSplashScreen;
 
+/* Invoked to enable/disble playback button */
+- (void)playbackEnabled:(BOOL) enabled;
+
 @end
