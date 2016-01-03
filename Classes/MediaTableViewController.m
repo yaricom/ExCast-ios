@@ -247,6 +247,7 @@
 - (void) initToolbarInEditMode:(BOOL) edit {
     if (edit) {
         self.toolbarItems = @[editItem, [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil], addItem];
+        self.toolbarItems[0].enabled = ([self.mediaList numberOfMediaLoaded] > 0);
     } else {
         self.toolbarItems = @[doneItem, [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil], addItem];
     }
