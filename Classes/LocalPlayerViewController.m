@@ -227,8 +227,7 @@
     AlertHelper *helper = [[AlertHelper alloc] init];
     helper.cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
     
-    GCKMediaInformation *media =
-    [GCKMediaInformation mediaInformationFromLocalMedia:_mediaToPlay];
+    GCKMediaInformation *media = [GCKMediaInformation mediaInformationFromLocalMedia:_mediaToPlay];
     
     // Play Now blindly loads the media, clobbering the current queue.
     [helper addAction:NSLocalizedString(@"Play Now", nil) handler:^{
@@ -267,8 +266,8 @@
         // When we connect to a new device and are playing locally, always clobber the currently
         // playing video (as per Android).
         CastDeviceController *controller = [CastDeviceController sharedInstance];
-        GCKMediaInformation *media =
-        [GCKMediaInformation mediaInformationFromLocalMedia:_mediaToPlay];
+        GCKMediaInformation *media = [GCKMediaInformation mediaInformationFromLocalMedia:_mediaToPlay];
+
         [controller.mediaControlChannel loadMedia:media
                                          autoplay:YES
                                      playPosition:_playerView.playbackTime];

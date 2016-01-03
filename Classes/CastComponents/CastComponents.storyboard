@@ -150,8 +150,8 @@
                             <imageView userInteractionEnabled="NO" alpha="0.60000002384185791" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="A1y-2N-6w2" userLabel="Background Image">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                             </imageView>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Waiting for Godot (2009)" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7DF-67-E6c">
-                                <rect key="frame" x="111" y="560" width="192" height="21"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Waiting for Godot (2009)" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7DF-67-E6c">
+                                <rect key="frame" x="20" y="560" width="374" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
@@ -317,6 +317,7 @@
                             <constraint firstItem="y0q-ze-fOi" firstAttribute="centerY" secondItem="Q8L-Jh-dbb" secondAttribute="centerY" constant="0.5" id="UtF-fF-b1s"/>
                             <constraint firstAttribute="trailing" secondItem="7DF-67-E6c" secondAttribute="trailing" constant="20" id="VYs-nZ-ItS"/>
                             <constraint firstItem="QPg-Wd-cJq" firstAttribute="centerY" secondItem="aVm-B0-DTK" secondAttribute="centerY" id="Y5n-5O-p6R"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="7DF-67-E6c" secondAttribute="trailing" id="Zgk-Qa-gWK"/>
                             <constraint firstItem="Fn7-Uc-9Vd" firstAttribute="trailing" secondItem="CQK-gQ-tj1" secondAttribute="trailingMargin" id="d8p-VR-3Mu"/>
                             <constraint firstItem="QPg-Wd-cJq" firstAttribute="leading" secondItem="ruf-lM-fF7" secondAttribute="trailing" constant="20" id="js9-7a-1mP"/>
                             <constraint firstAttribute="centerX" secondItem="y0q-ze-fOi" secondAttribute="centerX" id="muc-bq-UBA"/>
@@ -325,6 +326,7 @@
                             <constraint firstItem="QPg-Wd-cJq" firstAttribute="top" secondItem="y0q-ze-fOi" secondAttribute="bottom" constant="2" id="tDu-I3-DSM"/>
                             <constraint firstItem="fEv-89-Yk2" firstAttribute="centerX" secondItem="A1y-2N-6w2" secondAttribute="centerX" id="tnT-W8-WsS"/>
                             <constraint firstItem="y0q-ze-fOi" firstAttribute="top" secondItem="fEv-89-Yk2" secondAttribute="bottom" constant="30" id="uOL-Hn-l0H"/>
+                            <constraint firstItem="7DF-67-E6c" firstAttribute="leading" secondItem="CQK-gQ-tj1" secondAttribute="leadingMargin" id="uZJ-ue-dSL"/>
                             <constraint firstItem="7DF-67-E6c" firstAttribute="centerX" secondItem="fEv-89-Yk2" secondAttribute="centerX" id="uvs-mU-Nfg"/>
                             <constraint firstItem="Fn7-Uc-9Vd" firstAttribute="leading" secondItem="y0q-ze-fOi" secondAttribute="trailing" constant="14" id="wRw-KC-Irk"/>
                             <constraint firstItem="QPg-Wd-cJq" firstAttribute="centerY" secondItem="ruf-lM-fF7" secondAttribute="centerY" id="we8-Zc-VYg"/>

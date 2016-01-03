@@ -162,15 +162,12 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell =
-    [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
     Media *media = [self.mediaList mediaAtIndex:(int)indexPath.row];
     
-    UILabel *mediaTitle = (UILabel *)[cell viewWithTag:1];
-    mediaTitle.text = media.title;
-    
-    UILabel *mediaOwner = (UILabel *)[cell viewWithTag:2];
-    mediaOwner.text = media.subtitle;
+    cell.textLabel.numberOfLines = 2;
+    cell.textLabel.text = media.title;
+    cell.detailTextLabel.text = media.subtitle;
     
     // Asynchronously load the table view image
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
@@ -180,8 +177,9 @@
         [UIImage imageWithData:[SimpleImageFetcher getDataFromImageURL:media.thumbnailURL]];
         
         dispatch_sync(dispatch_get_main_queue(), ^{
-            UIImageView *mediaThumb = (UIImageView *)[cell viewWithTag:3];
+            UIImageView *mediaThumb = cell.imageView;
             [mediaThumb setImage:image];
+            [cell setNeedsLayout];
         });
     });
     

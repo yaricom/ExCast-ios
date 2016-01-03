@@ -73,6 +73,7 @@
         NSString *alt = [img.attributes objectForKey:@"alt"];
         if (alt && [alt isEqualToString:self.title]) {
             self.thumbnailURL = [NSURL URLWithString:[img.attributes objectForKey:@"src"]];
+            self.posterURL = self.thumbnailURL;
             break;
         }
     }
