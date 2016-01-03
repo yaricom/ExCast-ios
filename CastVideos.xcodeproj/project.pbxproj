@@ -42,6 +42,7 @@
 		5FA883BF1B2165F1008D7840 /* play_circle@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FA883BD1B2165F1008D7840 /* play_circle@3x.png */; };
 		78C585FE1C38991E009305C7 /* PersistentMediaListModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C585FD1C38991E009305C7 /* PersistentMediaListModel.m */; };
 		78C586011C397EF9009305C7 /* ExMedia.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C586001C397EF9009305C7 /* ExMedia.m */; };
+		78C586031C39B635009305C7 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 78C586021C39B635009305C7 /* Launch Screen.storyboard */; };
 		CCE5BD43196F037300016BAB /* MediaAccessibility.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE5BD42196F037300016BAB /* MediaAccessibility.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		CCE5BD45196F038400016BAB /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE5BD44196F038400016BAB /* CoreText.framework */; };
 		EA01BA6D1BB0D2860003EF32 /* Toast.m in Sources */ = {isa = PBXBuildFile; fileRef = EA01BA6C1BB0D2860003EF32 /* Toast.m */; };
@@ -124,6 +125,7 @@
 		78C585FD1C38991E009305C7 /* PersistentMediaListModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersistentMediaListModel.m; sourceTree = "<group>"; };
 		78C585FF1C397EF9009305C7 /* ExMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExMedia.h; sourceTree = "<group>"; };
 		78C586001C397EF9009305C7 /* ExMedia.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExMedia.m; sourceTree = "<group>"; };
+		78C586021C39B635009305C7 /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		CCE5BD42196F037300016BAB /* MediaAccessibility.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaAccessibility.framework; path = System/Library/Frameworks/MediaAccessibility.framework; sourceTree = SDKROOT; };
 		CCE5BD44196F038400016BAB /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		EA01BA6B1BB0D2860003EF32 /* Toast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Toast.h; sourceTree = "<group>"; };
@@ -221,6 +223,7 @@
 				EF60AA251A9D27390036D4FA /* CastComponents */,
 				EFD8A0EA1AABD632005808B2 /* Main.storyboard */,
 				5FA883B91B212991008D7840 /* AlertHelper.h */,
+				78C586021C39B635009305C7 /* Launch Screen.storyboard */,
 				5FA883BA1B212991008D7840 /* AlertHelper.m */,
 				284CBD94182ADC2D007F65F9 /* AppDelegate.h */,
 				284CBD95182ADC2D007F65F9 /* AppDelegate.m */,
@@ -416,6 +419,7 @@
 				EFEE50A21B8D3C6600AFE97E /* media_stop@1x.png in Resources */,
 				EF23DBAA19C0EF7F00DA5ABB /* closed_caption_white@2x.png in Resources */,
 				12E0CD1918550A0700447896 /* list_outline_white.png in Resources */,
+				78C586031C39B635009305C7 /* Launch Screen.storyboard in Resources */,
 				12E0CD1A18550A0700447896 /* list_outline_white@2x.png in Resources */,
 				5FA883B71B210940008D7840 /* playlist@2x.png in Resources */,
 				284CC02B182B0F9B007F65F9 /* Default-568h@2x.png in Resources */,
@@ -609,7 +613,7 @@
 				GCC_PREFIX_HEADER = "Classes/CastVideos-Prefix.pch";
 				INFOPLIST_FILE = "Classes/CastVideos-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ua.nologin.ChromeCastExCast;
+				PRODUCT_BUNDLE_IDENTIFIER = ua.nologin.ChromeCast.ExCast;
 				PRODUCT_NAME = CastVideos;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -633,7 +637,7 @@
 				GCC_PREFIX_HEADER = "Classes/CastVideos-Prefix.pch";
 				INFOPLIST_FILE = "Classes/CastVideos-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ua.nologin.ChromeCastExCast;
+				PRODUCT_BUNDLE_IDENTIFIER = ua.nologin.ChromeCast.ExCast;
 				PRODUCT_NAME = CastVideos;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
