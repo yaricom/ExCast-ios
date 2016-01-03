@@ -46,6 +46,9 @@
                                                       style:UIBarButtonItemStylePlain
                                                      target:self
                                                      action:@selector(showQueue:)];
+    
+    // hide toolbar
+    self.navigationController.toolbarHidden = YES;
 }
 
 - (void)viewWillAppear:(BOOL)animated {

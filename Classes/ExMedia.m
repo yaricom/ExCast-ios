@@ -1,18 +1,19 @@
 //
-//  Media+Ex.m
+//  ExMedia.m
 //  CastVideos
 //
-//  Created by Iaroslav Omelianenko on 1/2/16.
+//  Created by Iaroslav Omelianenko on 1/3/16.
+//  Copyright © 2016 Google inc. All rights reserved.
 //
 #import <HTMLReader/HTMLReader.h>
 #import <GoogleCast/GoogleCast.h>
 
-#import "Media+Ex.h"
+#import "ExMedia.h"
 
-@implementation Media(Ex_ua)
+@implementation ExMedia
 
 + (void)mediaFromExURL:(NSURL *__nonnull)url
-        withCompletion:(void (^__nonnull)(Media* __nullable media, NSError * __nullable error))completeBlock {
+        withCompletion:(void (^__nonnull)(ExMedia* __nullable media, NSError * __nullable error))completeBlock {
     // Load a web page.
     NSURLSession *session = [NSURLSession sharedSession];
     [[session dataTaskWithRequest:[NSURLRequest requestWithURL:url]
@@ -30,7 +31,9 @@
                     }
                     HTMLDocument *home = [HTMLDocument documentWithData:data
                                                       contentTypeHeader:contentType];
-                    Media *m = [[Media alloc] initWithHTMLDocument:home];
+                    ExMedia *m = [[ExMedia alloc] initWithHTMLDocument:home];
+                    m.subtitle = [url absoluteString];
+                    m.pageUrl = url;
                     completeBlock(m, nil);
                 }] resume];
 }
@@ -55,7 +58,7 @@
         // get media URL
         NSArray *scripts = [document nodesMatchingSelector:@"script"];
         for (HTMLElement *node in scripts) {
-            NSURL *url = [self findMediaURLinElement:node];
+            NSURL *url = [self findMediaInElement:node];
             if (url) {
                 self.URL = url;
                 break;
@@ -65,7 +68,7 @@
     return self;
 }
 
-- (NSURL *)findMediaURLinElement:(HTMLElement*) script {
+- (NSURL *)findMediaInElement:(HTMLElement*) script {
     NSString *text = [script textContent];
     __block NSURL *url = nil;
     if ([text containsString:@"player_list"]) {
@@ -95,5 +98,6 @@
     }
     return url;
 }
+
 
 @end

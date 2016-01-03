@@ -7,7 +7,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "Media+Ex.h"
+#import "ExMedia.h"
 
 /**
  * The media list model able to keep list of media objects persistent
@@ -20,11 +20,14 @@
 /* The number of media objects in the array. */
 @property(nonatomic, readonly) int numberOfMediaLoaded;
 
-/* Loads all medias and calls the supplied callback on completion. */
-- (void)loadMedia:(void (^)(void))callbackBlock;
+/* Loads all medias and calls the supplied callback on completion (partial or final). */
+- (void)loadMedia:(void (^)(BOOL final))callbackBlock;
 
 /* Returns the media object at index. */
-- (Media *)mediaAtIndex:(int)index;
+- (Media *)mediaAtIndex:(NSInteger)index;
+
+/* Removes media at index */
+- (void) removeMediaAtIndex:(NSInteger) index;
 
 /* Adds specified media to the list */
 - (void) addMedia:(Media *) media;

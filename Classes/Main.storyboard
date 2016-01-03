@@ -49,31 +49,40 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="1" contentMode="top" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Chromecast: For Bigger Blazes" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="179" translatesAutoresizingMaskIntoConstraints="NO" id="alp-bp-r9y">
-                                            <rect key="frame" x="125" y="13" width="281" height="36"/>
-                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                            <rect key="frame" x="104" y="13" width="302" height="34"/>
+                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="14"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <imageView userInteractionEnabled="NO" tag="3" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="X0m-0a-8GH">
-                                            <rect key="frame" x="15" y="11" width="102" height="58"/>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" tag="3" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="X0m-0a-8GH">
+                                            <rect key="frame" x="16" y="11" width="80" height="57"/>
                                             <constraints>
-                                                <constraint firstAttribute="width" constant="102" id="tV2-ao-Pbi"/>
+                                                <constraint firstAttribute="width" constant="80" id="tV2-ao-Pbi"/>
                                                 <constraint firstAttribute="height" constant="58" id="wv1-YX-Ptl"/>
                                             </constraints>
+                                            <variation key="default">
+                                                <mask key="constraints">
+                                                    <exclude reference="wv1-YX-Ptl"/>
+                                                </mask>
+                                            </variation>
                                         </imageView>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="2" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Google, Inc." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NAd-fD-NCZ">
-                                            <rect key="frame" x="125" y="49" width="281" height="17"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <rect key="frame" x="104" y="51" width="302" height="15"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
                                     <constraints>
                                         <constraint firstAttribute="bottomMargin" secondItem="NAd-fD-NCZ" secondAttribute="bottom" constant="5" id="2BZ-Ji-APs"/>
-                                        <constraint firstItem="X0m-0a-8GH" firstAttribute="leading" secondItem="N4p-iz-RUX" secondAttribute="leadingMargin" constant="7" id="31C-ci-iqz"/>
+                                        <constraint firstItem="X0m-0a-8GH" firstAttribute="leading" secondItem="N4p-iz-RUX" secondAttribute="leadingMargin" constant="8" id="31C-ci-iqz"/>
                                         <constraint firstItem="NAd-fD-NCZ" firstAttribute="trailing" secondItem="N4p-iz-RUX" secondAttribute="trailingMargin" id="4nZ-NS-FNE"/>
                                         <constraint firstItem="NAd-fD-NCZ" firstAttribute="leading" secondItem="X0m-0a-8GH" secondAttribute="trailing" constant="8" id="7fk-ka-0am"/>
+                                        <constraint firstItem="X0m-0a-8GH" firstAttribute="leading" secondItem="N4p-iz-RUX" secondAttribute="leadingMargin" constant="7" id="BW2-Pw-PxH"/>
                                         <constraint firstItem="X0m-0a-8GH" firstAttribute="centerY" secondItem="N4p-iz-RUX" secondAttribute="centerY" id="MgD-au-OeM"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="X0m-0a-8GH" secondAttribute="bottom" constant="3" id="bWa-2j-p34"/>
+                                        <constraint firstItem="NAd-fD-NCZ" firstAttribute="leading" secondItem="X0m-0a-8GH" secondAttribute="trailing" constant="8" id="hLT-D4-eQU"/>
                                         <constraint firstItem="alp-bp-r9y" firstAttribute="trailing" secondItem="N4p-iz-RUX" secondAttribute="trailingMargin" id="pgT-ck-6PY"/>
+                                        <constraint firstItem="X0m-0a-8GH" firstAttribute="top" secondItem="N4p-iz-RUX" secondAttribute="topMargin" constant="3" id="rEa-bV-Dch"/>
                                         <constraint firstAttribute="bottomMargin" secondItem="alp-bp-r9y" secondAttribute="bottom" constant="24" id="rpk-Wz-2mt"/>
                                         <constraint firstItem="alp-bp-r9y" firstAttribute="top" secondItem="N4p-iz-RUX" secondAttribute="topMargin" constant="5" id="snl-Gp-6R7"/>
                                         <constraint firstItem="alp-bp-r9y" firstAttribute="leading" secondItem="X0m-0a-8GH" secondAttribute="trailing" constant="8" id="vzd-fi-jLZ"/>
@@ -81,7 +90,9 @@
                                     </constraints>
                                     <variation key="default">
                                         <mask key="constraints">
+                                            <exclude reference="BW2-Pw-PxH"/>
                                             <exclude reference="rpk-Wz-2mt"/>
+                                            <exclude reference="7fk-ka-0am"/>
                                             <exclude reference="zi5-8n-9t3"/>
                                         </mask>
                                     </variation>
