@@ -16,7 +16,7 @@
 #import "CastDeviceController.h"
 #import "LocalPlayerViewController.h"
 #import "Media+Ex.h"
-#import "MediaListModel.h"
+#import "PersistentMediaListModel.h"
 #import "MediaTableViewController.h"
 #import "NotificationConstants.h"
 #import "SimpleImageFetcher.h"
@@ -25,10 +25,12 @@
 #import <GoogleCast/GCKDeviceManager.h>
 #import <GoogleCast/GCKMediaControlChannel.h>
 
+#define kCellImageSize CGSizeMake(102, 58)
+
 @interface MediaTableViewController () <CastDeviceControllerDelegate>
 
 /** The media to be displayed. */
-@property(nonatomic, strong) MediaListModel *mediaList;
+@property(nonatomic, strong) PersistentMediaListModel *mediaList;
 
 /** The queue button. */
 @property(nonatomic, strong) UIBarButtonItem *showQueueButton;
@@ -50,7 +52,7 @@
 
   // Asynchronously load the media json.
   AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
-  delegate.mediaList = [[MediaListModel alloc] init];
+  delegate.mediaList = [[PersistentMediaListModel alloc] init];
   self.mediaList = delegate.mediaList;
   [self.mediaList loadMedia:^{
     self.title = self.mediaList.mediaTitle;
@@ -168,6 +170,7 @@
   dispatch_async(queue, ^{
     UIImage *image =
         [UIImage imageWithData:[SimpleImageFetcher getDataFromImageURL:media.thumbnailURL]];
+    image = [SimpleImageFetcher scaleImage:image toSize:kCellImageSize];
 
     dispatch_sync(dispatch_get_main_queue(), ^{
       UIImageView *mediaThumb = (UIImageView *)[cell viewWithTag:3];
@@ -207,7 +210,9 @@
 }
 
 - (void) addMediaToTable:(Media *) media {
-#warning implement this
+    [self.mediaList addMedia:media];
+    
+    [self.tableView reloadData];
 }
 
 #pragma mark - Toolbar actions
