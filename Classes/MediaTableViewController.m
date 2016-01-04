@@ -74,6 +74,7 @@
         [self.tableView reloadData];
         // refresh toolbar
         [self initToolbarInEditMode:YES];
+//        self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     }];
     
     // Create the queue button.
