@@ -25,6 +25,9 @@
 #import <GoogleCast/GCKDeviceManager.h>
 #import <GoogleCast/GCKMediaControlChannel.h>
 
+#define kDefaultRowHeight 40
+#define kMediaRowHeight 80
+
 @interface MediaTableViewController () <CastDeviceControllerDelegate>
 
 /** The media to be displayed. */
@@ -46,9 +49,17 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    // Hide table header by default
+    self.tableView.tableHeaderView = nil;
+    
+    // create toolbar
+    editItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(editTableItems:)];
+    addItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(onAddURLAction:)];
+    doneItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneEditTableItems:)];
+    [self initToolbarInEditMode:YES];
+    
     // Show stylized application title as a left-aligned image.
-    UIView *titleView =
-    [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo_castvideos.png"]];
+    UIView *titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo_castvideos.png"]];
     self.navigationItem.titleView = [[UIView alloc] init];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:titleView];
     
@@ -61,6 +72,8 @@
             self.title = self.mediaList.mediaTitle;
         }
         [self.tableView reloadData];
+        // refresh toolbar
+        [self initToolbarInEditMode:YES];
     }];
     
     // Create the queue button.
@@ -68,16 +81,6 @@
                                                         style:UIBarButtonItemStylePlain
                                                        target:self
                                                        action:@selector(showQueue:)];
-    
-    // Hide table header by default
-    self.tableView.tableHeaderView = nil;
-    
-    // create toolbar
-    editItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(editTableItems:)];
-    addItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(onAddURLAction:)];
-    doneItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneEditTableItems:)];
-
-    [self initToolbarInEditMode:YES];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -151,6 +154,22 @@
 }
 
 #pragma mark - Table View
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.row < self.mediaList.numberOfMediaLoaded) {
+        return kMediaRowHeight;
+    } else {
+        return kDefaultRowHeight;
+    }
+}
+
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.row < self.mediaList.numberOfMediaLoaded) {
+        return kMediaRowHeight;
+    } else {
+        return kDefaultRowHeight;
+    }
+}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;

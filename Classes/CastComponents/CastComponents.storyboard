@@ -549,7 +549,7 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Connect to device" id="CYb-Jv-cAA">
-                        <barButtonItem key="leftBarButtonItem" image="cast_off" style="plain" id="DFz-un-Y6i">
+                        <barButtonItem key="leftBarButtonItem" image="cast_off" style="done" id="DFz-un-Y6i">
                             <inset key="imageInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="-2"/>
                             <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         </barButtonItem>
