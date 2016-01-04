@@ -21,4 +21,7 @@
 @property(nonatomic, strong) UIWindow *window;
 @property(nonatomic, strong) PersistentMediaListModel *mediaList;
 
+// Method to get shared instance of the delegate
++ (AppDelegate*) sharedInstance;
+
 @end

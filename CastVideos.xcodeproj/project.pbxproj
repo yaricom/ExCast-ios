@@ -45,7 +45,7 @@
 		78C586031C39B635009305C7 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 78C586021C39B635009305C7 /* Launch Screen.storyboard */; };
 		78F761D11C3AB885005E8F36 /* ActionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 78F761D01C3AB885005E8F36 /* ActionViewController.m */; };
 		78F761D41C3AB885005E8F36 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 78F761D21C3AB885005E8F36 /* MainInterface.storyboard */; };
-		78F761D91C3AB885005E8F36 /* ExCast.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 78F761CD1C3AB885005E8F36 /* ExCast.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		78F761D91C3AB885005E8F36 /* ExCastExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 78F761CD1C3AB885005E8F36 /* ExCastExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		78F761DE1C3AB944005E8F36 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 78F761DD1C3AB944005E8F36 /* Images.xcassets */; };
 		78F761E01C3ACE7D005E8F36 /* GetURL.js in Resources */ = {isa = PBXBuildFile; fileRef = 78F761DF1C3ACE7D005E8F36 /* GetURL.js */; };
 		CCE5BD43196F037300016BAB /* MediaAccessibility.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE5BD42196F037300016BAB /* MediaAccessibility.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -92,7 +92,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				78F761D91C3AB885005E8F36 /* ExCast.appex in Embed App Extensions */,
+				78F761D91C3AB885005E8F36 /* ExCastExtension.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -155,7 +155,7 @@
 		78C585FF1C397EF9009305C7 /* ExMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExMedia.h; sourceTree = "<group>"; };
 		78C586001C397EF9009305C7 /* ExMedia.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExMedia.m; sourceTree = "<group>"; };
 		78C586021C39B635009305C7 /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
-		78F761CD1C3AB885005E8F36 /* ExCast.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ExCast.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		78F761CD1C3AB885005E8F36 /* ExCastExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ExCastExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		78F761CF1C3AB885005E8F36 /* ActionViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ActionViewController.h; sourceTree = "<group>"; };
 		78F761D01C3AB885005E8F36 /* ActionViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ActionViewController.m; sourceTree = "<group>"; };
 		78F761D31C3AB885005E8F36 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
@@ -241,7 +241,7 @@
 			isa = PBXGroup;
 			children = (
 				284CBD82182ADC2D007F65F9 /* CastVideos.app */,
-				78F761CD1C3AB885005E8F36 /* ExCast.appex */,
+				78F761CD1C3AB885005E8F36 /* ExCastExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -395,9 +395,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		284CBD81182ADC2D007F65F9 /* CastVideos */ = {
+		284CBD81182ADC2D007F65F9 /* ExCastVideos */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 284CBDBA182ADC2E007F65F9 /* Build configuration list for PBXNativeTarget "CastVideos" */;
+			buildConfigurationList = 284CBDBA182ADC2E007F65F9 /* Build configuration list for PBXNativeTarget "ExCastVideos" */;
 			buildPhases = (
 				03B5B1FD64413F4F6405893A /* Check Pods Manifest.lock */,
 				284CBD7E182ADC2D007F65F9 /* Sources */,
@@ -412,14 +412,14 @@
 			dependencies = (
 				78F761D71C3AB885005E8F36 /* PBXTargetDependency */,
 			);
-			name = CastVideos;
+			name = ExCastVideos;
 			productName = Chromecast_iOS;
 			productReference = 284CBD82182ADC2D007F65F9 /* CastVideos.app */;
 			productType = "com.apple.product-type.application";
 		};
-		78F761CC1C3AB885005E8F36 /* ExCast */ = {
+		78F761CC1C3AB885005E8F36 /* ExCastExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 78F761DC1C3AB885005E8F36 /* Build configuration list for PBXNativeTarget "ExCast" */;
+			buildConfigurationList = 78F761DC1C3AB885005E8F36 /* Build configuration list for PBXNativeTarget "ExCastExtension" */;
 			buildPhases = (
 				78F761C91C3AB885005E8F36 /* Sources */,
 				78F761CA1C3AB885005E8F36 /* Frameworks */,
@@ -429,9 +429,9 @@
 			);
 			dependencies = (
 			);
-			name = ExCast;
+			name = ExCastExtension;
 			productName = ExCast;
-			productReference = 78F761CD1C3AB885005E8F36 /* ExCast.appex */;
+			productReference = 78F761CD1C3AB885005E8F36 /* ExCastExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -465,8 +465,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				284CBD81182ADC2D007F65F9 /* CastVideos */,
-				78F761CC1C3AB885005E8F36 /* ExCast */,
+				284CBD81182ADC2D007F65F9 /* ExCastVideos */,
+				78F761CC1C3AB885005E8F36 /* ExCastExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -613,7 +613,7 @@
 /* Begin PBXTargetDependency section */
 		78F761D71C3AB885005E8F36 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 78F761CC1C3AB885005E8F36 /* ExCast */;
+			target = 78F761CC1C3AB885005E8F36 /* ExCastExtension */;
 			targetProxy = 78F761D61C3AB885005E8F36 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -775,7 +775,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = ua.nologin.ChromeCast.ExCast.ExCast;
+				PRODUCT_BUNDLE_IDENTIFIER = ua.nologin.ChromeCast.ExCast.ExCastExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -796,7 +796,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = ua.nologin.ChromeCast.ExCast.ExCast;
+				PRODUCT_BUNDLE_IDENTIFIER = ua.nologin.ChromeCast.ExCast.ExCastExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -814,7 +814,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		284CBDBA182ADC2E007F65F9 /* Build configuration list for PBXNativeTarget "CastVideos" */ = {
+		284CBDBA182ADC2E007F65F9 /* Build configuration list for PBXNativeTarget "ExCastVideos" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				284CBDBB182ADC2E007F65F9 /* Debug */,
@@ -823,13 +823,14 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		78F761DC1C3AB885005E8F36 /* Build configuration list for PBXNativeTarget "ExCast" */ = {
+		78F761DC1C3AB885005E8F36 /* Build configuration list for PBXNativeTarget "ExCastExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				78F761DA1C3AB885005E8F36 /* Debug */,
 				78F761DB1C3AB885005E8F36 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
