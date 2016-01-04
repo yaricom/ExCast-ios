@@ -8,6 +8,8 @@
 #import "ActionViewController.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 
+#import "SharedDataUtils.h"
+
 @interface ActionViewController () <UITableViewDelegate, UITableViewDataSource>
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSString *pageUrlText;
@@ -57,6 +59,15 @@
 }
 
 - (IBAction)done:(id)sender {
+    [self.extensionContext completeRequestReturningItems:self.extensionContext.inputItems completionHandler:^(BOOL expired) {
+        if (!expired) {
+            // save page URL
+            NSMutableArray *urls = [NSMutableArray arrayWithContentsOfURL:[SharedDataUtils pathToMediaFile]];
+            [urls addObject:urls];
+            
+            [urls writeToURL:[SharedDataUtils pathToMediaFile] atomically:YES];
+        }
+    }];
 }
 
 #pragma mark - Table view

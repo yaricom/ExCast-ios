@@ -7,10 +7,12 @@
 
 #import "PersistentMediaListModel.h"
 
+#import "SharedDataUtils.h"
+
 #define kNotifyStep 10
 
 @interface PersistentMediaListModel(private)
-    + (NSURL*) pathToMediaFile;
+
 @end
 
 @implementation PersistentMediaListModel {
@@ -28,9 +30,10 @@
 
 - (void)loadMedia:(void (^)(BOOL final))callbackBlock {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSArray *urls = [NSArray arrayWithContentsOfURL:[PersistentMediaListModel pathToMediaFile]];
-        // start loading
+        // read data
+        NSArray *urls = [NSArray arrayWithContentsOfURL:[SharedDataUtils pathToMediaFile]];
         if (urls) {
+            // start loading media
             [self loadFrom:urls atIndex:0 withCallback:callbackBlock];
         }
     });
@@ -96,19 +99,11 @@
             [urls addObject:m.pageUrl.absoluteString];
         }
         
-        NSURL* mediaList = [PersistentMediaListModel pathToMediaFile];
-        
-        [urls writeToURL:mediaList atomically:YES];
-        
-        NSLog(@"Media list saved to: %@", [mediaList absoluteString]);
-    });
-}
+        // write data
+        [urls writeToURL:[SharedDataUtils pathToMediaFile] atomically:YES];
 
-+ (NSURL*) pathToMediaFile {
-    NSFileManager *fileManger = [NSFileManager defaultManager];
-    
-    NSURL *docsDirectory = [[fileManger URLsForDirectory:NSApplicationSupportDirectory inDomains:NSUserDomainMask] lastObject];
-    return [docsDirectory URLByAppendingPathComponent:@"media.list"];
+        NSLog(@"Media list saved to: %@", [[SharedDataUtils pathToMediaFile] absoluteString]);
+    });
 }
 
 @end

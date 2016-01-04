@@ -40,6 +40,8 @@
 		5FA883BB1B212991008D7840 /* AlertHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA883BA1B212991008D7840 /* AlertHelper.m */; };
 		5FA883BE1B2165F1008D7840 /* play_circle@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FA883BC1B2165F1008D7840 /* play_circle@2x.png */; };
 		5FA883BF1B2165F1008D7840 /* play_circle@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FA883BD1B2165F1008D7840 /* play_circle@3x.png */; };
+		787309731C3B0EE3002E2C23 /* SharedDataUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 787309721C3B0EE3002E2C23 /* SharedDataUtils.m */; };
+		787309741C3B1F35002E2C23 /* SharedDataUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 787309721C3B0EE3002E2C23 /* SharedDataUtils.m */; };
 		78C585FE1C38991E009305C7 /* PersistentMediaListModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C585FD1C38991E009305C7 /* PersistentMediaListModel.m */; };
 		78C586011C397EF9009305C7 /* ExMedia.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C586001C397EF9009305C7 /* ExMedia.m */; };
 		78C586031C39B635009305C7 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 78C586021C39B635009305C7 /* Launch Screen.storyboard */; };
@@ -150,6 +152,8 @@
 		5FA883BA1B212991008D7840 /* AlertHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertHelper.m; sourceTree = "<group>"; };
 		5FA883BC1B2165F1008D7840 /* play_circle@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "play_circle@2x.png"; sourceTree = "<group>"; };
 		5FA883BD1B2165F1008D7840 /* play_circle@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "play_circle@3x.png"; sourceTree = "<group>"; };
+		787309711C3B0EE3002E2C23 /* SharedDataUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedDataUtils.h; sourceTree = "<group>"; };
+		787309721C3B0EE3002E2C23 /* SharedDataUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SharedDataUtils.m; sourceTree = "<group>"; };
 		78C585FC1C38991E009305C7 /* PersistentMediaListModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistentMediaListModel.h; sourceTree = "<group>"; };
 		78C585FD1C38991E009305C7 /* PersistentMediaListModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersistentMediaListModel.m; sourceTree = "<group>"; };
 		78C585FF1C397EF9009305C7 /* ExMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExMedia.h; sourceTree = "<group>"; };
@@ -282,6 +286,8 @@
 				496D4700182DBE9C00343F72 /* MediaListModel.m */,
 				78C585FC1C38991E009305C7 /* PersistentMediaListModel.h */,
 				78C585FD1C38991E009305C7 /* PersistentMediaListModel.m */,
+				787309711C3B0EE3002E2C23 /* SharedDataUtils.h */,
+				787309721C3B0EE3002E2C23 /* SharedDataUtils.m */,
 				284CBD9D182ADC2D007F65F9 /* MediaTableViewController.h */,
 				284CBD9E182ADC2D007F65F9 /* MediaTableViewController.m */,
 				EFD7C20119FE71AF00082842 /* LocalPlayerView.h */,
@@ -576,6 +582,7 @@
 				284CBD96182ADC2D007F65F9 /* AppDelegate.m in Sources */,
 				EADEB9841BB46D7000680739 /* RepeatingTimerManager.m in Sources */,
 				284CC032182B1891007F65F9 /* CastDeviceController.m in Sources */,
+				787309731C3B0EE3002E2C23 /* SharedDataUtils.m in Sources */,
 				284CBD9F182ADC2D007F65F9 /* MediaTableViewController.m in Sources */,
 				EF60AA281A9D28A40036D4FA /* CastIconButton.m in Sources */,
 				78C586011C397EF9009305C7 /* ExMedia.m in Sources */,
@@ -604,6 +611,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				787309741C3B1F35002E2C23 /* SharedDataUtils.m in Sources */,
 				78F761D11C3AB885005E8F36 /* ActionViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
