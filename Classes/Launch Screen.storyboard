@@ -19,6 +19,10 @@
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo_castvideos.png" translatesAutoresizingMaskIntoConstraints="NO" id="iaF-Ss-g3s">
                                 <rect key="frame" x="252" y="293" width="97" height="15"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="97" id="4yb-8E-D3i"/>
+                                    <constraint firstAttribute="height" constant="15" id="QSs-Z7-OG4"/>
+                                </constraints>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" red="0.31372549020000001" green="0.41568627450000001" blue="0.49019607840000001" alpha="1" colorSpace="deviceRGB"/>
