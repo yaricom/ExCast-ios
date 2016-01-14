@@ -30,8 +30,6 @@
 		284CC032182B1891007F65F9 /* CastDeviceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 284CC031182B1891007F65F9 /* CastDeviceController.m */; };
 		284CC035182C3396007F65F9 /* CastViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 284CC034182C3396007F65F9 /* CastViewController.m */; };
 		491627AF184FBF9C00351397 /* SimpleImageFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 491627AE184FBF9C00351397 /* SimpleImageFetcher.m */; };
-		496D46FE182DBE9100343F72 /* Media.m in Sources */ = {isa = PBXBuildFile; fileRef = 496D46FD182DBE9100343F72 /* Media.m */; };
-		496D4701182DBE9C00343F72 /* MediaListModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 496D4700182DBE9C00343F72 /* MediaListModel.m */; };
 		5FA883B01B2102C5008D7840 /* QueueTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA883AF1B2102C5008D7840 /* QueueTableViewController.m */; };
 		5FA883B51B210940008D7840 /* playlist_white@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FA883B11B210940008D7840 /* playlist_white@2x.png */; };
 		5FA883B61B210940008D7840 /* playlist_white@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FA883B21B210940008D7840 /* playlist_white@3x.png */; };
@@ -40,6 +38,8 @@
 		5FA883BB1B212991008D7840 /* AlertHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA883BA1B212991008D7840 /* AlertHelper.m */; };
 		5FA883BE1B2165F1008D7840 /* play_circle@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FA883BC1B2165F1008D7840 /* play_circle@2x.png */; };
 		5FA883BF1B2165F1008D7840 /* play_circle@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FA883BD1B2165F1008D7840 /* play_circle@3x.png */; };
+		7813CABE1C481E2E007C6846 /* ExMediaTrack.m in Sources */ = {isa = PBXBuildFile; fileRef = 7813CABD1C481E2E007C6846 /* ExMediaTrack.m */; };
+		7813CAC11C482514007C6846 /* MediaTracksTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7813CAC01C482514007C6846 /* MediaTracksTableViewController.m */; };
 		787309731C3B0EE3002E2C23 /* SharedDataUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 787309721C3B0EE3002E2C23 /* SharedDataUtils.m */; };
 		787309741C3B1F35002E2C23 /* SharedDataUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 787309721C3B0EE3002E2C23 /* SharedDataUtils.m */; };
 		78C585FE1C38991E009305C7 /* PersistentMediaListModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C585FD1C38991E009305C7 /* PersistentMediaListModel.m */; };
@@ -67,7 +67,6 @@
 		EF775C5F1A49FE9E00995266 /* thumb@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EF775C5C1A49FE9E00995266 /* thumb@2x.png */; };
 		EF775C601A49FE9E00995266 /* thumb@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = EF775C5D1A49FE9E00995266 /* thumb@3x.png */; };
 		EFD7C20319FE71AF00082842 /* LocalPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = EFD7C20219FE71AF00082842 /* LocalPlayerView.m */; };
-		EFD8A0E91AABD052005808B2 /* MediaTrack.m in Sources */ = {isa = PBXBuildFile; fileRef = EFD8A0E81AABD052005808B2 /* MediaTrack.m */; };
 		EFD8A0EB1AABD632005808B2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EFD8A0EA1AABD632005808B2 /* Main.storyboard */; };
 		EFD8A0ED1AACFCAF005808B2 /* CastComponents.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EFD8A0EC1AACFCAF005808B2 /* CastComponents.storyboard */; };
 		EFD8A0F01AAE32AB005808B2 /* GCKMediaInformation+LocalMedia.m in Sources */ = {isa = PBXBuildFile; fileRef = EFD8A0EF1AAE32AB005808B2 /* GCKMediaInformation+LocalMedia.m */; };
@@ -78,12 +77,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		78F761D61C3AB885005E8F36 /* PBXContainerItemProxy */ = {
+		7813CACC1C484899007C6846 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 284CBD7A182ADC2D007F65F9 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 78F761CC1C3AB885005E8F36;
-			remoteInfo = ExCast;
+			remoteInfo = ExCastExtension;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -136,10 +135,6 @@
 		284CC034182C3396007F65F9 /* CastViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CastViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		491627AD184FBF9C00351397 /* SimpleImageFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleImageFetcher.h; sourceTree = "<group>"; };
 		491627AE184FBF9C00351397 /* SimpleImageFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimpleImageFetcher.m; sourceTree = "<group>"; };
-		496D46FC182DBE9100343F72 /* Media.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Media.h; sourceTree = "<group>"; };
-		496D46FD182DBE9100343F72 /* Media.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Media.m; sourceTree = "<group>"; };
-		496D46FF182DBE9C00343F72 /* MediaListModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaListModel.h; sourceTree = "<group>"; };
-		496D4700182DBE9C00343F72 /* MediaListModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaListModel.m; sourceTree = "<group>"; };
 		4A57F69A5118DA34FB4A308C /* Pods-CastVideos.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CastVideos.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CastVideos/Pods-CastVideos.debug.xcconfig"; sourceTree = "<group>"; };
 		52402E57263507436405B954 /* Pods-CastVideos.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CastVideos.release.xcconfig"; path = "Pods/Target Support Files/Pods-CastVideos/Pods-CastVideos.release.xcconfig"; sourceTree = "<group>"; };
 		5FA883AE1B2102C5008D7840 /* QueueTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueueTableViewController.h; sourceTree = "<group>"; };
@@ -152,6 +147,14 @@
 		5FA883BA1B212991008D7840 /* AlertHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertHelper.m; sourceTree = "<group>"; };
 		5FA883BC1B2165F1008D7840 /* play_circle@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "play_circle@2x.png"; sourceTree = "<group>"; };
 		5FA883BD1B2165F1008D7840 /* play_circle@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "play_circle@3x.png"; sourceTree = "<group>"; };
+		7813CABC1C481E2E007C6846 /* ExMediaTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExMediaTrack.h; sourceTree = "<group>"; };
+		7813CABD1C481E2E007C6846 /* ExMediaTrack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExMediaTrack.m; sourceTree = "<group>"; };
+		7813CABF1C482514007C6846 /* MediaTracksTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTracksTableViewController.h; sourceTree = "<group>"; };
+		7813CAC01C482514007C6846 /* MediaTracksTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaTracksTableViewController.m; sourceTree = "<group>"; };
+		7813CAC21C483F95007C6846 /* CastVideos.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = CastVideos.entitlements; sourceTree = "<group>"; };
+		7813CAC31C484065007C6846 /* ExCastExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ExCastExtension.entitlements; sourceTree = "<group>"; };
+		7813CAC81C48484F007C6846 /* libPods-CastVideos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libPods-CastVideos.a"; path = "Pods/../build/Debug-iphoneos/libPods-CastVideos.a"; sourceTree = "<group>"; };
+		7813CACA1C48485A007C6846 /* libHTMLReader.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libHTMLReader.a; path = "Pods/../build/Debug-iphoneos/libHTMLReader.a"; sourceTree = "<group>"; };
 		787309711C3B0EE3002E2C23 /* SharedDataUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedDataUtils.h; sourceTree = "<group>"; };
 		787309721C3B0EE3002E2C23 /* SharedDataUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SharedDataUtils.m; sourceTree = "<group>"; };
 		78C585FC1C38991E009305C7 /* PersistentMediaListModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistentMediaListModel.h; sourceTree = "<group>"; };
@@ -190,8 +193,6 @@
 		EF775C5D1A49FE9E00995266 /* thumb@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "thumb@3x.png"; sourceTree = "<group>"; };
 		EFD7C20119FE71AF00082842 /* LocalPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalPlayerView.h; sourceTree = "<group>"; };
 		EFD7C20219FE71AF00082842 /* LocalPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalPlayerView.m; sourceTree = "<group>"; };
-		EFD8A0E71AABD052005808B2 /* MediaTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTrack.h; sourceTree = "<group>"; };
-		EFD8A0E81AABD052005808B2 /* MediaTrack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaTrack.m; sourceTree = "<group>"; };
 		EFD8A0EA1AABD632005808B2 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		EFD8A0EC1AACFCAF005808B2 /* CastComponents.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = CastComponents.storyboard; sourceTree = "<group>"; };
 		EFD8A0EE1AAE32AB005808B2 /* GCKMediaInformation+LocalMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GCKMediaInformation+LocalMedia.h"; sourceTree = "<group>"; };
@@ -232,6 +233,8 @@
 		284CBD79182ADC2D007F65F9 = {
 			isa = PBXGroup;
 			children = (
+				7813CAC31C484065007C6846 /* ExCastExtension.entitlements */,
+				7813CAC21C483F95007C6846 /* CastVideos.entitlements */,
 				284CC025182B0F9B007F65F9 /* Images */,
 				284CBD8B182ADC2D007F65F9 /* Classes */,
 				78F761CE1C3AB885005E8F36 /* ExCast */,
@@ -253,6 +256,8 @@
 		284CBD84182ADC2D007F65F9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7813CACA1C48485A007C6846 /* libHTMLReader.a */,
+				7813CAC81C48484F007C6846 /* libPods-CastVideos.a */,
 				EFE3184719C7D97B00C053EE /* SystemConfiguration.framework */,
 				CCE5BD44196F038400016BAB /* CoreText.framework */,
 				CCE5BD42196F037300016BAB /* MediaAccessibility.framework */,
@@ -276,18 +281,16 @@
 				5FA883BA1B212991008D7840 /* AlertHelper.m */,
 				284CBD94182ADC2D007F65F9 /* AppDelegate.h */,
 				284CBD95182ADC2D007F65F9 /* AppDelegate.m */,
+				7813CABC1C481E2E007C6846 /* ExMediaTrack.h */,
+				7813CABD1C481E2E007C6846 /* ExMediaTrack.m */,
 				78C585FF1C397EF9009305C7 /* ExMedia.h */,
 				78C586001C397EF9009305C7 /* ExMedia.m */,
-				496D46FC182DBE9100343F72 /* Media.h */,
-				496D46FD182DBE9100343F72 /* Media.m */,
-				EFD8A0E71AABD052005808B2 /* MediaTrack.h */,
-				EFD8A0E81AABD052005808B2 /* MediaTrack.m */,
-				496D46FF182DBE9C00343F72 /* MediaListModel.h */,
-				496D4700182DBE9C00343F72 /* MediaListModel.m */,
 				78C585FC1C38991E009305C7 /* PersistentMediaListModel.h */,
 				78C585FD1C38991E009305C7 /* PersistentMediaListModel.m */,
 				787309711C3B0EE3002E2C23 /* SharedDataUtils.h */,
 				787309721C3B0EE3002E2C23 /* SharedDataUtils.m */,
+				7813CABF1C482514007C6846 /* MediaTracksTableViewController.h */,
+				7813CAC01C482514007C6846 /* MediaTracksTableViewController.m */,
 				284CBD9D182ADC2D007F65F9 /* MediaTableViewController.h */,
 				284CBD9E182ADC2D007F65F9 /* MediaTableViewController.m */,
 				EFD7C20119FE71AF00082842 /* LocalPlayerView.h */,
@@ -416,7 +419,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				78F761D71C3AB885005E8F36 /* PBXTargetDependency */,
+				7813CACD1C484899007C6846 /* PBXTargetDependency */,
 			);
 			name = ExCastVideos;
 			productName = Chromecast_iOS;
@@ -451,10 +454,20 @@
 				TargetAttributes = {
 					284CBD81182ADC2D007F65F9 = {
 						DevelopmentTeam = TNSVT26X2M;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+						};
 					};
 					78F761CC1C3AB885005E8F36 = {
 						CreatedOnToolsVersion = 7.2;
 						DevelopmentTeam = TNSVT26X2M;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -591,17 +604,16 @@
 				284CBD92182ADC2D007F65F9 /* main.m in Sources */,
 				EA64A2261B9F4AFF00A45576 /* NotificationConstants.m in Sources */,
 				124377D0187CC2B500ADF736 /* DeviceTableViewController.m in Sources */,
+				7813CAC11C482514007C6846 /* MediaTracksTableViewController.m in Sources */,
 				78C585FE1C38991E009305C7 /* PersistentMediaListModel.m in Sources */,
 				EFD8A0F01AAE32AB005808B2 /* GCKMediaInformation+LocalMedia.m in Sources */,
 				5FA883B01B2102C5008D7840 /* QueueTableViewController.m in Sources */,
 				491627AF184FBF9C00351397 /* SimpleImageFetcher.m in Sources */,
 				EF23DBAD19C0FF2F00DA5ABB /* TracksTableViewController.m in Sources */,
-				496D46FE182DBE9100343F72 /* Media.m in Sources */,
 				EF548C2F1B87F3F00026C33F /* CastContainerController.m in Sources */,
+				7813CABE1C481E2E007C6846 /* ExMediaTrack.m in Sources */,
 				284CBDA2182ADC2D007F65F9 /* LocalPlayerViewController.m in Sources */,
 				EA01BA6D1BB0D2860003EF32 /* Toast.m in Sources */,
-				EFD8A0E91AABD052005808B2 /* MediaTrack.m in Sources */,
-				496D4701182DBE9C00343F72 /* MediaListModel.m in Sources */,
 				EF110FB119759BB30009410F /* CastInstructionsViewController.m in Sources */,
 				5FA883BB1B212991008D7840 /* AlertHelper.m in Sources */,
 			);
@@ -619,10 +631,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		78F761D71C3AB885005E8F36 /* PBXTargetDependency */ = {
+		7813CACD1C484899007C6846 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 78F761CC1C3AB885005E8F36 /* ExCastExtension */;
-			targetProxy = 78F761D61C3AB885005E8F36 /* PBXContainerItemProxy */;
+			targetProxy = 7813CACC1C484899007C6846 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -727,7 +739,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = CastVideos.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					..,
@@ -751,7 +765,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = CastVideos.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					..,
@@ -774,7 +790,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_ENTITLEMENTS = ExCastExtension.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -782,9 +800,14 @@
 				INFOPLIST_FILE = ExCast/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/build/Debug-iphoneos",
+				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = ua.nologin.ChromeCast.ExCast.ExCastExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -794,7 +817,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_ENTITLEMENTS = ExCastExtension.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -803,9 +828,14 @@
 				INFOPLIST_FILE = ExCast/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/build/Debug-iphoneos",
+				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = ua.nologin.ChromeCast.ExCast.ExCastExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
 			};
 			name = Release;

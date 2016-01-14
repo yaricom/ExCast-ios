@@ -8,14 +8,12 @@
 #import "SharedDataUtils.h"
 
 // The shared data group identifier
-static NSString * const kCCSharedAppGroupIdentifier = @"group.dk.whiterock.friendsnotifier.iwatch";
+static NSString * const kCCSharedAppGroupIdentifier = @"group.ua.nologin.ChromeCast.ExCast";
 
 @implementation SharedDataUtils
 
 + (NSURL*) pathToMediaFile {
-    NSFileManager *fileManger = [NSFileManager defaultManager];
-    
-    NSURL *docsDirectory = [[fileManger URLsForDirectory:NSApplicationSupportDirectory inDomains:NSUserDomainMask] lastObject];
+    NSURL *docsDirectory = [SharedDataUtils sharedGroupDataDirectory];
     return [docsDirectory URLByAppendingPathComponent:@"media.list"];
 }
 

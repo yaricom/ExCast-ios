@@ -19,25 +19,12 @@
 
 #import "CastViewController.h"
 #import "GCKMediaInformation+LocalMedia.h"
-#import "MediaTrack.h"
 
 @implementation GCKMediaInformation (LocalMedia)
 
-+ (GCKMediaInformation *)mediaInformationFromLocalMedia:(Media *)media {
-  NSMutableArray *tracks = [NSMutableArray arrayWithCapacity:media.tracks.count];
-  for (MediaTrack *track in media.tracks) {
-    [tracks addObject:
-        [[GCKMediaTrack alloc] initWithIdentifier:track.identifier
-                                contentIdentifier:[track.url absoluteString]
-                                      contentType:@"text/vtt"
-                                             type:[self trackTypeFrom:track.type]
-                                      textSubtype:[self trackSubtypeFrom:track.subtype]
-                                             name:track.name
-                                     languageCode:track.language
-                                       customData:nil]];
-  }
++ (GCKMediaInformation *)mediaInformationFromLocalMedia:(ExMedia *)media {
   GCKMediaMetadata *metadata =
-      [[GCKMediaMetadata alloc] initWithMetadataType:GCKMediaMetadataTypeGeneric];
+      [[GCKMediaMetadata alloc] initWithMetadataType:GCKMediaMetadataTypeMovie];
   if (media.title) {
     [metadata setString:media.title forKey:kGCKMetadataKeyTitle];
   }
@@ -60,7 +47,7 @@
                                          contentType:media.mimeType
                                             metadata:metadata
                                       streamDuration:0
-                                         mediaTracks:tracks
+                                         mediaTracks:nil
                                       textTrackStyle:[GCKMediaTextTrackStyle createDefault]
                                           customData:nil];
   return mi;

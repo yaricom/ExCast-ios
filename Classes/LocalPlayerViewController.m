@@ -131,25 +131,7 @@
 - (void)setMediaToPlay:(id)newMediaToPlay {
     if (_mediaToPlay != newMediaToPlay) {
         _mediaToPlay = newMediaToPlay;
-        if ([newMediaToPlay isKindOfClass:[ExMedia class]]) {
-            self.playbackEnabled = NO;
-            [newMediaToPlay reloadWithCompletion:^(NSError * _Nullable error) {
-                if (error) {
-                    NSLog(@"Failed to reload media: %@", error);
-                    // show alert
-                    AlertHelper *helper = [[AlertHelper alloc] init];
-                    helper.cancelButtonTitle = NSLocalizedString(@"OK", nil);
-                    helper.title = NSLocalizedString(@"Failed to load media file", nil);
-                    helper.message = NSLocalizedString(@"Please try again later", nil);
-                    [helper showOnController:self sourceView:_playerView];
-                } else {
-                    [self.playerView playbackEnabled:YES];
-                    self.playbackEnabled = YES;
-                }
-            }];
-        } else {
-            self.playbackEnabled = YES;
-        }
+        self.playbackEnabled = YES;
         [self syncTextToMedia];
     }
 }

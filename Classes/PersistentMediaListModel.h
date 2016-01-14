@@ -24,13 +24,13 @@
 - (void)loadMedia:(void (^)(BOOL final))callbackBlock;
 
 /* Returns the media object at index. */
-- (Media *)mediaAtIndex:(NSInteger)index;
+- (ExMedia *)mediaAtIndex:(NSInteger)index;
 
 /* Removes media at index */
 - (void) removeMediaAtIndex:(NSInteger) index;
 
 /* Adds specified media to the list */
-- (void) addMedia:(Media *) media;
+- (void) addMedia:(ExMedia *) media;
 
 /* Return the index of the first media object with matching title. */
 - (int)indexOfMediaByTitle:(NSString *)title;

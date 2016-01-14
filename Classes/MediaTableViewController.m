@@ -130,7 +130,7 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"playMedia"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        Media *media = [self.mediaList mediaAtIndex:(int)indexPath.row];
+        ExMedia *media = [self.mediaList mediaAtIndex:(int)indexPath.row];
         // Pass the currently selected media to the next controller if it needs it.
         [[segue destinationViewController] setMediaToPlay:media];
     }
@@ -183,7 +183,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
-    Media *media = [self.mediaList mediaAtIndex:(int)indexPath.row];
+    ExMedia *media = [self.mediaList mediaAtIndex:(int)indexPath.row];
     
     cell.textLabel.numberOfLines = 2;
     cell.textLabel.text = media.title;
@@ -215,7 +215,7 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // remove from data source and local cache
-        Media *m = [self.mediaList mediaAtIndex:indexPath.row];
+        ExMedia *m = [self.mediaList mediaAtIndex:indexPath.row];
         [self.mediaList removeMediaAtIndex:indexPath.row];
         [SimpleImageFetcher removeCacheHitForURL:m.thumbnailURL];
         
@@ -227,7 +227,7 @@
 #pragma mark - manage table content
 - (void)addMediaFromURL:(NSURL *) url {
     [ExMedia mediaFromExURL:url
-             withCompletion:^(Media * _Nullable media, NSError * _Nullable error) {
+             withCompletion:^(ExMedia * _Nullable media, NSError * _Nullable error) {
                  dispatch_async(dispatch_get_main_queue(), ^{
                      // execute on main UI thread
                      if (error) {
@@ -246,7 +246,7 @@
              }];
 }
 
-- (void) addMediaToTable:(Media *) media {
+- (void) addMediaToTable:(ExMedia *) media {
     [self.mediaList addMedia:media];
     
     [self.tableView reloadData];

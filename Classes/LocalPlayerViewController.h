@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #import "LocalPlayerView.h"
-#import "Media.h"
+#import "ExMedia.h"
 
 #import <UIKit/UIKit.h>
 
@@ -23,7 +23,7 @@
 @interface LocalPlayerViewController : UIViewController<LocalPlayerDelegate>
 
 /** The media object being played on Chromecast device. Set this before presenting the view. */
-@property(strong, nonatomic) Media *mediaToPlay;
+@property(strong, nonatomic) ExMedia *mediaToPlay;
 
 /** The local player view used for displaying thumbnail and in-app video. */
 @property(weak, nonatomic) IBOutlet LocalPlayerView *playerView;

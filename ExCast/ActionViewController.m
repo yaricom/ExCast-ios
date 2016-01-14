@@ -12,8 +12,9 @@
 
 @interface ActionViewController () <UITableViewDelegate, UITableViewDataSource>
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (strong, nonatomic) NSString *pageUrlText;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *doneBarBtn;
+
+@property (strong, nonatomic) NSString *pageUrlText;
 
 @end
 
@@ -63,9 +64,14 @@
         if (!expired) {
             // save page URL
             NSMutableArray *urls = [NSMutableArray arrayWithContentsOfURL:[SharedDataUtils pathToMediaFile]];
-            [urls addObject:urls];
+            if (!urls) {
+                urls = [NSMutableArray arrayWithCapacity:1];
+            }
+            [urls addObject:self.pageUrlText];
             
             [urls writeToURL:[SharedDataUtils pathToMediaFile] atomically:YES];
+            
+            NSLog(@"Media list saved to: %@", [[SharedDataUtils pathToMediaFile] absoluteString]);
         }
     }];
 }
@@ -74,8 +80,9 @@
 - (NSString*)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if (section == 0) {
         return NSLocalizedString(@"Page address", nil) ;
+    } else {
+        return nil;
     }
-    return nil;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -91,6 +98,7 @@
     if (self.pageUrlText) {
         cell.textLabel.text = self.pageUrlText;
     }
+    
     return cell;
 }
 
@@ -98,12 +106,12 @@
 - (void) setMoviePageUrl:(NSString *) urlStr {
     // check if this is Ex.ua page
     if ([urlStr containsString:@"ex.ua"]) {
-        self.pageUrlText = urlStr;
         self.doneBarBtn.enabled = YES;
+        self.pageUrlText = urlStr;
     } else {
         self.pageUrlText = NSLocalizedString(@"Only ex.ua pages supported", nil);
+        
     }
-    
     [self.tableView reloadData];
 }
 

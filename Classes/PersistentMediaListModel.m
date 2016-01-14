@@ -30,6 +30,7 @@
 
 - (void)loadMedia:(void (^)(BOOL final))callbackBlock {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSLog(@"Load media list from: %@", [[SharedDataUtils pathToMediaFile] absoluteString]);
         // read data
         NSArray *urls = [NSArray arrayWithContentsOfURL:[SharedDataUtils pathToMediaFile]];
         if (urls) {
@@ -66,8 +67,8 @@
     return (int)_medias.count;
 }
 
-- (Media *)mediaAtIndex:(NSInteger)index {
-    return (Media *)[_medias objectAtIndex:index];
+- (ExMedia *)mediaAtIndex:(NSInteger)index {
+    return (ExMedia *)[_medias objectAtIndex:index];
 }
 
 - (void) removeMediaAtIndex:(NSInteger) index {
@@ -76,7 +77,7 @@
     [self saveMediaList];
 }
 
-- (void) addMedia:(Media *) media {
+- (void) addMedia:(ExMedia *) media {
     [_medias addObject:media];
     
     [self saveMediaList];
@@ -84,7 +85,7 @@
 
 - (int)indexOfMediaByTitle:(NSString *)title {
     for (int i = 0; i < self.numberOfMediaLoaded; i++) {
-        Media *media = [self mediaAtIndex:i];
+        ExMedia *media = [self mediaAtIndex:i];
         if ([media.title isEqualToString:title]) {
             return i;
         }

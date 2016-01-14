@@ -8,6 +8,7 @@
 #import <GoogleCast/GoogleCast.h>
 
 #import "ExMedia.h"
+#import "ExMediaTrack.h"
 
 @interface mediaInfo : NSObject
 @property (strong, nonatomic) NSURL *url;
@@ -39,9 +40,11 @@
                     HTMLDocument *home = [HTMLDocument documentWithData:data
                                                       contentTypeHeader:contentType];
                     ExMedia *m = [[ExMedia alloc] init];
-                    [m loadFromHTMLDocument:home];
                     m.subtitle = [url absoluteString];
                     m.pageUrl = url;
+                    // load media info
+                    [m loadFromHTMLDocument:home];
+                    
                     completeBlock(m, nil);
                 }] resume];
 }
@@ -89,14 +92,8 @@
     NSArray *scripts = [document nodesMatchingSelector:@"script"];
     for (HTMLElement *node in scripts) {
         NSArray *medias = [self findMediaInElement:node];
-        if (medias) {
-            if (medias.count == 1) {
-                // only one track found
-                self.URL = [medias[0] url];
-            } else {
-                // read all tracks
-            }
-
+        if (medias.count > 0) {
+            self.tracks = medias;
             break;
         }
     }
@@ -137,7 +134,7 @@
     NSMutableArray *info = [NSMutableArray array];
     if ([text containsString:@"player_info"]) {
         [text enumerateLinesUsingBlock:^(NSString * _Nonnull line, BOOL * _Nonnull stop) {
-            NSRange startRange = [line rangeOfString:@"player_list"];
+            NSRange startRange = [line rangeOfString:@"player_info"];
             if (startRange.length > 0) {
                 // found line
                 NSUInteger start = [line rangeOfString:@"("].location;
@@ -145,6 +142,10 @@
                                              options:NSLiteralSearch
                                                range:NSMakeRange(start + 1, line.length - start - 1)].location;
                 NSString *jsonStr = [NSString stringWithFormat:@"[%@]", [line substringWithRange:NSMakeRange(start + 1, end - start - 1)]];
+                jsonStr = [jsonStr stringByReplacingOccurrencesOfString:@"pos" withString:@"\"pos\""];
+                jsonStr = [jsonStr stringByReplacingOccurrencesOfString:@"title" withString:@"\"title\""];
+                jsonStr = [jsonStr stringByReplacingOccurrencesOfString:@"'" withString:@"\""];
+                
                 NSArray *array = [GCKJSONUtils parseJSON:jsonStr];
                 for (NSDictionary *dict in array) {
                     [info addObject:[dict objectForKey:@"title"]];
@@ -159,16 +160,19 @@
     NSMutableArray *res = [NSMutableArray array];
     for (int i = 0; i < urls.count; i++) {
         // store
-        mediaInfo *minfo = [[mediaInfo alloc] init];
-        minfo.url = [urls objectAtIndex:i];
+        ExMediaTrack *track = [[ExMediaTrack alloc]init];
+        track.identifier = i;
+        track.url = [urls objectAtIndex:i];
+        track.mimeType = @"video/mp4";
+
         if (i < info.count) {
-            minfo.title = [info objectAtIndex:i];
+            track.name = [info objectAtIndex:i];
         }
-        if (! minfo.title) {
-            minfo.title = [minfo.url absoluteString];
+        if (! track.name) {
+            track.name = [track.url absoluteString];
         }
         
-        [res addObject:minfo];
+        [res addObject:track];
     }
     
     return res;

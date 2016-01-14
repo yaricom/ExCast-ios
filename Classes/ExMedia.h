@@ -7,14 +7,20 @@
 
 #import <Foundation/Foundation.h>
 
-#import "Media.h"
-
 /**
  * The media object able to read from Ex.ua
  */
-@interface ExMedia : Media
+@interface ExMedia : NSObject
 
 @property (strong, nonatomic) NSURL*__nonnull pageUrl;
+@property(nonatomic, copy) NSString *__nonnull title;
+@property(nonatomic, copy) NSString *__nullable descrip;
+@property(nonatomic, copy) NSString *__nonnull mimeType;
+@property(nonatomic, copy) NSString *__nullable subtitle;
+@property(nonatomic, strong) NSURL *__nonnull URL;
+@property(nonatomic, strong) NSURL *__nullable thumbnailURL;
+@property(nonatomic, strong) NSURL *__nullable posterURL;
+@property(nonatomic, strong) NSArray *__nullable tracks;
 
 /**
  *  Creates a Media object given a page URL.

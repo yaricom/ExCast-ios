@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "Media.h"
+#import "ExMedia.h"
 
 #import <GoogleCast/GCKMediaInformation.h>
 
@@ -22,6 +22,6 @@
  */
 @interface GCKMediaInformation (LocalMedia)
 
-+ (GCKMediaInformation *)mediaInformationFromLocalMedia:(Media *)media;
++ (GCKMediaInformation *)mediaInformationFromLocalMedia:(ExMedia *)media;
 
 @end

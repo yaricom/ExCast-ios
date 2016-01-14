@@ -44,7 +44,7 @@ static NSInteger kToolbarHeight = 44;
 /* The UIView used for receiving control input. */
 @property(nonatomic) UIView *controlView;
 /* The media we are playing. */
-@property(nonatomic) Media *mediaToPlay;
+@property(nonatomic) ExMedia *mediaToPlay;
 /* Opaque observer reference for the played duration observer. */
 @property(nonatomic) id playerObserver;
 /* Flag for whether we observing the playback buffers. */
@@ -133,7 +133,7 @@ static NSInteger kToolbarHeight = 44;
 # pragma mark - Interface
 
 /* If given a new media, allocate a media player and the various layers needed. */
-- (void)setMedia:(Media *)media {
+- (void)setMedia:(ExMedia *)media {
   if (_mediaToPlay == media) {
     // Don't reinit if we already have the media.
     return;

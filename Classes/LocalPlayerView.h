@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "Media.h"
+#import "ExMedia.h"
 
 #import <UIKit/UIKit.h>
 
@@ -57,7 +57,7 @@ typedef NS_ENUM(NSUInteger, LPVNavBarStyle) {
 @property(nonatomic, readonly) BOOL fullscreen;
 
 /* Set the media to be displayed and played. */
-- (void)setMedia:(Media *)media;
+- (void)setMedia:(ExMedia *)media;
 
 /* Signal an orientation change has occurred. */
 - (void)orientationChanged;
