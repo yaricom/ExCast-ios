@@ -3,12 +3,19 @@
 //  CastVideos
 //
 //  Created by Iaroslav Omelianenko on 1/3/16.
-//  Copyright © 2016 Google inc. All rights reserved.
 //
 #import <HTMLReader/HTMLReader.h>
 #import <GoogleCast/GoogleCast.h>
 
 #import "ExMedia.h"
+
+@interface mediaInfo : NSObject
+@property (strong, nonatomic) NSURL *url;
+@property (strong, nonatomic) NSString *title;
+@end
+
+@implementation mediaInfo
+@end
 
 @implementation ExMedia
 
@@ -81,19 +88,28 @@
     // get media URL
     NSArray *scripts = [document nodesMatchingSelector:@"script"];
     for (HTMLElement *node in scripts) {
-        NSURL *url = [self findMediaInElement:node];
-        if (url) {
-            self.URL = url;
+        NSArray *medias = [self findMediaInElement:node];
+        if (medias) {
+            if (medias.count == 1) {
+                // only one track found
+                self.URL = [medias[0] url];
+            } else {
+                // read all tracks
+            }
+
             break;
         }
     }
+    
+    self.mimeType = @"video/mp4";
 }
 
-- (NSURL *)findMediaInElement:(HTMLElement*) script {
+- (NSArray *)findMediaInElement:(HTMLElement*) script {
     NSString *text = [script textContent];
-    __block NSURL *url = nil;
+    // extract media URLs
+    NSMutableArray *urls = [NSMutableArray array];
     if ([text containsString:@"player_list"]) {
-        // extract video URL
+        // extract video URLs
         [text enumerateLinesUsingBlock:^(NSString * _Nonnull line, BOOL * _Nonnull stop) {
             NSRange startRange = [line rangeOfString:@"player_list"];
             if (startRange.length > 0) {
@@ -107,17 +123,55 @@
                 for (NSDictionary *dict in array) {
                     // check object type
                     if ([[dict objectForKey:@"type"] isEqualToString:@"video"]) {
-                        // no need to enumerate
-                        *stop = YES;
-                        
                         // get URL
-                        url = [NSURL URLWithString:[dict objectForKey:@"url"]];
+                        [urls addObject: [NSURL URLWithString: [dict objectForKey:@"url"]]];
                     }
                 }
+                
+                // no need to enumerate any further
+                *stop = YES;
             }
         }];
     }
-    return url;
+    // extract media names
+    NSMutableArray *info = [NSMutableArray array];
+    if ([text containsString:@"player_info"]) {
+        [text enumerateLinesUsingBlock:^(NSString * _Nonnull line, BOOL * _Nonnull stop) {
+            NSRange startRange = [line rangeOfString:@"player_list"];
+            if (startRange.length > 0) {
+                // found line
+                NSUInteger start = [line rangeOfString:@"("].location;
+                NSUInteger end = [line rangeOfString:@")"
+                                             options:NSLiteralSearch
+                                               range:NSMakeRange(start + 1, line.length - start - 1)].location;
+                NSString *jsonStr = [NSString stringWithFormat:@"[%@]", [line substringWithRange:NSMakeRange(start + 1, end - start - 1)]];
+                NSArray *array = [GCKJSONUtils parseJSON:jsonStr];
+                for (NSDictionary *dict in array) {
+                    [info addObject:[dict objectForKey:@"title"]];
+                }
+                
+                // no need to enumerate any further
+                *stop = YES;
+            }
+        }];
+    }
+    // prepare results
+    NSMutableArray *res = [NSMutableArray array];
+    for (int i = 0; i < urls.count; i++) {
+        // store
+        mediaInfo *minfo = [[mediaInfo alloc] init];
+        minfo.url = [urls objectAtIndex:i];
+        if (i < info.count) {
+            minfo.title = [info objectAtIndex:i];
+        }
+        if (! minfo.title) {
+            minfo.title = [minfo.url absoluteString];
+        }
+        
+        [res addObject:minfo];
+    }
+    
+    return res;
 }
 
 
