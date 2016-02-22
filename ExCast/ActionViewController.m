@@ -63,7 +63,7 @@
     [self.extensionContext completeRequestReturningItems:self.extensionContext.inputItems completionHandler:^(BOOL expired) {
         if (!expired) {
             // save page URL
-            NSMutableArray *urls = [NSMutableArray arrayWithContentsOfURL:[SharedDataUtils pathToMediaFile]];
+            NSMutableArray<NSString *> *urls = [NSMutableArray arrayWithContentsOfURL:[SharedDataUtils pathToMediaFile]];
             if (!urls) {
                 urls = [NSMutableArray arrayWithCapacity:1];
             }

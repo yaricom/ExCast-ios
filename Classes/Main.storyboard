@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="kEN-Yq-IZJ">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="kEN-Yq-IZJ">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
@@ -73,8 +73,20 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Movies" id="TtT-MQ-asq"/>
+                    <refreshControl key="refreshControl" opaque="NO" multipleTouchEnabled="YES" contentMode="center" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="PXx-xd-4Bp">
+                        <autoresizingMask key="autoresizingMask"/>
+                        <attributedString key="attributedTitle">
+                            <fragment content="Refreshing media list...">
+                                <attributes>
+                                    <font key="NSFont" metaFont="system"/>
+                                    <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                </attributes>
+                            </fragment>
+                        </attributedString>
+                    </refreshControl>
                     <connections>
                         <outlet property="headerView" destination="6SA-eP-Ymg" id="4vM-AH-qFv"/>
+                        <outlet property="listRefreshControl" destination="PXx-xd-4Bp" id="sXc-4O-vTN"/>
                         <outlet property="loadingText" destination="boD-fw-4M6" id="vbM-9d-CVK"/>
                         <segue destination="FrP-5o-Gla" kind="show" identifier="showQueue" id="oFk-xB-g6w"/>
                         <segue destination="csy-B6-QN4" kind="show" identifier="playMedia" id="Tpk-GA-Mcy"/>
@@ -516,6 +528,6 @@
         <image name="video_thumb_mini.png" width="75" height="42"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="wW8-GZ-Xjx"/>
+        <segue reference="oFk-xB-g6w"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -32,15 +32,17 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSLog(@"Load media list from: %@", [[SharedDataUtils pathToMediaFile] absoluteString]);
         // read data
-        NSArray *urls = [NSArray arrayWithContentsOfURL:[SharedDataUtils pathToMediaFile]];
+        NSArray<NSString *> *urls = [NSArray arrayWithContentsOfURL:[SharedDataUtils pathToMediaFile]];
         if (urls) {
+            // clear current list
+            [_medias removeAllObjects];
             // start loading media
             [self loadFrom:urls atIndex:0 withCallback:callbackBlock];
         }
     });
 }
 
-- (void) loadFrom:(NSArray *)urls atIndex:(NSUInteger)index withCallback:(void (^)(BOOL final))callbackBlock {
+- (void) loadFrom:(NSArray<NSString *> *)urls atIndex:(NSUInteger)index withCallback:(void (^)(BOOL final))callbackBlock {
     [ExMedia mediaFromExURL:[NSURL URLWithString:urls[index]] withCompletion:^(ExMedia * _Nullable media, NSError * _Nullable error) {
         // check for error
         if (error) {

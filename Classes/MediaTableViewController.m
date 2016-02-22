@@ -38,6 +38,10 @@
 @property (strong, nonatomic) IBOutlet UIView *headerView;
 @property (weak, nonatomic) IBOutlet UILabel *loadingText;
 
+/** The refresh control to update movies list */
+@property (weak, nonatomic) IBOutlet UIRefreshControl *listRefreshControl;
+
+
 @end
 
 @implementation MediaTableViewController {
@@ -67,21 +71,17 @@
     AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
     delegate.mediaList = [[PersistentMediaListModel alloc] init];
     self.mediaList = delegate.mediaList;
-    [self.mediaList loadMedia:^(BOOL final) {
-        if (final) {
-            self.title = self.mediaList.mediaTitle;
-        }
-        [self.tableView reloadData];
-        // refresh toolbar
-        [self initToolbarInEditMode:YES];
-//        self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    }];
+    [self reloadMediaList];
     
     // Create the queue button.
     _showQueueButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"playlist_white.png"]
                                                         style:UIBarButtonItemStylePlain
                                                        target:self
                                                        action:@selector(showQueue:)];
+    // assign action to refresh control
+    [self.listRefreshControl addTarget:self
+                                action:@selector(reloadMediaList)
+                      forControlEvents:UIControlEventValueChanged];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -225,6 +225,29 @@
 }
 
 #pragma mark - manage table content
+- (void) reloadMediaList {
+    // show refresh control if appropriate
+    if (!self.refreshControl.refreshing) {
+        [self.listRefreshControl beginRefreshing];
+    }
+    
+    // load media list
+    [self.mediaList loadMedia:^(BOOL final) {
+        if (final) {
+            self.title = self.mediaList.mediaTitle;
+        }
+        [self.tableView reloadData];
+        // refresh toolbar
+        [self initToolbarInEditMode:YES];
+        //        self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+        
+        // close refresh control
+        if (self.refreshControl.refreshing && final) {
+            [self.listRefreshControl endRefreshing];
+        }
+    }];
+}
+
 - (void)addMediaFromURL:(NSURL *) url {
     [ExMedia mediaFromExURL:url
              withCompletion:^(ExMedia * _Nullable media, NSError * _Nullable error) {
