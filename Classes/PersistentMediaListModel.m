@@ -17,7 +17,7 @@
 
 @implementation PersistentMediaListModel {
     /** Storage for the list of Media objects. */
-    NSMutableArray *_medias;
+    NSMutableArray<ExMedia *> *_medias;
 }
 
 - (id)init {
@@ -70,7 +70,7 @@
 }
 
 - (ExMedia *)mediaAtIndex:(NSInteger)index {
-    return (ExMedia *)[_medias objectAtIndex:index];
+    return [_medias objectAtIndex:index];
 }
 
 - (void) removeMediaAtIndex:(NSInteger) index {
@@ -97,7 +97,7 @@
 
 - (void) saveMediaList {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSMutableArray *urls = [NSMutableArray arrayWithCapacity:[_medias count]];
+        NSMutableArray<NSString *> *urls = [NSMutableArray arrayWithCapacity:[_medias count]];
         for (ExMedia *m in _medias) {
             [urls addObject:m.pageUrl.absoluteString];
         }

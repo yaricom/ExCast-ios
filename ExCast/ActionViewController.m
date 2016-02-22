@@ -65,7 +65,7 @@
             // save page URL
             NSMutableArray<NSString *> *urls = [NSMutableArray arrayWithContentsOfURL:[SharedDataUtils pathToMediaFile]];
             if (!urls) {
-                urls = [NSMutableArray arrayWithCapacity:1];
+                urls = [NSMutableArray<NSString *> arrayWithCapacity:1];
             }
             [urls addObject:self.pageUrlText];
             

@@ -276,8 +276,8 @@
 			children = (
 				EF60AA251A9D27390036D4FA /* CastComponents */,
 				EFD8A0EA1AABD632005808B2 /* Main.storyboard */,
-				5FA883B91B212991008D7840 /* AlertHelper.h */,
 				78C586021C39B635009305C7 /* Launch Screen.storyboard */,
+				5FA883B91B212991008D7840 /* AlertHelper.h */,
 				5FA883BA1B212991008D7840 /* AlertHelper.m */,
 				284CBD94182ADC2D007F65F9 /* AppDelegate.h */,
 				284CBD95182ADC2D007F65F9 /* AppDelegate.m */,
