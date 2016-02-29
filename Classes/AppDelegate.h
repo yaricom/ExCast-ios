@@ -16,10 +16,13 @@
 
 #import <UIKit/UIKit.h>
 
+#import "CVCoreDataController.h"
+
 @interface AppDelegate : UIResponder<UIApplicationDelegate>
 
 @property(nonatomic, strong) UIWindow *window;
 @property(nonatomic, strong) PersistentMediaListModel *mediaList;
+@property(nonatomic, strong) CVCoreDataController *dataController;
 
 // Method to get shared instance of the delegate
 + (AppDelegate*) sharedInstance;
