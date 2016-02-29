@@ -8,6 +8,8 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
+static NSString* const kMediaRecordEntityName;
+
 @class CVGenreMO;
 
 NS_ASSUME_NONNULL_BEGIN

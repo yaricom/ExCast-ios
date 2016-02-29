@@ -8,8 +8,10 @@
 #import "CVCoreDataController.h"
 
 #import "SharedDataUtils.h"
+#import "CVMediaRecordMO+CoreDataProperties.h"
+#import "CVGenreMO+CoreDataProperties.h"
 
-static NSString *kDefaultSoreFile = @"";
+static NSString *const kCoreDataAccessErrorName = @"CoreDataAccessError";
 
 @interface CVCoreDataController()
 
@@ -23,11 +25,30 @@ static NSString *kDefaultSoreFile = @"";
 @synthesize managedObjectModel=_managedObjectModel, managedObjectContext=_managedObjectContext, persistentStoreCoordinator=_persistentStoreCoordinator;
 
 
+- (BFTask *) saveAsyncWithURL: (NSURL *)mediaURL
+                        title: (NSString *)title
+                  description: (NSString *)description
+                        genre: (NSString *)genre {
+    BFTask *res = [BFTask taskFromExecutor:[BFExecutor defaultExecutor] withBlock:^id _Nonnull{
+        // read genre
+        CVGenreMO *genreMO = [self findGenreByName:genre];
+        if (!genreMO) {
+            NSException *ex = [[NSException alloc]initWithName: kCoreDataAccessErrorName
+                                                        reason: [NSString stringWithFormat:@"Failed to find Genre info for name: %@", genre]
+                                                      userInfo: nil];
+            @throw ex;
+        }
+#warning implement MediaRecord persistence
+        return nil;
+    }];
+    return res;
+}
+
 - (void) saveContext {
     NSError *error;
     if (_managedObjectContext != nil) {
         if ([_managedObjectContext hasChanges] && ![_managedObjectContext save:&error]) {
-            NSLog(@"Failed to save managed object context %@, %@", error, [error userInfo]);
+            NSLog(@"Error saving managed objects context: %@\n%@", [error localizedDescription], [error userInfo]);
         }
     }
 }
@@ -110,5 +131,16 @@ static NSString *kDefaultSoreFile = @"";
 }
 
 #pragma mark - private methods
+- (CVGenreMO *) findGenreByName: (NSString *) name {
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGenreEntityName];
+    [request setPredicate:[NSPredicate predicateWithFormat:@"name == %@", name]];
+    NSError *error = nil;
+    NSArray *results = [self.managedObjectContext executeFetchRequest:request error:&error];
+    if (!results) {
+        NSLog(@"Error fetching Employee objects: %@\n%@", [error localizedDescription], [error userInfo]);
+        return nil;
+    }
+    return [results objectAtIndex:0];
+}
 
 @end

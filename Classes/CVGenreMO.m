@@ -7,6 +7,8 @@
 
 #import "CVGenreMO.h"
 
+static NSString * const kGenreEntityName = @"Genre";
+
 @implementation CVGenreMO
 
 // Insert code here to add functionality to your managed object subclass
