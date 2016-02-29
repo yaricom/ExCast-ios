@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9525" systemVersion="15D21" minimumToolsVersion="Xcode 7.0">
+    <entity name="Genre" representedClassName="CVGenreMO" syncable="YES">
+        <attribute name="name" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="MediaRecord" representedClassName="CVMediaRecordMO" syncable="YES">
+        <attribute name="dateAdded" attributeType="Date" syncable="YES"/>
+        <attribute name="details" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="pageUrl" attributeType="String" syncable="YES"/>
+        <attribute name="startTime" attributeType="Integer 32" minValueString="0" defaultValueString="0" syncable="YES"/>
+        <attribute name="title" attributeType="String" syncable="YES"/>
+        <attribute name="valid" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
+        <relationship name="genres" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Genre" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="MediaRecord" positionX="-63" positionY="-18" width="128" height="28"/>
+        <element name="Genre" positionX="171" positionY="45" width="128" height="58"/>
+    </elements>
+</model>

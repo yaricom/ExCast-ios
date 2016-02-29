@@ -42,6 +42,15 @@
 		7813CAC11C482514007C6846 /* MediaTracksTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7813CAC01C482514007C6846 /* MediaTracksTableViewController.m */; };
 		787309731C3B0EE3002E2C23 /* SharedDataUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 787309721C3B0EE3002E2C23 /* SharedDataUtils.m */; };
 		787309741C3B1F35002E2C23 /* SharedDataUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 787309721C3B0EE3002E2C23 /* SharedDataUtils.m */; };
+		78AACF0A1C848161006BABE9 /* MediaRecords.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 78AACF081C848161006BABE9 /* MediaRecords.xcdatamodeld */; };
+		78AACF131C8485D7006BABE9 /* CVMediaRecordMO+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 78AACF0C1C8485D7006BABE9 /* CVMediaRecordMO+CoreDataProperties.m */; };
+		78AACF141C8485D7006BABE9 /* CVMediaRecordMO+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 78AACF0C1C8485D7006BABE9 /* CVMediaRecordMO+CoreDataProperties.m */; };
+		78AACF151C8485D7006BABE9 /* CVMediaRecordMO.m in Sources */ = {isa = PBXBuildFile; fileRef = 78AACF0E1C8485D7006BABE9 /* CVMediaRecordMO.m */; };
+		78AACF161C8485D7006BABE9 /* CVMediaRecordMO.m in Sources */ = {isa = PBXBuildFile; fileRef = 78AACF0E1C8485D7006BABE9 /* CVMediaRecordMO.m */; };
+		78AACF171C8485D7006BABE9 /* CVGenreMO+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 78AACF101C8485D7006BABE9 /* CVGenreMO+CoreDataProperties.m */; };
+		78AACF181C8485D7006BABE9 /* CVGenreMO+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 78AACF101C8485D7006BABE9 /* CVGenreMO+CoreDataProperties.m */; };
+		78AACF191C8485D7006BABE9 /* CVGenreMO.m in Sources */ = {isa = PBXBuildFile; fileRef = 78AACF121C8485D7006BABE9 /* CVGenreMO.m */; };
+		78AACF1A1C8485D7006BABE9 /* CVGenreMO.m in Sources */ = {isa = PBXBuildFile; fileRef = 78AACF121C8485D7006BABE9 /* CVGenreMO.m */; };
 		78C585FE1C38991E009305C7 /* PersistentMediaListModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C585FD1C38991E009305C7 /* PersistentMediaListModel.m */; };
 		78C586011C397EF9009305C7 /* ExMedia.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C586001C397EF9009305C7 /* ExMedia.m */; };
 		78C586031C39B635009305C7 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 78C586021C39B635009305C7 /* Launch Screen.storyboard */; };
@@ -157,6 +166,15 @@
 		7813CACA1C48485A007C6846 /* libHTMLReader.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libHTMLReader.a; path = "Pods/../build/Debug-iphoneos/libHTMLReader.a"; sourceTree = "<group>"; };
 		787309711C3B0EE3002E2C23 /* SharedDataUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedDataUtils.h; sourceTree = "<group>"; };
 		787309721C3B0EE3002E2C23 /* SharedDataUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SharedDataUtils.m; sourceTree = "<group>"; };
+		78AACF091C848161006BABE9 /* MediaRecords.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MediaRecords.xcdatamodel; sourceTree = "<group>"; };
+		78AACF0B1C8485D7006BABE9 /* CVMediaRecordMO+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CVMediaRecordMO+CoreDataProperties.h"; sourceTree = "<group>"; };
+		78AACF0C1C8485D7006BABE9 /* CVMediaRecordMO+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CVMediaRecordMO+CoreDataProperties.m"; sourceTree = "<group>"; };
+		78AACF0D1C8485D7006BABE9 /* CVMediaRecordMO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CVMediaRecordMO.h; sourceTree = "<group>"; };
+		78AACF0E1C8485D7006BABE9 /* CVMediaRecordMO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CVMediaRecordMO.m; sourceTree = "<group>"; };
+		78AACF0F1C8485D7006BABE9 /* CVGenreMO+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CVGenreMO+CoreDataProperties.h"; sourceTree = "<group>"; };
+		78AACF101C8485D7006BABE9 /* CVGenreMO+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CVGenreMO+CoreDataProperties.m"; sourceTree = "<group>"; };
+		78AACF111C8485D7006BABE9 /* CVGenreMO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CVGenreMO.h; sourceTree = "<group>"; };
+		78AACF121C8485D7006BABE9 /* CVGenreMO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CVGenreMO.m; sourceTree = "<group>"; };
 		78C585FC1C38991E009305C7 /* PersistentMediaListModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistentMediaListModel.h; sourceTree = "<group>"; };
 		78C585FD1C38991E009305C7 /* PersistentMediaListModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersistentMediaListModel.m; sourceTree = "<group>"; };
 		78C585FF1C397EF9009305C7 /* ExMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExMedia.h; sourceTree = "<group>"; };
@@ -237,7 +255,7 @@
 				7813CAC21C483F95007C6846 /* CastVideos.entitlements */,
 				284CC025182B0F9B007F65F9 /* Images */,
 				284CBD8B182ADC2D007F65F9 /* Classes */,
-				78F761CE1C3AB885005E8F36 /* ExCast */,
+				78F761CE1C3AB885005E8F36 /* ExCastActionExtension */,
 				284CBD84182ADC2D007F65F9 /* Frameworks */,
 				284CBD83182ADC2D007F65F9 /* Products */,
 				AAF945D30CEBEECB469A7476 /* Pods */,
@@ -351,17 +369,26 @@
 		78AACF071C847EA2006BABE9 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				78AACF0B1C8485D7006BABE9 /* CVMediaRecordMO+CoreDataProperties.h */,
+				78AACF0C1C8485D7006BABE9 /* CVMediaRecordMO+CoreDataProperties.m */,
+				78AACF0D1C8485D7006BABE9 /* CVMediaRecordMO.h */,
+				78AACF0E1C8485D7006BABE9 /* CVMediaRecordMO.m */,
+				78AACF0F1C8485D7006BABE9 /* CVGenreMO+CoreDataProperties.h */,
+				78AACF101C8485D7006BABE9 /* CVGenreMO+CoreDataProperties.m */,
+				78AACF111C8485D7006BABE9 /* CVGenreMO.h */,
+				78AACF121C8485D7006BABE9 /* CVGenreMO.m */,
 				7813CABC1C481E2E007C6846 /* ExMediaTrack.h */,
 				7813CABD1C481E2E007C6846 /* ExMediaTrack.m */,
 				78C585FF1C397EF9009305C7 /* ExMedia.h */,
 				78C586001C397EF9009305C7 /* ExMedia.m */,
 				78C585FC1C38991E009305C7 /* PersistentMediaListModel.h */,
 				78C585FD1C38991E009305C7 /* PersistentMediaListModel.m */,
+				78AACF081C848161006BABE9 /* MediaRecords.xcdatamodeld */,
 			);
 			name = Model;
 			sourceTree = "<group>";
 		};
-		78F761CE1C3AB885005E8F36 /* ExCast */ = {
+		78F761CE1C3AB885005E8F36 /* ExCastActionExtension */ = {
 			isa = PBXGroup;
 			children = (
 				78F761CF1C3AB885005E8F36 /* ActionViewController.h */,
@@ -371,6 +398,7 @@
 				78F761DD1C3AB944005E8F36 /* Images.xcassets */,
 				78F761DF1C3ACE7D005E8F36 /* GetURL.js */,
 			);
+			name = ExCastActionExtension;
 			path = ExCast;
 			sourceTree = "<group>";
 		};
@@ -604,6 +632,8 @@
 				EADEB9841BB46D7000680739 /* RepeatingTimerManager.m in Sources */,
 				284CC032182B1891007F65F9 /* CastDeviceController.m in Sources */,
 				787309731C3B0EE3002E2C23 /* SharedDataUtils.m in Sources */,
+				78AACF0A1C848161006BABE9 /* MediaRecords.xcdatamodeld in Sources */,
+				78AACF151C8485D7006BABE9 /* CVMediaRecordMO.m in Sources */,
 				284CBD9F182ADC2D007F65F9 /* MediaTableViewController.m in Sources */,
 				EF60AA281A9D28A40036D4FA /* CastIconButton.m in Sources */,
 				78C586011C397EF9009305C7 /* ExMedia.m in Sources */,
@@ -618,11 +648,14 @@
 				5FA883B01B2102C5008D7840 /* QueueTableViewController.m in Sources */,
 				491627AF184FBF9C00351397 /* SimpleImageFetcher.m in Sources */,
 				EF23DBAD19C0FF2F00DA5ABB /* TracksTableViewController.m in Sources */,
+				78AACF191C8485D7006BABE9 /* CVGenreMO.m in Sources */,
 				EF548C2F1B87F3F00026C33F /* CastContainerController.m in Sources */,
 				7813CABE1C481E2E007C6846 /* ExMediaTrack.m in Sources */,
 				284CBDA2182ADC2D007F65F9 /* LocalPlayerViewController.m in Sources */,
 				EA01BA6D1BB0D2860003EF32 /* Toast.m in Sources */,
 				EF110FB119759BB30009410F /* CastInstructionsViewController.m in Sources */,
+				78AACF131C8485D7006BABE9 /* CVMediaRecordMO+CoreDataProperties.m in Sources */,
+				78AACF171C8485D7006BABE9 /* CVGenreMO+CoreDataProperties.m in Sources */,
 				5FA883BB1B212991008D7840 /* AlertHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -631,8 +664,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				78AACF161C8485D7006BABE9 /* CVMediaRecordMO.m in Sources */,
+				78AACF181C8485D7006BABE9 /* CVGenreMO+CoreDataProperties.m in Sources */,
 				787309741C3B1F35002E2C23 /* SharedDataUtils.m in Sources */,
 				78F761D11C3AB885005E8F36 /* ActionViewController.m in Sources */,
+				78AACF1A1C8485D7006BABE9 /* CVGenreMO.m in Sources */,
+				78AACF141C8485D7006BABE9 /* CVMediaRecordMO+CoreDataProperties.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -879,6 +916,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		78AACF081C848161006BABE9 /* MediaRecords.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				78AACF091C848161006BABE9 /* MediaRecords.xcdatamodel */,
+			);
+			currentVersion = 78AACF091C848161006BABE9 /* MediaRecords.xcdatamodel */;
+			path = MediaRecords.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 284CBD7A182ADC2D007F65F9 /* Project object */;
 }
