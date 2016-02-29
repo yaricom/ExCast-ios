@@ -198,6 +198,7 @@
                         <outlet property="mediaTitleLbl" destination="adN-nK-fJS" id="j2j-1w-VR3"/>
                         <outlet property="posterImage" destination="eB8-3O-Qvd" id="K1H-y6-Rn1"/>
                         <segue destination="z7F-cd-Xed" kind="show" identifier="playMedia" id="O3M-Lh-hxG"/>
+                        <segue destination="FrP-5o-Gla" kind="show" identifier="showQueue" id="XwB-bb-b7L"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wwL-2A-sra" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -283,7 +284,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hpW-RV-Hej" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1927" y="-75"/>
+            <point key="canvasLocation" x="1771" y="-75"/>
         </scene>
         <!--Queue Table View Controller-->
         <scene sceneID="VlA-oK-m38">
@@ -328,7 +329,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Sag-IJ-glX" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="797" y="957"/>
+            <point key="canvasLocation" x="1286" y="945"/>
         </scene>
         <!--CastContainerController-->
         <scene sceneID="uUV-yS-8aO">
@@ -528,6 +529,6 @@
         <image name="video_thumb_mini.png" width="75" height="42"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="oFk-xB-g6w"/>
+        <segue reference="wW8-GZ-Xjx"/>
     </inferredMetricsTieBreakers>
 </document>

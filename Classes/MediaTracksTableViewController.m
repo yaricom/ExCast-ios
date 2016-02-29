@@ -10,10 +10,18 @@
 
 #import "SimpleImageFetcher.h"
 #import "ExMediaTrack.h"
+#import "CastDeviceController.h"
+#import "NotificationConstants.h"
 
-@interface MediaTracksTableViewController ()
+#import <GoogleCast/GCKDeviceManager.h>
+#import <GoogleCast/GCKMediaControlChannel.h>
+
+@interface MediaTracksTableViewController () <CastDeviceControllerDelegate>
+
 @property (weak, nonatomic) IBOutlet UIImageView *posterImage;
 @property (weak, nonatomic) IBOutlet UILabel *mediaTitleLbl;
+/** The queue button. */
+@property(nonatomic, strong) UIBarButtonItem *showQueueButton;
 
 @end
 
@@ -33,6 +41,39 @@
             [self.posterImage setNeedsLayout];
         });
     });
+    
+    // Create the queue button.
+    _showQueueButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"playlist_white.png"]
+                                                        style:UIBarButtonItemStylePlain
+                                                       target:self
+                                                       action:@selector(showQueue:)];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    // show toobar
+    self.navigationController.toolbarHidden = NO;
+    
+    // Assign ourselves as delegate ONLY in viewWillAppear of a view controller.
+    CastDeviceController *controller = [CastDeviceController sharedInstance];
+    controller.delegate = self;
+    
+    UIBarButtonItem *item = [controller queueItemForController:self];
+    self.navigationItem.rightBarButtonItems = @[item];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateQueueButton)
+                                                 name:kCastQueueUpdatedNotification
+                                               object:nil];
+    
+    [self updateQueueButton];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -87,6 +128,38 @@
         // Pass the currently selected media to the next controller if it needs it.
         [[segue destinationViewController] setMediaToPlay:media];
     }
+}
+
+- (void)showQueue:(id)sender {
+    [self performSegueWithIdentifier:@"showQueue" sender:self];
+}
+
+#pragma mark - Handling the queue button's display state
+
+- (void)updateQueueButton {
+    CastDeviceController *deviceController = [CastDeviceController sharedInstance];
+    if (deviceController.deviceManager.applicationConnectionState == GCKConnectionStateConnected
+        && [deviceController.mediaControlChannel.mediaStatus queueItemCount] > 0) {
+        if (![self.navigationItem.rightBarButtonItems containsObject:_showQueueButton]) {
+            NSMutableArray *rightBarButtons = [self.navigationItem.rightBarButtonItems mutableCopy];
+            [rightBarButtons addObject:_showQueueButton];
+            self.navigationItem.rightBarButtonItems = rightBarButtons;
+        }
+    } else {
+        NSMutableArray *rightBarButtons = [self.navigationItem.rightBarButtonItems mutableCopy];
+        [rightBarButtons removeObject:_showQueueButton];
+        self.navigationItem.rightBarButtonItems = rightBarButtons;
+    }
+}
+
+#pragma mark - CastDeviceControllerDelegate
+
+- (void)didConnectToDevice:(GCKDevice *)device {
+    [self updateQueueButton];
+}
+
+- (void)didDisconnect {
+    [self updateQueueButton];
 }
 
 
