@@ -32,10 +32,5 @@
 + (void) mediaFromExURL:(NSURL *__nonnull)url
         withCompletion:(void (^__nonnull)(ExMedia* __nullable media, NSError * __nullable error))completeBlock;
 
-/**
- *  Invoked to reload remote media info
- *  @param completeBlock The completion handler
- */
-- (void) reloadWithCompletion:(void (^__nonnull)(NSError * __nullable error))completeBlock;
 
 @end

@@ -274,6 +274,7 @@
 		284CBD8B182ADC2D007F65F9 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				78AACF071C847EA2006BABE9 /* Model */,
 				EF60AA251A9D27390036D4FA /* CastComponents */,
 				EFD8A0EA1AABD632005808B2 /* Main.storyboard */,
 				78C586021C39B635009305C7 /* Launch Screen.storyboard */,
@@ -281,12 +282,6 @@
 				5FA883BA1B212991008D7840 /* AlertHelper.m */,
 				284CBD94182ADC2D007F65F9 /* AppDelegate.h */,
 				284CBD95182ADC2D007F65F9 /* AppDelegate.m */,
-				7813CABC1C481E2E007C6846 /* ExMediaTrack.h */,
-				7813CABD1C481E2E007C6846 /* ExMediaTrack.m */,
-				78C585FF1C397EF9009305C7 /* ExMedia.h */,
-				78C586001C397EF9009305C7 /* ExMedia.m */,
-				78C585FC1C38991E009305C7 /* PersistentMediaListModel.h */,
-				78C585FD1C38991E009305C7 /* PersistentMediaListModel.m */,
 				787309711C3B0EE3002E2C23 /* SharedDataUtils.h */,
 				787309721C3B0EE3002E2C23 /* SharedDataUtils.m */,
 				7813CABF1C482514007C6846 /* MediaTracksTableViewController.h */,
@@ -351,6 +346,19 @@
 				129886E21872348A00B013D2 /* video_thumb_mini@2x.png */,
 			);
 			path = Images;
+			sourceTree = "<group>";
+		};
+		78AACF071C847EA2006BABE9 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				7813CABC1C481E2E007C6846 /* ExMediaTrack.h */,
+				7813CABD1C481E2E007C6846 /* ExMediaTrack.m */,
+				78C585FF1C397EF9009305C7 /* ExMedia.h */,
+				78C586001C397EF9009305C7 /* ExMedia.m */,
+				78C585FC1C38991E009305C7 /* PersistentMediaListModel.h */,
+				78C585FD1C38991E009305C7 /* PersistentMediaListModel.m */,
+			);
+			name = Model;
 			sourceTree = "<group>";
 		};
 		78F761CE1C3AB885005E8F36 /* ExCast */ = {

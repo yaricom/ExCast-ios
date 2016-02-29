@@ -49,29 +49,6 @@
                 }] resume];
 }
 
-- (void) reloadWithCompletion:(void (^__nonnull)(NSError * __nullable error))completeBlock {
-    // Load a web page.
-    NSURLSession *session = [NSURLSession sharedSession];
-    [[session dataTaskWithRequest:[NSURLRequest requestWithURL:self.pageUrl]
-                completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-                    // parse response
-                    if (error) {
-                        // error occured
-                        completeBlock(error);
-                        return;
-                    }
-                    NSString *contentType = nil;
-                    if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-                        NSDictionary *headers = [(NSHTTPURLResponse *)response allHeaderFields];
-                        contentType = headers[@"Content-Type"];
-                    }
-                    HTMLDocument *home = [HTMLDocument documentWithData:data
-                                                      contentTypeHeader:contentType];
-                    [self loadFromHTMLDocument:home];
-                    completeBlock(nil);
-                }] resume];
-}
-
 - (void)loadFromHTMLDocument:(HTMLDocument *) document {
     HTMLElement *h1 = [document firstNodeMatchingSelector:@"h1"];
     self.title = [h1 textContent];
