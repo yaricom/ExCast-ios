@@ -51,6 +51,10 @@
 		78AACF181C8485D7006BABE9 /* CVGenreMO+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 78AACF101C8485D7006BABE9 /* CVGenreMO+CoreDataProperties.m */; };
 		78AACF191C8485D7006BABE9 /* CVGenreMO.m in Sources */ = {isa = PBXBuildFile; fileRef = 78AACF121C8485D7006BABE9 /* CVGenreMO.m */; };
 		78AACF1A1C8485D7006BABE9 /* CVGenreMO.m in Sources */ = {isa = PBXBuildFile; fileRef = 78AACF121C8485D7006BABE9 /* CVGenreMO.m */; };
+		78AACF1D1C848AE1006BABE9 /* CVCoreDataController.m in Sources */ = {isa = PBXBuildFile; fileRef = 78AACF1C1C848AE1006BABE9 /* CVCoreDataController.m */; };
+		78AACF1E1C848AE1006BABE9 /* CVCoreDataController.m in Sources */ = {isa = PBXBuildFile; fileRef = 78AACF1C1C848AE1006BABE9 /* CVCoreDataController.m */; };
+		78AACF201C848B78006BABE9 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78AACF1F1C848B78006BABE9 /* CoreData.framework */; };
+		78AACF211C848B86006BABE9 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78AACF1F1C848B78006BABE9 /* CoreData.framework */; };
 		78C585FE1C38991E009305C7 /* PersistentMediaListModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C585FD1C38991E009305C7 /* PersistentMediaListModel.m */; };
 		78C586011C397EF9009305C7 /* ExMedia.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C586001C397EF9009305C7 /* ExMedia.m */; };
 		78C586031C39B635009305C7 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 78C586021C39B635009305C7 /* Launch Screen.storyboard */; };
@@ -175,6 +179,9 @@
 		78AACF101C8485D7006BABE9 /* CVGenreMO+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CVGenreMO+CoreDataProperties.m"; sourceTree = "<group>"; };
 		78AACF111C8485D7006BABE9 /* CVGenreMO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CVGenreMO.h; sourceTree = "<group>"; };
 		78AACF121C8485D7006BABE9 /* CVGenreMO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CVGenreMO.m; sourceTree = "<group>"; };
+		78AACF1B1C848AE1006BABE9 /* CVCoreDataController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CVCoreDataController.h; sourceTree = "<group>"; };
+		78AACF1C1C848AE1006BABE9 /* CVCoreDataController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CVCoreDataController.m; sourceTree = "<group>"; };
+		78AACF1F1C848B78006BABE9 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		78C585FC1C38991E009305C7 /* PersistentMediaListModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistentMediaListModel.h; sourceTree = "<group>"; };
 		78C585FD1C38991E009305C7 /* PersistentMediaListModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersistentMediaListModel.m; sourceTree = "<group>"; };
 		78C585FF1C397EF9009305C7 /* ExMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExMedia.h; sourceTree = "<group>"; };
@@ -227,6 +234,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				78AACF201C848B78006BABE9 /* CoreData.framework in Frameworks */,
 				EFE3184819C7D97B00C053EE /* SystemConfiguration.framework in Frameworks */,
 				CCE5BD45196F038400016BAB /* CoreText.framework in Frameworks */,
 				CCE5BD43196F037300016BAB /* MediaAccessibility.framework in Frameworks */,
@@ -242,6 +250,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				78AACF211C848B86006BABE9 /* CoreData.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,6 +283,7 @@
 		284CBD84182ADC2D007F65F9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				78AACF1F1C848B78006BABE9 /* CoreData.framework */,
 				7813CACA1C48485A007C6846 /* libHTMLReader.a */,
 				7813CAC81C48484F007C6846 /* libPods-CastVideos.a */,
 				EFE3184719C7D97B00C053EE /* SystemConfiguration.framework */,
@@ -377,6 +387,8 @@
 				78AACF101C8485D7006BABE9 /* CVGenreMO+CoreDataProperties.m */,
 				78AACF111C8485D7006BABE9 /* CVGenreMO.h */,
 				78AACF121C8485D7006BABE9 /* CVGenreMO.m */,
+				78AACF1B1C848AE1006BABE9 /* CVCoreDataController.h */,
+				78AACF1C1C848AE1006BABE9 /* CVCoreDataController.m */,
 				7813CABC1C481E2E007C6846 /* ExMediaTrack.h */,
 				7813CABD1C481E2E007C6846 /* ExMediaTrack.m */,
 				78C585FF1C397EF9009305C7 /* ExMedia.h */,
@@ -645,6 +657,7 @@
 				7813CAC11C482514007C6846 /* MediaTracksTableViewController.m in Sources */,
 				78C585FE1C38991E009305C7 /* PersistentMediaListModel.m in Sources */,
 				EFD8A0F01AAE32AB005808B2 /* GCKMediaInformation+LocalMedia.m in Sources */,
+				78AACF1D1C848AE1006BABE9 /* CVCoreDataController.m in Sources */,
 				5FA883B01B2102C5008D7840 /* QueueTableViewController.m in Sources */,
 				491627AF184FBF9C00351397 /* SimpleImageFetcher.m in Sources */,
 				EF23DBAD19C0FF2F00DA5ABB /* TracksTableViewController.m in Sources */,
@@ -669,6 +682,7 @@
 				787309741C3B1F35002E2C23 /* SharedDataUtils.m in Sources */,
 				78F761D11C3AB885005E8F36 /* ActionViewController.m in Sources */,
 				78AACF1A1C8485D7006BABE9 /* CVGenreMO.m in Sources */,
+				78AACF1E1C848AE1006BABE9 /* CVCoreDataController.m in Sources */,
 				78AACF141C8485D7006BABE9 /* CVMediaRecordMO+CoreDataProperties.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
