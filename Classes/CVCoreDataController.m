@@ -28,18 +28,34 @@ static NSString *const kCoreDataAccessErrorName = @"CoreDataAccessError";
 - (BFTask *) saveAsyncWithURL: (NSURL *)mediaURL
                         title: (NSString *)title
                   description: (NSString *)description
-                        genre: (NSString *)genre {
+                        genre: (NSString *)genre
+                     subGenre: (NSString *)subGenre {
     BFTask *res = [BFTask taskFromExecutor:[BFExecutor defaultExecutor] withBlock:^id _Nonnull{
         // read genre
-        CVGenreMO *genreMO = [self findGenreByName:genre];
+        CVGenreMO *genreMO = [self findOrCreateGenre:genre];
         if (!genreMO) {
             NSException *ex = [[NSException alloc]initWithName: kCoreDataAccessErrorName
-                                                        reason: [NSString stringWithFormat:@"Failed to find Genre info for name: %@", genre]
+                                                        reason: [NSString stringWithFormat:@"Failed to find Main Genre info for name: %@", genre]
                                                       userInfo: nil];
             @throw ex;
         }
-#warning implement MediaRecord persistence
-        return nil;
+        CVGenreMO *subGenreMO = [self findOrCreateGenre:genre];
+        if (!genreMO) {
+            NSException *ex = [[NSException alloc]initWithName: kCoreDataAccessErrorName
+                                                        reason: [NSString stringWithFormat:@"Failed to find Sub Genre info for name: %@", genre]
+                                                      userInfo: nil];
+            @throw ex;
+        }
+        
+        // create new media record
+        CVMediaRecordMO *record = [NSEntityDescription insertNewObjectForEntityForName: kMediaRecordEntityName
+                                                                inManagedObjectContext: [self managedObjectContext]];
+        [record addGenres:[NSSet setWithArray:@[genreMO, subGenreMO]]];
+        record.dateAdded = [NSDate new];
+        record.title = title;
+        record.details = description;
+        record.pageUrl = [mediaURL absoluteString];
+        return record;
     }];
     return res;
 }
@@ -66,7 +82,7 @@ static NSString *const kCoreDataAccessErrorName = @"CoreDataAccessError";
     
     NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
     if (coordinator != nil) {
-        _managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
+        _managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType: NSMainQueueConcurrencyType];
         [_managedObjectContext setPersistentStoreCoordinator: coordinator];
     }
     return _managedObjectContext;
@@ -141,6 +157,17 @@ static NSString *const kCoreDataAccessErrorName = @"CoreDataAccessError";
         return nil;
     }
     return [results objectAtIndex:0];
+}
+
+- (CVGenreMO *) findOrCreateGenre:(NSString *) name {
+    CVGenreMO *genre = [self findGenreByName:name];
+    if (!genre) {
+        // create new genre record
+        genre = [NSEntityDescription insertNewObjectForEntityForName:kGenreEntityName
+                                              inManagedObjectContext:[self managedObjectContext]];
+        genre.name = name;
+    }
+    return genre;
 }
 
 @end

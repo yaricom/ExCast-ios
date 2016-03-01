@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<string>Action</string>
+	<string>Adventure</string>
+	<string>Animation</string>
+	<string>Avangard</string>
+	<string>Biography</string>
+	<string>Comedy</string>
+	<string>Crime</string>
+	<string>Documentary</string>
+	<string>Drama</string>
+	<string>Family</string>
+	<string>Fantasy</string>
+	<string>Historical</string>
+	<string>Horror</string>
+	<string>Melodrama</string>
+	<string>Music</string>
+	<string>Musical</string>
+	<string>Mystery</string>
+	<string>Romance</string>
+	<string>Science fiction</string>
+	<string>Sport</string>
+	<string>Thriller</string>
+	<string>War</string>
+	<string>Western</string>
+</array>
+</plist>

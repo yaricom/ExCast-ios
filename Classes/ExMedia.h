@@ -7,6 +7,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class ExMediaTrack;
+
 /**
  * The media object able to read from Ex.ua
  */
@@ -20,14 +22,13 @@
 @property(nonatomic, strong) NSURL *__nonnull URL;
 @property(nonatomic, strong) NSURL *__nullable thumbnailURL;
 @property(nonatomic, strong) NSURL *__nullable posterURL;
-@property(nonatomic, strong) NSArray *__nullable tracks;
+@property(nonatomic, strong) NSArray<ExMediaTrack *> *__nullable tracks;
 
-/**
- *  Creates a Media object given a page URL.
- *
- *  @param url The media page URL
- *  @param completeBlock The completion handler
- *  @param errorBlock The error block or nil
+/*!
+ Creates a Media object given a page URL.
+
+ @param url The media page URL
+ @param completeBlock The completion handler which will be invoked on main queue
  */
 + (void) mediaFromExURL:(NSURL *__nonnull)url
         withCompletion:(void (^__nonnull)(ExMedia* __nullable media, NSError * __nullable error))completeBlock;

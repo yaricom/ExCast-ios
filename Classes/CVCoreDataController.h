@@ -31,7 +31,8 @@ static NSString *const kCoreDataAccessErrorName;
 - (BFTask *) saveAsyncWithURL: (NSURL *)mediaURL
                         title: (NSString *)title
                   description: (NSString *)description
-                        genre: (NSString *)genre;
+                        genre: (NSString *)genre
+                     subGenre: (NSString *)subGenre;
 
 /*!
  Method to synchronize managed obect context with underlying data store. It should be invoked

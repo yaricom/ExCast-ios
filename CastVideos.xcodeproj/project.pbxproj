@@ -58,6 +58,11 @@
 		78C585FE1C38991E009305C7 /* PersistentMediaListModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C585FD1C38991E009305C7 /* PersistentMediaListModel.m */; };
 		78C586011C397EF9009305C7 /* ExMedia.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C586001C397EF9009305C7 /* ExMedia.m */; };
 		78C586031C39B635009305C7 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 78C586021C39B635009305C7 /* Launch Screen.storyboard */; };
+		78E5603D1C85D480008C858F /* libPods-ExCastVideos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78E5603C1C85D480008C858F /* libPods-ExCastVideos.a */; };
+		78E5603F1C85E0F6008C858F /* genres.plist in Resources */ = {isa = PBXBuildFile; fileRef = 78E5603E1C85E0F6008C858F /* genres.plist */; };
+		78E560431C85EFF5008C858F /* GenreSelectorTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 78E560421C85EFF5008C858F /* GenreSelectorTableViewController.m */; };
+		78E560441C86018B008C858F /* ExMedia.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C586001C397EF9009305C7 /* ExMedia.m */; };
+		78E560451C860194008C858F /* ExMediaTrack.m in Sources */ = {isa = PBXBuildFile; fileRef = 7813CABD1C481E2E007C6846 /* ExMediaTrack.m */; };
 		78F761D11C3AB885005E8F36 /* ActionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 78F761D01C3AB885005E8F36 /* ActionViewController.m */; };
 		78F761D41C3AB885005E8F36 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 78F761D21C3AB885005E8F36 /* MainInterface.storyboard */; };
 		78F761D91C3AB885005E8F36 /* ExCastExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 78F761CD1C3AB885005E8F36 /* ExCastExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -187,6 +192,10 @@
 		78C585FF1C397EF9009305C7 /* ExMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExMedia.h; sourceTree = "<group>"; };
 		78C586001C397EF9009305C7 /* ExMedia.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExMedia.m; sourceTree = "<group>"; };
 		78C586021C39B635009305C7 /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		78E5603C1C85D480008C858F /* libPods-ExCastVideos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libPods-ExCastVideos.a"; path = "Pods/../build/Debug-iphoneos/libPods-ExCastVideos.a"; sourceTree = "<group>"; };
+		78E5603E1C85E0F6008C858F /* genres.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = genres.plist; sourceTree = "<group>"; };
+		78E560411C85EFF5008C858F /* GenreSelectorTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenreSelectorTableViewController.h; sourceTree = "<group>"; };
+		78E560421C85EFF5008C858F /* GenreSelectorTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GenreSelectorTableViewController.m; sourceTree = "<group>"; };
 		78F761CD1C3AB885005E8F36 /* ExCastExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ExCastExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		78F761CF1C3AB885005E8F36 /* ActionViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ActionViewController.h; sourceTree = "<group>"; };
 		78F761D01C3AB885005E8F36 /* ActionViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ActionViewController.m; sourceTree = "<group>"; };
@@ -251,6 +260,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				78E5603D1C85D480008C858F /* libPods-ExCastVideos.a in Frameworks */,
 				78AACF211C848B86006BABE9 /* CoreData.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -284,6 +294,7 @@
 		284CBD84182ADC2D007F65F9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				78E5603C1C85D480008C858F /* libPods-ExCastVideos.a */,
 				78AACF1F1C848B78006BABE9 /* CoreData.framework */,
 				7813CACA1C48485A007C6846 /* libHTMLReader.a */,
 				7813CAC81C48484F007C6846 /* libPods-CastVideos.a */,
@@ -407,10 +418,13 @@
 			children = (
 				78F761CF1C3AB885005E8F36 /* ActionViewController.h */,
 				78F761D01C3AB885005E8F36 /* ActionViewController.m */,
+				78E560411C85EFF5008C858F /* GenreSelectorTableViewController.h */,
+				78E560421C85EFF5008C858F /* GenreSelectorTableViewController.m */,
 				78F761D21C3AB885005E8F36 /* MainInterface.storyboard */,
 				78F761D51C3AB885005E8F36 /* Info.plist */,
 				78F761DD1C3AB944005E8F36 /* Images.xcassets */,
 				78F761DF1C3ACE7D005E8F36 /* GetURL.js */,
+				78E5603E1C85E0F6008C858F /* genres.plist */,
 			);
 			name = ExCastActionExtension;
 			path = ExCast;
@@ -583,6 +597,7 @@
 			files = (
 				78F761D41C3AB885005E8F36 /* MainInterface.storyboard in Resources */,
 				78F761DE1C3AB944005E8F36 /* Images.xcassets in Resources */,
+				78E5603F1C85E0F6008C858F /* genres.plist in Resources */,
 				78F761E01C3ACE7D005E8F36 /* GetURL.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -679,12 +694,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				78E560451C860194008C858F /* ExMediaTrack.m in Sources */,
+				78E560441C86018B008C858F /* ExMedia.m in Sources */,
 				78AACF161C8485D7006BABE9 /* CVMediaRecordMO.m in Sources */,
 				78AACF181C8485D7006BABE9 /* CVGenreMO+CoreDataProperties.m in Sources */,
 				787309741C3B1F35002E2C23 /* SharedDataUtils.m in Sources */,
 				78F761D11C3AB885005E8F36 /* ActionViewController.m in Sources */,
 				78AACF1A1C8485D7006BABE9 /* CVGenreMO.m in Sources */,
 				78AACF1E1C848AE1006BABE9 /* CVCoreDataController.m in Sources */,
+				78E560431C85EFF5008C858F /* GenreSelectorTableViewController.m in Sources */,
 				78AACF141C8485D7006BABE9 /* CVMediaRecordMO+CoreDataProperties.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -848,6 +866,7 @@
 		};
 		78F761DA1C3AB885005E8F36 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 70BBDA213CBBFA5D85562F8F /* Pods-ExCastVideos.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
@@ -875,6 +894,7 @@
 		};
 		78F761DB1C3AB885005E8F36 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 756EC5018A137531454325B4 /* Pods-ExCastVideos.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
