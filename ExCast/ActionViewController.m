@@ -225,6 +225,9 @@ static int const kSubGenreRow = 3;
     } else if (self.media) {
         // description
         cell = [tableView dequeueReusableCellWithIdentifier:kTextFieldCellIdentifier];
+        UITextView *textView = [cell viewWithTag:101];
+        [textView setText:@""];
+#warning implement keyboard show/hide
     }
     
     return cell;
