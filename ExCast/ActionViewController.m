@@ -26,7 +26,7 @@ static int const kMainGenreRow = 2;
 static int const kSubGenreRow = 3;
 
 
-@interface ActionViewController () <UITableViewDelegate, UITableViewDataSource>
+@interface ActionViewController () <UITableViewDelegate, UITableViewDataSource, GenreSelectorDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *doneBarBtn;
@@ -101,15 +101,7 @@ static int const kSubGenreRow = 3;
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    // register genre selection notification listeners
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(mainGenreSelected:)
-                                                 name:kSelectedMainGenreNotification
-                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(subGenreSelected:)
-                                                 name:kSelectedSubGenreNotification
-                                               object:nil];
+    [self registerForKeyboardNotifications];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -122,18 +114,17 @@ static int const kSubGenreRow = 3;
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
     GenreSelectorTableViewController *vc = (GenreSelectorTableViewController *)[segue destinationViewController];
     vc.genres = self.genres;
     NSIndexPath *selectedIndexPath = [self.tableView indexPathForSelectedRow];
-    if (selectedIndexPath.row == kMainGenreRow) {
+    if (selectedIndexPath.section == kMainGenreRow) {
         vc.selectedIndex = self.mainGenreIndex;
-        vc.selectNotification = kSelectedMainGenreNotification;
+        vc.genreType = kSelectedMainGenreNotification;
     } else {
         vc.selectedIndex = self.subGenreIndex;
-        vc.selectNotification = kSelectedSubGenreNotification;
+        vc.genreType = kSelectedSubGenreNotification;
     }
+    vc.delegate = self;
 }
 
 #pragma mark - Actions processing
@@ -163,6 +154,7 @@ static int const kSubGenreRow = 3;
                         [self closeScreen];
                     }];
          } else {
+             NSLog(@"New media record was saved: %@", task.result);
              // close screen
              [self closeScreen];
          }
@@ -220,35 +212,69 @@ static int const kSubGenreRow = 3;
     } else if (indexPath.section <= kSubGenreRow) {
         // main/sub genres
         cell = [tableView dequeueReusableCellWithIdentifier:kGenreCellIdentifier];
-        cell.textLabel.text = NSLocalizedString([self.genres objectAtIndex:indexPath.section == kMainGenreRow ?
-                                                 self.mainGenreIndex : self.subGenreIndex], nil);
+        cell.textLabel.text =
+        NSLocalizedString([self.genres objectAtIndex: (indexPath.section == kMainGenreRow ? self.mainGenreIndex : self.subGenreIndex)], nil);
     } else if (self.media) {
         // description
         cell = [tableView dequeueReusableCellWithIdentifier:kTextFieldCellIdentifier];
         UITextView *textView = [cell viewWithTag:101];
         [textView setText:@""];
-#warning implement keyboard show/hide
     }
     
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == kMainGenreRow || indexPath.row == kSubGenreRow) {
+    if (indexPath.section == kMainGenreRow || indexPath.section == kSubGenreRow) {
         // invoke select genre screen
         [self performSegueWithIdentifier:@"selectGenreSegue" sender:self];
     }
 }
 
-#pragma mark - notification receivers
-- (void) mainGenreSelected:(NSNotification *) notification {
-    self.mainGenreIndex = [notification.userInfo[kSelectedIndexKey] integerValue];
+#pragma mark - GenreSelectorDelegate
+- (void)onGenreSelected:(NSUInteger)index forType:(NSString*)type {
+    if ([kSelectedMainGenreNotification isEqualToString:type]) {
+        self.mainGenreIndex = index;
+    } else {
+        self.subGenreIndex = index;
+    }
     [self.tableView reloadData];
 }
 
-- (void) subGenreSelected:(NSNotification *) notification {
-    self.subGenreIndex = [notification.userInfo[kSelectedIndexKey] integerValue];
-    [self.tableView reloadData];
+
+#pragma mark - keyboard
+- (void)registerForKeyboardNotifications {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWasShown:)
+                                                 name:UIKeyboardDidShowNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillBeHidden:)
+                                                 name:UIKeyboardWillHideNotification object:nil];
+    
+}
+
+// Called when the UIKeyboardDidShowNotification is sent.
+- (void)keyboardWasShown:(NSNotification*)aNotification {
+    NSDictionary* info = [aNotification userInfo];
+    CGSize kbSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, kbSize.height, 0.0);
+    self.tableView.contentInset = contentInsets;
+    self.tableView.scrollIndicatorInsets = contentInsets;
+    
+    // scroll to make visible
+    if (self.media) {
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSubGenreRow + 1]
+                              atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    }
+}
+
+// Called when the UIKeyboardWillHideNotification is sent
+- (void)keyboardWillBeHidden:(NSNotification*)aNotification {
+    UIEdgeInsets contentInsets = UIEdgeInsetsZero;
+    self.tableView.contentInset = contentInsets;
+    self.tableView.scrollIndicatorInsets = contentInsets;
 }
 
 #pragma mark - private methods
@@ -258,7 +284,8 @@ static int const kSubGenreRow = 3;
         self.doneBarBtn.enabled = YES;
         self.pageUrlText = urlStr;
         self.pageUrl = [NSURL URLWithString:self.pageUrlText];
-        [self loadPageDetails:self.pageUrl];
+        [self loadPageDetails];
+        [self checkIfPageAlreadySaved];
     } else {
         self.pageUrlText = NSLocalizedString(@"Only ex.ua pages supported", nil);
         
@@ -266,8 +293,8 @@ static int const kSubGenreRow = 3;
     [self.tableView reloadData];
 }
 
-- (void) loadPageDetails: (NSURL*) pageUrl {
-    [ExMedia mediaFromExURL:pageUrl withCompletion:^(ExMedia * _Nullable media, NSError * _Nullable error) {
+- (void) loadPageDetails {
+    [ExMedia mediaFromExURL:self.pageUrl withCompletion:^(ExMedia * _Nullable media, NSError * _Nullable error) {
         // read genres
         NSURL *gURL = [[NSBundle mainBundle] URLForResource:@"genres" withExtension:@"plist"];
         if (gURL) {
@@ -298,6 +325,25 @@ static int const kSubGenreRow = 3;
                        }];
             }
         });
+    }];
+}
+
+- (void) checkIfPageAlreadySaved {
+    [[self.dataControler checkItemForURL:self.pageUrl]
+    continueWithBlock:^id _Nullable(BFTask * _Nonnull task) {
+        if (!task.faulted) {
+            if (task.result) {
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Already saved", nil)
+                                                                               message:nil preferredStyle:UIAlertControllerStyleAlert];
+                [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+                    // just close
+                    [self cancel:nil];
+                }]];
+                [alert addAction:[UIAlertAction actionWithTitle:@"Proceed" style:UIAlertActionStyleDefault handler:nil]];
+                [self presentViewController:alert animated:YES completion:nil];
+            }
+        }
+        return nil;
     }];
 }
 

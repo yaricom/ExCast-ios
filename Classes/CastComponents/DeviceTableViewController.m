@@ -31,7 +31,6 @@ static NSString * const kVersionFooter = @"v";
 @implementation DeviceTableViewController {
     BOOL _isManualVolumeChange;
     UISlider *_volumeSlider;
-    UIStatusBarStyle _statusBarStyle;
 }
 
 - (void)viewDidLoad {
@@ -40,8 +39,6 @@ static NSString * const kVersionFooter = @"v";
         // Disable passive scan when we appear to get latest updates.
         _delegate.deviceScanner.passiveScan = NO;
     }
-    _statusBarStyle = [UIApplication sharedApplication].statusBarStyle;
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -69,7 +66,6 @@ static NSString * const kVersionFooter = @"v";
         _delegate.deviceScanner.passiveScan = YES;
     }
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [[UIApplication sharedApplication] setStatusBarStyle:_statusBarStyle];
 }
 
 - (void)scanDidChange {

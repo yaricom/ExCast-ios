@@ -47,15 +47,36 @@ static NSString *const kCoreDataAccessErrorName = @"CoreDataAccessError";
             @throw ex;
         }
         
-        // create new media record
-        CVMediaRecordMO *record = [NSEntityDescription insertNewObjectForEntityForName: kMediaRecordEntityName
+        CVMediaRecordMO *record = [self findRecordByURL:mediaURL];
+        if (!record) {
+            // create new media record if not exists
+            record = [NSEntityDescription insertNewObjectForEntityForName: kMediaRecordEntityName
                                                                 inManagedObjectContext: [self managedObjectContext]];
+        }
         [record addGenres:[NSSet setWithArray:@[genreMO, subGenreMO]]];
         record.dateAdded = [NSDate new];
         record.title = title;
         record.details = description;
         record.pageUrl = [mediaURL absoluteString];
+        // make sure it actually saved
+        [self saveContext];
         return record;
+    }];
+    return res;
+}
+
+- (BFTask *) checkItemForURL: (NSURL *)mediaURL {
+    BFTask *res = [BFTask taskFromExecutor:[BFExecutor defaultExecutor] withBlock:^id _Nonnull{
+        CVMediaRecordMO *record = [self findRecordByURL:mediaURL];
+        if (record) {
+            NSLog(@"Record with title: %@ already exists", record.title);
+            return record;
+        } else {
+            NSException *ex = [[NSException alloc]initWithName: kCoreDataAccessErrorName
+                                                        reason: @"Error checking if media record exists"
+                                                      userInfo: nil];
+            @throw ex;
+        }
     }];
     return res;
 }
@@ -147,6 +168,19 @@ static NSString *const kCoreDataAccessErrorName = @"CoreDataAccessError";
 }
 
 #pragma mark - private methods
+- (CVMediaRecordMO *) findRecordByURL: (NSURL *) url {
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kMediaRecordEntityName];
+    [request setPredicate:[NSPredicate predicateWithFormat:@"pageUrl == %@", [url absoluteString]]];
+    NSError *error = nil;
+    NSArray *results = [self.managedObjectContext executeFetchRequest:request error:&error];
+    if (!results) {
+        NSLog(@"Error checking if media record exists: %@\n%@", [error localizedDescription], [error userInfo]);
+        return nil;
+    }
+    NSLog(@"Found: %lu records for URL: %@", (unsigned long)[results count], url);
+    return [results firstObject];
+}
+
 - (CVGenreMO *) findGenreByName: (NSString *) name {
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGenreEntityName];
     [request setPredicate:[NSPredicate predicateWithFormat:@"name == %@", name]];
@@ -156,7 +190,7 @@ static NSString *const kCoreDataAccessErrorName = @"CoreDataAccessError";
         NSLog(@"Error fetching Employee objects: %@\n%@", [error localizedDescription], [error userInfo]);
         return nil;
     }
-    return [results objectAtIndex:0];
+    return [results firstObject];
 }
 
 - (CVGenreMO *) findOrCreateGenre:(NSString *) name {

@@ -5,7 +5,6 @@
 //  Created by Iaroslav Omelianenko on 1/3/16.
 //
 #import <HTMLReader/HTMLReader.h>
-#import <GoogleCast/GoogleCast.h>
 
 #import "ExMedia.h"
 #import "ExMediaTrack.h"
@@ -16,6 +15,10 @@
 @end
 
 @implementation mediaInfo
+@end
+
+@interface ExMedia()
+- (NSArray *)arrayFromJSONString: (NSString *)jsonString error:(NSError**)error;
 @end
 
 @implementation ExMedia
@@ -93,13 +96,18 @@
                                              options:NSLiteralSearch
                                                range:NSMakeRange(start + 1, line.length - start - 1)].location;
                 NSString *jsonStr = [NSString stringWithFormat:@"[%@]", [line substringWithRange:NSMakeRange(start + 1, end - start - 1)]];
-                NSArray *array = [GCKJSONUtils parseJSON:jsonStr];
-                for (NSDictionary *dict in array) {
-                    // check object type
-                    if ([[dict objectForKey:@"type"] isEqualToString:@"video"]) {
-                        // get URL
-                        [urls addObject: [NSURL URLWithString: [dict objectForKey:@"url"]]];
+                NSError *error;
+                NSArray *array = [self arrayFromJSONString:jsonStr error:&error];
+                if (array) {
+                    for (NSDictionary *dict in array) {
+                        // check object type
+                        if ([[dict objectForKey:@"type"] isEqualToString:@"video"]) {
+                            // get URL
+                            [urls addObject: [NSURL URLWithString: [dict objectForKey:@"url"]]];
+                        }
                     }
+                } else {
+                    NSLog(@"Failed to parse JSON string: [%@], reason: %@", jsonStr, error);
                 }
                 
                 // no need to enumerate any further
@@ -123,9 +131,14 @@
                 jsonStr = [jsonStr stringByReplacingOccurrencesOfString:@"title" withString:@"\"title\""];
                 jsonStr = [jsonStr stringByReplacingOccurrencesOfString:@"'" withString:@"\""];
                 
-                NSArray *array = [GCKJSONUtils parseJSON:jsonStr];
-                for (NSDictionary *dict in array) {
-                    [info addObject:[dict objectForKey:@"title"]];
+                NSError *error;
+                NSArray *array = [self arrayFromJSONString:jsonStr error:&error];
+                if (array) {
+                    for (NSDictionary *dict in array) {
+                        [info addObject:[dict objectForKey:@"title"]];
+                    }
+                } else {
+                    NSLog(@"Failed to parse JSON string: [%@], reason: %@", jsonStr, error);
                 }
                 
                 // no need to enumerate any further
@@ -155,5 +168,9 @@
     return res;
 }
 
-
+#pragma mark - private
+- (NSArray *)arrayFromJSONString: (NSString *)jsonString error:(NSError**)error {
+    NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+    return (NSArray *)[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:error];
+}
 @end

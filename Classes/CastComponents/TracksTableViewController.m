@@ -20,8 +20,6 @@
 #import "TracksTableViewController.h"
 
 @interface TracksTableViewController ()
-
-@property(nonatomic) UIStatusBarStyle statusBarStyle;
 @property(weak, nonatomic) GCKMediaControlChannel *controlChannel;
 @property(weak, nonatomic) GCKMediaInformation *media;
 @property(strong, nonatomic) NSMutableArray *tracks;
@@ -42,8 +40,6 @@
   // TODO(i18n): Localize these strings.
   NSString *title = self.type == GCKMediaTrackTypeAudio ? @"Audio Tracks" : @"Subtitles";
   [self.tabBarController.navigationItem setTitle:title];
-  self.statusBarStyle = [UIApplication sharedApplication].statusBarStyle;
-  [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -51,7 +47,6 @@
   if (self.toolbarWasShowing) {
     [self.navigationController setToolbarHidden:NO animated:animated];
   }
-  [[UIApplication sharedApplication] setStatusBarStyle:_statusBarStyle];
 }
 
 - (void)viewDidAppear:(BOOL)animated {

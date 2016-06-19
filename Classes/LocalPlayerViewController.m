@@ -170,8 +170,8 @@
         [self.navigationController.navigationBar setBackgroundImage:nil
                                                       forBarMetrics:UIBarMetricsDefault];
         self.navigationController.navigationBar.shadowImage = nil;
-        [[UIApplication sharedApplication] setStatusBarHidden:NO
-                                                withAnimation:UIStatusBarAnimationFade];
+//        [[UIApplication sharedApplication] setStatusBarHidden:NO
+//                                                withAnimation:UIStatusBarAnimationFade];
         self.navigationController.interactivePopGestureRecognizer.enabled = YES;
         _resetEdgesOnDisappear = NO;
     } else if (style == LPVNavBarTransparent) {
@@ -179,8 +179,8 @@
         [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
                                                       forBarMetrics:UIBarMetricsDefault];
         self.navigationController.navigationBar.shadowImage = [UIImage new];
-        [[UIApplication sharedApplication] setStatusBarHidden:YES
-                                                withAnimation:UIStatusBarAnimationFade];
+//        [[UIApplication sharedApplication] setStatusBarHidden:YES
+//                                                withAnimation:UIStatusBarAnimationFade];
         // Disable the swipe gesture if we're fullscreen.
         self.navigationController.interactivePopGestureRecognizer.enabled = NO;
         _resetEdgesOnDisappear = YES;

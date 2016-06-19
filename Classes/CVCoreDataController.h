@@ -34,6 +34,11 @@ static NSString *const kCoreDataAccessErrorName;
                         genre: (NSString *)genre
                      subGenre: (NSString *)subGenre;
 
+/**
+ Method to check if item with specified URL already exists and return it if so
+ */
+- (BFTask *) checkItemForURL: (NSURL *)mediaURL;
+
 /*!
  Method to synchronize managed obect context with underlying data store. It should be invoked
  upon application lifecycle change events in order to guarantee that everything user changed

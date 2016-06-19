@@ -33,11 +33,13 @@
         NSLog(@"Load media list from: %@", [[SharedDataUtils pathToMediaFile] absoluteString]);
         // read data
         NSArray<NSString *> *urls = [NSArray arrayWithContentsOfURL:[SharedDataUtils pathToMediaFile]];
-        if (urls) {
+        if (urls && [urls count] > 0) {
             // clear current list
             [_medias removeAllObjects];
             // start loading media
             [self loadFrom:urls atIndex:0 withCallback:callbackBlock];
+        } else {
+            callbackBlock(YES);
         }
     });
 }

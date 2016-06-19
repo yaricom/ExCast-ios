@@ -27,8 +27,6 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-    
     // Turn on the Cast logging for debug purposes.
     [[CastDeviceController sharedInstance] enableLogging];
     // Set the receiver application ID to initialise scanning.

@@ -51,9 +51,9 @@ static NSString * const kSelectedIndexKey = @"kSelectedIndexKey";
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // notify about selection
-    NSNotificationCenter *notifier = [NSNotificationCenter defaultCenter];
-    NSDictionary *userInfo = @{kSelectedIndexKey : [NSNumber numberWithInteger:indexPath.row]};
-    [notifier postNotificationName:self.selectNotification object:nil userInfo:userInfo];
+    if (self.delegate) {
+        [self.delegate onGenreSelected:indexPath.row forType:self.genreType];
+    }
     
     // close
     [self cancelAction:nil];
