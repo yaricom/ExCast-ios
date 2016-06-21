@@ -7,7 +7,7 @@
 
 #import "CVGenreMO.h"
 
-static NSString * const kGenreEntityName = @"Genre";
+NSString * const kGenreEntityName = @"Genre";
 
 @implementation CVGenreMO
 

@@ -8,10 +8,12 @@
 #import "CVMediaRecordMO.h"
 #import "CVGenreMO.h"
 
-static NSString* const kMediaRecordEntityName = @"MediaRecord";
+NSString* const kMediaRecordEntityName = @"MediaRecord";
 
 @implementation CVMediaRecordMO
 
-// Insert code here to add functionality to your managed object subclass
+- (BOOL) hasBeenSeen {
+    return !self.neverPlayed.boolValue;
+}
 
 @end

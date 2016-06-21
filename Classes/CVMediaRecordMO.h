@@ -8,7 +8,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-static NSString* const kMediaRecordEntityName;
+FOUNDATION_EXPORT NSString* const kMediaRecordEntityName;
 
 @class CVGenreMO;
 
@@ -16,7 +16,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CVMediaRecordMO : NSManagedObject
 
-// Insert code here to declare functionality of your managed object subclass
+/**
+ Checkens whether this record was already played at least once
+ */
+- (BOOL) hasBeenSeen;
 
 @end
 

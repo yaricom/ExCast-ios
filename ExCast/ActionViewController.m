@@ -136,31 +136,7 @@ static int const kSubGenreRow = 3;
 
 - (IBAction)done:(id)sender {
     // save media record
-    [[self.dataControler saveAsyncWithURL: self.pageUrl
-                                    title: self.media.title
-                              description: self.movieDetails
-                                    genre: self.genres[self.mainGenreIndex]
-                                 subGenre: self.genres[self.subGenreIndex]]
-     continueWithBlock:^id _Nullable(BFTask * _Nonnull task) {
-         // check for error
-         if (task.error) {
-             NSLog(@"Failed to save media record, %@\n%@", [task.error localizedDescription], [task.error userInfo]);
-             
-             // show error alert
-             [self showAlertWithTitle:NSLocalizedString(@"Failed to save media record", nil)
-                              message:[task.error localizedDescription]
-                    completionHandler:^{
-                        // close screen
-                        [self closeScreen];
-                    }];
-         } else {
-             NSLog(@"New media record was saved: %@", task.result);
-             // close screen
-             [self closeScreen];
-         }
-         
-         return nil;
-     }];
+    [self saveMediaRecord];
 }
 
 // method to close extension screen
@@ -362,6 +338,55 @@ static int const kSubGenreRow = 3;
     
     [alert addAction:defaultAction];
     [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void) saveMediaRecordToFile {
+    [self.extensionContext completeRequestReturningItems:self.extensionContext.inputItems completionHandler:^(BOOL expired) {
+        if (!expired) {
+            // save page URL
+            NSMutableArray<NSString *> *urls = [NSMutableArray arrayWithContentsOfURL:[SharedDataUtils pathToMediaFile]];
+            if (!urls) {
+                urls = [NSMutableArray<NSString *> arrayWithCapacity:1];
+            }
+            [urls addObject:self.pageUrlText];
+            
+            [urls writeToURL:[SharedDataUtils pathToMediaFile] atomically:YES];
+            
+            NSLog(@"Media list saved to: %@", [[SharedDataUtils pathToMediaFile] absoluteString]);
+        }
+    }];
+}
+
+- (void) saveMediaRecord {
+    [self.extensionContext completeRequestReturningItems:self.extensionContext.inputItems completionHandler:^(BOOL expired) {
+        if (!expired) {
+            [[self.dataControler saveWithURL: self.pageUrl
+                                       title: self.media.title
+                                 description: self.movieDetails
+                                       genre: self.genres[self.mainGenreIndex]
+                                    subGenre: self.genres[self.subGenreIndex]]
+             continueWithBlock:^id _Nullable(BFTask * _Nonnull task) {
+                 // check for error
+                 if (task.error) {
+                     NSLog(@"Failed to save media record, %@\n%@", [task.error localizedDescription], [task.error userInfo]);
+                     
+                     // show error alert
+                     [self showAlertWithTitle:NSLocalizedString(@"Failed to save media record", nil)
+                                      message:[task.error localizedDescription]
+                            completionHandler:^{
+                                // close screen
+                                [self closeScreen];
+                            }];
+                 } else {
+                     NSLog(@"New media record was saved: %@", task.result);
+                     // close screen
+                     [self closeScreen];
+                 }
+                 
+                 return nil;
+             }];
+        }
+    }];
 }
 
 @end

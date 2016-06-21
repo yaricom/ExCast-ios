@@ -24,7 +24,22 @@ static NSString *const kCoreDataAccessErrorName;
 // Indicates whether core data stack was already initialized
 @property (nonatomic, assign, readonly) BOOL initialized;
 
-/*!
+/**
+ Method to load all known media records
+ */
+- (BFTask *) listMediaRecordsAsync;
+
+/**
+ Method to save provided media object synchronously
+ @return BFTask object encapsulating operation results
+ */
+- (BFTask *) saveWithURL: (NSURL *)mediaURL
+                   title: (NSString *)title
+             description: (NSString *)description
+                   genre: (NSString *)genre
+                subGenre: (NSString *)subGenre;
+
+/**
  Method to save provided media object asynchronously
  @return BFTask object encapsulating operation results
  */

@@ -25,12 +25,68 @@ static NSString *const kCoreDataAccessErrorName = @"CoreDataAccessError";
 @synthesize managedObjectModel=_managedObjectModel, managedObjectContext=_managedObjectContext, persistentStoreCoordinator=_persistentStoreCoordinator;
 
 
+- (BFTask *) listMediaRecordsAsync {
+    BFTask *res = [BFTask taskFromExecutor:[BFExecutor defaultExecutor] withBlock:^id _Nonnull {
+        NSError *fetchError;
+        NSArray<CVMediaRecordMO*>* records = [self listMediaRecords:&fetchError];
+        if (!records) {
+            @throw fetchError;
+        } else {
+            return records;
+        }
+    }];
+    return res;
+}
+
+- (BFTask *) saveWithURL: (NSURL *)mediaURL
+                   title: (NSString *)title
+             description: (NSString *)description
+                   genre: (NSString *)genre
+                subGenre: (NSString *)subGenre {
+    BFTaskCompletionSource *task = [BFTaskCompletionSource taskCompletionSource];
+    
+    // read genre
+    CVGenreMO *genreMO = [self findOrCreateGenre:genre];
+    if (!genreMO) {
+        NSException *ex = [[NSException alloc]initWithName: kCoreDataAccessErrorName
+                                                    reason: [NSString stringWithFormat:@"Failed to find Main Genre info for name: %@", genre]
+                                                  userInfo: nil];
+        [task setException:ex];
+        return [task task];
+    }
+    CVGenreMO *subGenreMO = [self findOrCreateGenre:genre];
+    if (!genreMO) {
+        NSException *ex = [[NSException alloc]initWithName: kCoreDataAccessErrorName
+                                                    reason: [NSString stringWithFormat:@"Failed to find Sub Genre info for name: %@", genre]
+                                                  userInfo: nil];
+        [task setException:ex];
+        return [task task];
+    }
+    
+    CVMediaRecordMO *record = [self findRecordByURL:mediaURL];
+    if (!record) {
+        // create new media record if not exists
+        record = [NSEntityDescription insertNewObjectForEntityForName: kMediaRecordEntityName
+                                               inManagedObjectContext: [self managedObjectContext]];
+    }
+    [record addGenres:[NSSet setWithArray:@[genreMO, subGenreMO]]];
+    record.dateAdded = [NSDate new];
+    record.title = title;
+    record.details = description;
+    record.pageUrl = [mediaURL absoluteString];
+    // make sure it actually saved
+    [self saveContext];
+    
+    [task setResult:record];
+    return [task task];
+}
+
 - (BFTask *) saveAsyncWithURL: (NSURL *)mediaURL
                         title: (NSString *)title
                   description: (NSString *)description
                         genre: (NSString *)genre
                      subGenre: (NSString *)subGenre {
-    BFTask *res = [BFTask taskFromExecutor:[BFExecutor defaultExecutor] withBlock:^id _Nonnull{
+    BFTask *res = [BFTask taskFromExecutor:[BFExecutor defaultExecutor] withBlock:^id _Nonnull {
         // read genre
         CVGenreMO *genreMO = [self findOrCreateGenre:genre];
         if (!genreMO) {
@@ -168,6 +224,18 @@ static NSString *const kCoreDataAccessErrorName = @"CoreDataAccessError";
 }
 
 #pragma mark - private methods
+- (NSArray<CVMediaRecordMO *>*) listMediaRecords: (NSError **)__autoreleasing error{
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kMediaRecordEntityName];
+    NSSortDescriptor *orderByNeverSeen = [NSSortDescriptor sortDescriptorWithKey:@"neverPlayed" ascending:NO];
+    NSSortDescriptor *orderByNewestFirst = [NSSortDescriptor sortDescriptorWithKey:@"dateAdded" ascending:NO];
+    [request setSortDescriptors:@[orderByNeverSeen, orderByNewestFirst]];
+    NSArray *results = [self.managedObjectContext executeFetchRequest:request error:error];
+    if (!results) {
+        return nil;
+    }
+    return results;
+}
+
 - (CVMediaRecordMO *) findRecordByURL: (NSURL *) url {
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kMediaRecordEntityName];
     [request setPredicate:[NSPredicate predicateWithFormat:@"pageUrl == %@", [url absoluteString]]];

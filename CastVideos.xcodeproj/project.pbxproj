@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		03D9F1079B1CD8E5C0716B4D /* libPods-ExCastVideos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FA35F891C922348B5623FC74 /* libPods-ExCastVideos.a */; };
 		124377D0187CC2B500ADF736 /* DeviceTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 124377CF187CC2B500ADF736 /* DeviceTableViewController.m */; };
 		125F8FCA1880BA3300F14A9F /* logo_castvideos.png in Resources */ = {isa = PBXBuildFile; fileRef = 125F8FC81880BA3300F14A9F /* logo_castvideos.png */; };
 		125F8FCB1880BA3300F14A9F /* logo_castvideos@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 125F8FC91880BA3300F14A9F /* logo_castvideos@2x.png */; };
@@ -57,7 +56,6 @@
 		78AACF201C848B78006BABE9 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78AACF1F1C848B78006BABE9 /* CoreData.framework */; };
 		78AACF211C848B86006BABE9 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78AACF1F1C848B78006BABE9 /* CoreData.framework */; };
 		78C1922C1D16DB8E00032241 /* CastFrameworkAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 78C1922B1D16DB8E00032241 /* CastFrameworkAssets.xcassets */; };
-		78C192461D1703C500032241 /* libPods-ExCastVideos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C192451D1703C500032241 /* libPods-ExCastVideos.a */; };
 		78C192471D1720AD00032241 /* MediaRecords.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 78AACF081C848161006BABE9 /* MediaRecords.xcdatamodeld */; };
 		78C585FE1C38991E009305C7 /* PersistentMediaListModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C585FD1C38991E009305C7 /* PersistentMediaListModel.m */; };
 		78C586011C397EF9009305C7 /* ExMedia.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C586001C397EF9009305C7 /* ExMedia.m */; };
@@ -73,6 +71,7 @@
 		78F761E01C3ACE7D005E8F36 /* GetURL.js in Resources */ = {isa = PBXBuildFile; fileRef = 78F761DF1C3ACE7D005E8F36 /* GetURL.js */; };
 		CCE5BD43196F037300016BAB /* MediaAccessibility.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE5BD42196F037300016BAB /* MediaAccessibility.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		CCE5BD45196F038400016BAB /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE5BD44196F038400016BAB /* CoreText.framework */; };
+		D7E1273CBDBE85DB1BB4F520 /* libPods-ExCastVideos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D29602177069C72F04FFAD02 /* libPods-ExCastVideos.a */; };
 		EA01BA6D1BB0D2860003EF32 /* Toast.m in Sources */ = {isa = PBXBuildFile; fileRef = EA01BA6C1BB0D2860003EF32 /* Toast.m */; };
 		EA64A2261B9F4AFF00A45576 /* NotificationConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = EA64A2251B9F4AFF00A45576 /* NotificationConstants.m */; };
 		EADEB9841BB46D7000680739 /* RepeatingTimerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EADEB9831BB46D7000680739 /* RepeatingTimerManager.m */; };
@@ -131,7 +130,6 @@
 		12E0CCF218550A0700447896 /* list_outline_white@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "list_outline_white@2x.png"; sourceTree = "<group>"; };
 		12E0CCF318550A0700447896 /* list_outline.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = list_outline.png; sourceTree = "<group>"; };
 		12E0CCF418550A0700447896 /* list_outline@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "list_outline@2x.png"; sourceTree = "<group>"; };
-		1C9BDE24C1947EC2A141C656 /* Pods-ExCastVideos.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExCastVideos.release.xcconfig"; path = "Pods/Target Support Files/Pods-ExCastVideos/Pods-ExCastVideos.release.xcconfig"; sourceTree = "<group>"; };
 		284CBD82182ADC2D007F65F9 /* CastVideos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CastVideos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		284CBD85182ADC2D007F65F9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		284CBD87182ADC2D007F65F9 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -155,6 +153,7 @@
 		284CC034182C3396007F65F9 /* CastViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CastViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		491627AD184FBF9C00351397 /* SimpleImageFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleImageFetcher.h; sourceTree = "<group>"; };
 		491627AE184FBF9C00351397 /* SimpleImageFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimpleImageFetcher.m; sourceTree = "<group>"; };
+		51351C984A25E80E3F4F42E9 /* Pods-ExCastVideos.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExCastVideos.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ExCastVideos/Pods-ExCastVideos.debug.xcconfig"; sourceTree = "<group>"; };
 		5FA883AE1B2102C5008D7840 /* QueueTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueueTableViewController.h; sourceTree = "<group>"; };
 		5FA883AF1B2102C5008D7840 /* QueueTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QueueTableViewController.m; sourceTree = "<group>"; };
 		5FA883B11B210940008D7840 /* playlist_white@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "playlist_white@2x.png"; sourceTree = "<group>"; };
@@ -165,7 +164,6 @@
 		5FA883BA1B212991008D7840 /* AlertHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertHelper.m; sourceTree = "<group>"; };
 		5FA883BC1B2165F1008D7840 /* play_circle@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "play_circle@2x.png"; sourceTree = "<group>"; };
 		5FA883BD1B2165F1008D7840 /* play_circle@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "play_circle@3x.png"; sourceTree = "<group>"; };
-		71BD8907748272097CFCDBC9 /* Pods-ExCastVideos.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExCastVideos.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ExCastVideos/Pods-ExCastVideos.debug.xcconfig"; sourceTree = "<group>"; };
 		7813CABC1C481E2E007C6846 /* ExMediaTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExMediaTrack.h; sourceTree = "<group>"; };
 		7813CABD1C481E2E007C6846 /* ExMediaTrack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExMediaTrack.m; sourceTree = "<group>"; };
 		7813CABF1C482514007C6846 /* MediaTracksTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTracksTableViewController.h; sourceTree = "<group>"; };
@@ -194,7 +192,6 @@
 		78C192331D16EC8000032241 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Bolts.framework; path = "../../../../Library/Developer/Xcode/DerivedData/CastVideos-dwjupwjecxxzvsdxuanpcnfgwwtz/Build/Products/Debug-iphonesimulator/Bolts/Bolts.framework"; sourceTree = "<group>"; };
 		78C192351D16F2BC00032241 /* libHTMLReader.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libHTMLReader.a; path = "Pods/../build/Debug-iphoneos/HTMLReader/libHTMLReader.a"; sourceTree = "<group>"; };
 		78C192391D16FB4200032241 /* HTMLReader.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HTMLReader.framework; path = "../../../../Library/Developer/Xcode/DerivedData/CastVideos-dwjupwjecxxzvsdxuanpcnfgwwtz/Build/Products/Debug-iphonesimulator/HTMLReader/HTMLReader.framework"; sourceTree = "<group>"; };
-		78C1923C1D16FD0300032241 /* Pods_ExCastVideos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods_ExCastVideos.framework; path = "Pods/../build/Debug-iphoneos/Pods_ExCastVideos.framework"; sourceTree = "<group>"; };
 		78C192451D1703C500032241 /* libPods-ExCastVideos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libPods-ExCastVideos.a"; path = "Pods/../build/Debug-iphoneos/libPods-ExCastVideos.a"; sourceTree = "<group>"; };
 		78C585FC1C38991E009305C7 /* PersistentMediaListModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistentMediaListModel.h; sourceTree = "<group>"; };
 		78C585FD1C38991E009305C7 /* PersistentMediaListModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersistentMediaListModel.m; sourceTree = "<group>"; };
@@ -213,6 +210,8 @@
 		78F761DF1C3ACE7D005E8F36 /* GetURL.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = GetURL.js; sourceTree = "<group>"; };
 		CCE5BD42196F037300016BAB /* MediaAccessibility.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaAccessibility.framework; path = System/Library/Frameworks/MediaAccessibility.framework; sourceTree = SDKROOT; };
 		CCE5BD44196F038400016BAB /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		D2958157BE7EE98F5B2F0E07 /* Pods-ExCastVideos.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExCastVideos.release.xcconfig"; path = "Pods/Target Support Files/Pods-ExCastVideos/Pods-ExCastVideos.release.xcconfig"; sourceTree = "<group>"; };
+		D29602177069C72F04FFAD02 /* libPods-ExCastVideos.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ExCastVideos.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA01BA6B1BB0D2860003EF32 /* Toast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Toast.h; sourceTree = "<group>"; };
 		EA01BA6C1BB0D2860003EF32 /* Toast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Toast.m; sourceTree = "<group>"; };
 		EA64A2241B9F4AFF00A45576 /* NotificationConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotificationConstants.h; path = Classes/NotificationConstants.h; sourceTree = SOURCE_ROOT; };
@@ -242,7 +241,6 @@
 		EFEE509F1B8D3C6600AFE97E /* media_stop@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "media_stop@1x.png"; sourceTree = "<group>"; };
 		EFEE50A01B8D3C6600AFE97E /* media_stop@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "media_stop@2x.png"; sourceTree = "<group>"; };
 		EFEE50A11B8D3C6600AFE97E /* media_stop@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "media_stop@3x.png"; sourceTree = "<group>"; };
-		FA35F891C922348B5623FC74 /* libPods-ExCastVideos.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ExCastVideos.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -258,7 +256,7 @@
 				284CBD88182ADC2D007F65F9 /* CoreGraphics.framework in Frameworks */,
 				284CBD8A182ADC2D007F65F9 /* UIKit.framework in Frameworks */,
 				284CBD86182ADC2D007F65F9 /* Foundation.framework in Frameworks */,
-				03D9F1079B1CD8E5C0716B4D /* libPods-ExCastVideos.a in Frameworks */,
+				D7E1273CBDBE85DB1BB4F520 /* libPods-ExCastVideos.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -266,7 +264,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				78C192461D1703C500032241 /* libPods-ExCastVideos.a in Frameworks */,
 				78AACF211C848B86006BABE9 /* CoreData.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -284,7 +281,7 @@
 				78F761CE1C3AB885005E8F36 /* ExCastActionExtension */,
 				284CBD84182ADC2D007F65F9 /* Frameworks */,
 				284CBD83182ADC2D007F65F9 /* Products */,
-				D194353FF0268CBAB1881319 /* Pods */,
+				B7CC0DD1C375C4D62092840C /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -301,7 +298,6 @@
 			isa = PBXGroup;
 			children = (
 				78C192451D1703C500032241 /* libPods-ExCastVideos.a */,
-				78C1923C1D16FD0300032241 /* Pods_ExCastVideos.framework */,
 				78C192391D16FB4200032241 /* HTMLReader.framework */,
 				78C192351D16F2BC00032241 /* libHTMLReader.a */,
 				78C192331D16EC8000032241 /* Bolts.framework */,
@@ -318,7 +314,7 @@
 				284CBD87182ADC2D007F65F9 /* CoreGraphics.framework */,
 				284CBD89182ADC2D007F65F9 /* UIKit.framework */,
 				284CBDAA182ADC2D007F65F9 /* XCTest.framework */,
-				FA35F891C922348B5623FC74 /* libPods-ExCastVideos.a */,
+				D29602177069C72F04FFAD02 /* libPods-ExCastVideos.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -441,11 +437,11 @@
 			path = ExCast;
 			sourceTree = "<group>";
 		};
-		D194353FF0268CBAB1881319 /* Pods */ = {
+		B7CC0DD1C375C4D62092840C /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				71BD8907748272097CFCDBC9 /* Pods-ExCastVideos.debug.xcconfig */,
-				1C9BDE24C1947EC2A141C656 /* Pods-ExCastVideos.release.xcconfig */,
+				51351C984A25E80E3F4F42E9 /* Pods-ExCastVideos.debug.xcconfig */,
+				D2958157BE7EE98F5B2F0E07 /* Pods-ExCastVideos.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -826,7 +822,7 @@
 		};
 		284CBDBB182ADC2E007F65F9 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 71BD8907748272097CFCDBC9 /* Pods-ExCastVideos.debug.xcconfig */;
+			baseConfigurationReference = 51351C984A25E80E3F4F42E9 /* Pods-ExCastVideos.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -860,7 +856,7 @@
 		};
 		284CBDBC182ADC2E007F65F9 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C9BDE24C1947EC2A141C656 /* Pods-ExCastVideos.release.xcconfig */;
+			baseConfigurationReference = D2958157BE7EE98F5B2F0E07 /* Pods-ExCastVideos.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -894,7 +890,7 @@
 		};
 		78F761DA1C3AB885005E8F36 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 71BD8907748272097CFCDBC9 /* Pods-ExCastVideos.debug.xcconfig */;
+			baseConfigurationReference = 51351C984A25E80E3F4F42E9 /* Pods-ExCastVideos.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
@@ -931,7 +927,7 @@
 		};
 		78F761DB1C3AB885005E8F36 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C9BDE24C1947EC2A141C656 /* Pods-ExCastVideos.release.xcconfig */;
+			baseConfigurationReference = D2958157BE7EE98F5B2F0E07 /* Pods-ExCastVideos.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_WARN_UNREACHABLE_CODE = YES;

@@ -8,6 +8,7 @@
 #import <Foundation/Foundation.h>
 
 #import "ExMedia.h"
+#import "CVCoreDataController.h"
 
 /**
  * The media list model able to keep list of media objects persistent
@@ -19,6 +20,8 @@
 
 /* The number of media objects in the array. */
 @property(nonatomic, readonly) int numberOfMediaLoaded;
+
+- (id) initWithCoreDataController: (CVCoreDataController *) coreDataManager;
 
 /* Loads all medias and calls the supplied callback on completion (partial or final). */
 - (void)loadMedia:(void (^)(BOOL final))callbackBlock;
@@ -32,7 +35,5 @@
 /* Adds specified media to the list */
 - (void) addMedia:(ExMedia *) media;
 
-/* Return the index of the first media object with matching title. */
-- (int)indexOfMediaByTitle:(NSString *)title;
 
 @end

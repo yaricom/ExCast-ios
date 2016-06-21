@@ -68,9 +68,7 @@
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:titleView];
     
     // Asynchronously load the media json.
-    AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
-    delegate.mediaList = [[PersistentMediaListModel alloc] init];
-    self.mediaList = delegate.mediaList;
+    self.mediaList = [[PersistentMediaListModel alloc] initWithCoreDataController:[AppDelegate sharedInstance].dataController];
     [self reloadMediaList];
     
     // Create the queue button.

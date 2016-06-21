@@ -8,6 +8,7 @@
 #import "PersistentMediaListModel.h"
 
 #import "SharedDataUtils.h"
+#import "CVMediaRecordMO.h"
 
 #define kNotifyStep 10
 
@@ -18,17 +19,42 @@
 @implementation PersistentMediaListModel {
     /** Storage for the list of Media objects. */
     NSMutableArray<ExMedia *> *_medias;
+    // The core data manager
+    CVCoreDataController *_coreDataManager;
 }
 
-- (id)init {
+- (id) initWithCoreDataController: (CVCoreDataController *) coreDataManager {
     self = [super init];
     if (self) {
         _medias = [NSMutableArray array];
+        _coreDataManager = coreDataManager;
     }
     return self;
 }
 
 - (void)loadMedia:(void (^)(BOOL final))callbackBlock {
+    [_coreDataManager.listMediaRecordsAsync continueWithBlock:^id _Nullable(BFTask * _Nonnull task) {
+        if (!task.faulted) {
+            NSArray<CVMediaRecordMO *> *records = task.result;
+            NSMutableArray<NSString *> *urls = [NSMutableArray arrayWithCapacity:task.result];
+            for (CVMediaRecordMO *record in records) {
+                [urls addObject:record.pageUrl];
+            }
+            if (urls && [urls count] > 0) {
+                // clear current list
+                [_medias removeAllObjects];
+                // start loading media
+                [self loadFrom:urls atIndex:0 withCallback:callbackBlock];
+            } else {
+                callbackBlock(YES);
+            }
+        } else {
+            NSLog(@"Failed to load media records, reason: %@", task.error);
+        }
+        return nil;
+    }];
+    
+    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSLog(@"Load media list from: %@", [[SharedDataUtils pathToMediaFile] absoluteString]);
         // read data
@@ -85,16 +111,6 @@
     [_medias addObject:media];
     
     [self saveMediaList];
-}
-
-- (int)indexOfMediaByTitle:(NSString *)title {
-    for (int i = 0; i < self.numberOfMediaLoaded; i++) {
-        ExMedia *media = [self mediaAtIndex:i];
-        if ([media.title isEqualToString:title]) {
-            return i;
-        }
-    }
-    return -1;
 }
 
 - (void) saveMediaList {
