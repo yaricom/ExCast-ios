@@ -10,6 +10,7 @@
 #import <Bolts/Bolts.h>
 
 #import "ExMedia.h"
+#import "CVMediaRecordMO.h"
 
 // The name of error raised when failed to perform Core data Access operation
 static NSString *const kCoreDataAccessErrorName;
@@ -25,6 +26,23 @@ static NSString *const kCoreDataAccessErrorName;
 @property (nonatomic, assign, readonly) BOOL initialized;
 
 /**
+ Method to delete all media tracks associated with record
+ */
+- (BFTask *) deleteMediaTracksForRecordAsync: (CVMediaRecordMO *)record;
+
+/**
+ Method to create media track for specified record
+ */
+- (BFTask *) createTrackWithURL: (NSURL *)mediaURL
+                          title: (NSString *) title
+                      forRecord: (CVMediaRecordMO *)record;
+
+/**
+ Method to delete media record asynchronously
+ */
+- (BFTask *) deleteMediaRecordAsync: (CVMediaRecordMO*) record;
+
+/**
  Method to load all known media records
  */
 - (BFTask *) listMediaRecordsAsync;
@@ -37,17 +55,8 @@ static NSString *const kCoreDataAccessErrorName;
                    title: (NSString *)title
              description: (NSString *)description
                    genre: (NSString *)genre
-                subGenre: (NSString *)subGenre;
-
-/**
- Method to save provided media object asynchronously
- @return BFTask object encapsulating operation results
- */
-- (BFTask *) saveAsyncWithURL: (NSURL *)mediaURL
-                        title: (NSString *)title
-                  description: (NSString *)description
-                        genre: (NSString *)genre
-                     subGenre: (NSString *)subGenre;
+                subGenre: (NSString *)subGenre
+            thumbnailURL: (NSURL *)thumbnailURL;
 
 /**
  Method to check if item with specified URL already exists and return it if so

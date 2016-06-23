@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "ExMedia.h"
+#import "CVMediaRecordMO.h"
 
 #import <GoogleCast/GCKMediaInformation.h>
 
@@ -22,6 +22,6 @@
  */
 @interface GCKMediaInformation (LocalMedia)
 
-+ (GCKMediaInformation *)mediaInformationFromLocalMedia:(ExMedia *)media;
++ (GCKMediaInformation *)mediaInformationFromTrack:(CVMediaTrack *)media forRecord: (CVMediaRecordMO *)record;
 
 @end

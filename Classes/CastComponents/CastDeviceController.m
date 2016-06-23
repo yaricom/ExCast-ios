@@ -126,6 +126,9 @@ GCKMediaControlChannelDelegate
 
 - (void)updateLastPosition {
     self.lastPosition = [_mediaControlChannel approximateStreamPosition];
+    if ([_delegate respondsToSelector: @selector(didUpdateStreamPosition:)]) {
+        [_delegate didUpdateStreamPosition: self.lastPosition];
+    }
 }
 
 # pragma mark - Accessors
@@ -139,7 +142,7 @@ GCKMediaControlChannelDelegate
 }
 
 - (NSTimeInterval)streamPosition {
-    return _lastPosition;
+    return self.lastPosition;
 }
 
 - (void)setPlaybackPercent:(float)newPercent {
@@ -345,7 +348,7 @@ didDisconnectFromApplicationWithError:(NSError *)error {
 
 - (NSTimeInterval)streamPositionForPreviouslyCastMedia:(NSString *)contentID {
     if ([contentID isEqualToString:_lastContentID]) {
-        return _lastPosition;
+        return self.lastPosition;
     }
     return 0;
 }
@@ -395,9 +398,9 @@ didDisconnectFromApplicationWithError:(NSError *)error {
     // Start a new stream position timer if there's content playing.
     if (_mediaInformation.contentID) {
         self.streamPositionUpdateTimer =
-        [[RepeatingTimerManager alloc] initWithTarget:self
-                                             selector:@selector(updateLastPosition)
-                                            frequency:1.0];
+        [[RepeatingTimerManager alloc] initWithTarget: self
+                                             selector: @selector(updateLastPosition)
+                                            frequency: 1.0];
     }
     
     self.lastContentID = _mediaInformation.contentID;

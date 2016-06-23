@@ -20,6 +20,7 @@
 #import "LocalPlayerViewController.h"
 #import "NotificationConstants.h"
 #import "AlertHelper.h"
+#import "CVMediaTrack.h"
 
 #import "ExMedia.h"
 
@@ -33,6 +34,11 @@
 /** The queue button. */
 @property(nonatomic, strong) UIBarButtonItem *showQueueButton;
 @property(nonatomic, assign) BOOL playbackEnabled;
+
+/** The media record to play */
+@property (nonatomic, strong) CVMediaRecordMO *mediaRecord;
+/** The media track's index to play */
+@property (nonatomic, assign) NSInteger trackIndex;
 
 @end
 
@@ -56,7 +62,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self.playerView setMedia:_mediaToPlay];
+    [self.playerView playMediaTrack:self.trackIndex fromRecord:self.mediaRecord];
     [self.playerView playbackEnabled:self.playbackEnabled];
     _resetEdgesOnDisappear = YES;
     
@@ -102,7 +108,7 @@
 
 - (void)dealloc {
     // Explicitly clear the playing media and release the AVPlayer.
-    [_playerView setMedia:nil];
+    [_playerView playMediaTrack:0 fromRecord:nil];
     _playerView.delegate = nil;
 }
 
@@ -128,18 +134,19 @@
 
 #pragma mark - Managing the detail item
 
-- (void)setMediaToPlay:(id)newMediaToPlay {
-    if (_mediaToPlay != newMediaToPlay) {
-        _mediaToPlay = newMediaToPlay;
+- (void) playMediaTrack: (NSInteger)track fromRecord: (CVMediaRecordMO *)record {
+    if (self.mediaRecord != record && self.trackIndex != track) {
+        self.mediaRecord = record;
+        self.trackIndex = track;
         self.playbackEnabled = YES;
         [self syncTextToMedia];
     }
 }
 
 - (void)syncTextToMedia {
-    self.mediaTitle.text = self.mediaToPlay.title;
-    self.mediaSubtitle.text = self.mediaToPlay.subtitle;
-    self.mediaDescription.text = self.mediaToPlay.descrip;
+    self.mediaTitle.text = self.mediaRecord.title;
+    self.mediaSubtitle.text = [[self.mediaRecord trackAtIndex:self.trackIndex] address];
+    self.mediaDescription.text = self.mediaRecord.description;
 }
 
 #pragma mark - Handling the queue button's display state
@@ -195,9 +202,9 @@
 /* Play has been pressed in the LocalPlayerView. */
 - (BOOL)continueAfterPlayButtonClicked {
     CastDeviceController *controller = [CastDeviceController sharedInstance];
+    CVMediaTrack *track = [self.mediaRecord trackAtIndex:self.trackIndex];
+    NSTimeInterval pos = [[track playTime] doubleValue];
     if (controller.deviceManager.applicationConnectionState != GCKConnectionStateConnected) {
-        NSTimeInterval pos =
-        [controller streamPositionForPreviouslyCastMedia:_mediaToPlay.URL.absoluteString];
         if (pos > 0) {
             _playerView.playbackTime = pos;
             // We are playing locally, so don't try and reconnect.
@@ -209,11 +216,18 @@
     AlertHelper *helper = [[AlertHelper alloc] init];
     helper.cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
     
-    GCKMediaInformation *media = [GCKMediaInformation mediaInformationFromLocalMedia:_mediaToPlay];
+    GCKMediaInformation *media = [GCKMediaInformation mediaInformationFromTrack:track forRecord:self.mediaRecord];
     
     // Play Now blindly loads the media, clobbering the current queue.
     [helper addAction:NSLocalizedString(@"Play Now", nil) handler:^{
-        [controller mediaPlayNow:media];
+        if (pos > 0) {
+            // start playback from stored position
+            [controller.mediaControlChannel loadMedia: media
+                                             autoplay: YES
+                                         playPosition: pos];
+        } else {
+            [controller mediaPlayNow: media];
+        }
     }];
     
     // Play Next is available if something is currently being played.
@@ -248,11 +262,12 @@
         // When we connect to a new device and are playing locally, always clobber the currently
         // playing video (as per Android).
         CastDeviceController *controller = [CastDeviceController sharedInstance];
-        GCKMediaInformation *media = [GCKMediaInformation mediaInformationFromLocalMedia:_mediaToPlay];
+        GCKMediaInformation *media = [GCKMediaInformation mediaInformationFromTrack:[self.mediaRecord trackAtIndex:self.trackIndex]
+                                                                          forRecord:self.mediaRecord];
 
-        [controller.mediaControlChannel loadMedia:media
-                                         autoplay:YES
-                                     playPosition:_playerView.playbackTime];
+        [controller.mediaControlChannel loadMedia: media
+                                         autoplay: YES
+                                     playPosition: _playerView.playbackTime];
     }
     
     [_playerView showSplashScreen];
@@ -283,6 +298,10 @@
         [self hideNavigationBar:NO]; // Display the nav bar for the instructions.
         _resetEdgesOnDisappear = NO;
     }
+}
+
+- (void)didUpdateStreamPosition: (NSTimeInterval)position {
+    [[self.mediaRecord trackAtIndex:self.trackIndex] setPlayTime:[NSNumber numberWithDouble:position]];
 }
 
 @end

@@ -10,6 +10,8 @@
 
 FOUNDATION_EXPORT NSString * const kGenreEntityName;
 
+@class CVMediaRecordMO;
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CVGenreMO : NSManagedObject

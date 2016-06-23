@@ -2,7 +2,7 @@
 //  CVMediaRecordMO+CoreDataProperties.m
 //  CastVideos
 //
-//  Created by Iaroslav Omelianenko on 6/21/16.
+//  Created by Iaroslav Omelianenko on 6/23/16.
 //  Copyright © 2016 Google inc. All rights reserved.
 //
 //  Choose "Create NSManagedObject Subclass…" from the Core Data editor menu
@@ -15,11 +15,13 @@
 
 @dynamic dateAdded;
 @dynamic details;
+@dynamic neverPlayed;
 @dynamic pageUrl;
-@dynamic startTime;
 @dynamic title;
 @dynamic valid;
-@dynamic neverPlayed;
+@dynamic thumbnailUrl;
+@dynamic mimeType;
+@dynamic tracks;
 @dynamic genres;
 
 @end

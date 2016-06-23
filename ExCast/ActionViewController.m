@@ -364,7 +364,8 @@ static int const kSubGenreRow = 3;
                                        title: self.media.title
                                  description: self.movieDetails
                                        genre: self.genres[self.mainGenreIndex]
-                                    subGenre: self.genres[self.subGenreIndex]]
+                                    subGenre: self.genres[self.subGenreIndex]
+                                thumbnailURL: self.media.thumbnailURL]
              continueWithBlock:^id _Nullable(BFTask * _Nonnull task) {
                  // check for error
                  if (task.error) {

@@ -1,5 +1,5 @@
 //
-//  CVGenreMO+CoreDataProperties.m
+//  CVMediaTrack+CoreDataProperties.m
 //  CastVideos
 //
 //  Created by Iaroslav Omelianenko on 6/23/16.
@@ -9,11 +9,13 @@
 //  to delete and recreate this implementation file for your updated model.
 //
 
-#import "CVGenreMO+CoreDataProperties.h"
+#import "CVMediaTrack+CoreDataProperties.h"
 
-@implementation CVGenreMO (CoreDataProperties)
+@implementation CVMediaTrack (CoreDataProperties)
 
 @dynamic name;
-@dynamic records;
+@dynamic address;
+@dynamic playTime;
+@dynamic record;
 
 @end

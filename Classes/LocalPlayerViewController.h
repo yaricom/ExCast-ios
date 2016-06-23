@@ -13,7 +13,8 @@
 // limitations under the License.
 
 #import "LocalPlayerView.h"
-#import "ExMedia.h"
+#import "ExMediaTrack.h"
+#import "CVMediaRecordMO.h"
 
 #import <UIKit/UIKit.h>
 
@@ -21,9 +22,6 @@
  * A view to play media locally, when not connected to the Chromecast device.
  */
 @interface LocalPlayerViewController : UIViewController<LocalPlayerDelegate>
-
-/** The media object being played on Chromecast device. Set this before presenting the view. */
-@property(strong, nonatomic) ExMedia *mediaToPlay;
 
 /** The local player view used for displaying thumbnail and in-app video. */
 @property(weak, nonatomic) IBOutlet LocalPlayerView *playerView;
@@ -36,5 +34,8 @@
 
 /** An outlet to bind to media subtitle. */
 @property(weak, nonatomic) IBOutlet UILabel *mediaSubtitle;
+
+/** The media object being played on Chromecast device. Set this before presenting the view. */
+- (void) playMediaTrack: (NSInteger)track fromRecord: (CVMediaRecordMO *)record;
 
 @end

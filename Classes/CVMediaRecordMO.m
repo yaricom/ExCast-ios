@@ -16,4 +16,18 @@ NSString* const kMediaRecordEntityName = @"MediaRecord";
     return !self.neverPlayed.boolValue;
 }
 
+- (NSURL *) pageURL {
+    return [NSURL URLWithString:self.pageUrl];
+}
+
+- (NSURL *) thumbnailURL {
+    return [NSURL URLWithString:self.thumbnailUrl];
+}
+
+- (CVMediaTrack *) trackAtIndex: (NSInteger) index {
+    if (index < self.tracks.count) {
+        return [self.tracks objectAtIndex:index];
+    }
+    return nil;
+}
 @end

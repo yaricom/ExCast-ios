@@ -19,71 +19,68 @@
 
 #import "CastViewController.h"
 #import "GCKMediaInformation+LocalMedia.h"
+#import "CVMediaTrack.h"
 
 @implementation GCKMediaInformation (LocalMedia)
 
-+ (GCKMediaInformation *)mediaInformationFromLocalMedia:(ExMedia *)media {
-  GCKMediaMetadata *metadata =
-      [[GCKMediaMetadata alloc] initWithMetadataType:GCKMediaMetadataTypeMovie];
-  if (media.title) {
-    [metadata setString:media.title forKey:kGCKMetadataKeyTitle];
-  }
-
-  if (media.subtitle) {
-    [metadata setString:media.subtitle forKey:kGCKMetadataKeySubtitle];
-  }
-
-  if (media.thumbnailURL) {
-    [metadata addImage:[[GCKImage alloc] initWithURL:media.thumbnailURL width:200 height:100]];
-  }
-
-  if (media.posterURL) {
-    [metadata setString:[media.posterURL absoluteString] forKey:kCastComponentPosterURL];
-  }
-
-  GCKMediaInformation *mi =
-      [[GCKMediaInformation alloc] initWithContentID:[media.URL absoluteString]
-                                          streamType:GCKMediaStreamTypeNone
-                                         contentType:media.mimeType
-                                            metadata:metadata
-                                      streamDuration:0
-                                         mediaTracks:nil
-                                      textTrackStyle:[GCKMediaTextTrackStyle createDefault]
-                                          customData:nil];
-  return mi;
++ (GCKMediaInformation *)mediaInformationFromTrack:(CVMediaTrack *)media forRecord: (CVMediaRecordMO *)record {
+    GCKMediaMetadata *metadata = [[GCKMediaMetadata alloc] initWithMetadataType:GCKMediaMetadataTypeMovie];
+    if (record.title) {
+        [metadata setString:record.title forKey:kGCKMetadataKeyTitle];
+    }
+    
+    if (media.name) {
+        [metadata setString:media.name forKey:kGCKMetadataKeySubtitle];
+    }
+    
+    if ([record thumbnailURL]) {
+        [metadata addImage: [[GCKImage alloc] initWithURL: [record thumbnailURL] width:200 height:100]];
+        [metadata setString: record.thumbnailUrl forKey: kCastComponentPosterURL];
+    }
+    
+    GCKMediaInformation *mi =
+    [[GCKMediaInformation alloc] initWithContentID: media.address
+                                        streamType: GCKMediaStreamTypeNone
+                                       contentType: record.mimeType
+                                          metadata: metadata
+                                    streamDuration: 0
+                                       mediaTracks: nil
+                                    textTrackStyle: [GCKMediaTextTrackStyle createDefault]
+                                        customData: nil];
+    return mi;
 }
 
 + (GCKMediaTrackType)trackTypeFrom:(NSString *)string {
-  if ([string isEqualToString:@"audio"]) {
-    return GCKMediaTrackTypeAudio;
-  }
-  if ([string isEqualToString:@"text"]) {
-    return GCKMediaTrackTypeText;
-  }
-  if ([string isEqualToString:@"video"]) {
-    return GCKMediaTrackTypeVideo;
-  }
-  return GCKMediaTrackTypeUnknown;
+    if ([string isEqualToString:@"audio"]) {
+        return GCKMediaTrackTypeAudio;
+    }
+    if ([string isEqualToString:@"text"]) {
+        return GCKMediaTrackTypeText;
+    }
+    if ([string isEqualToString:@"video"]) {
+        return GCKMediaTrackTypeVideo;
+    }
+    return GCKMediaTrackTypeUnknown;
 }
 
 + (GCKMediaTextTrackSubtype)trackSubtypeFrom:(NSString *)string {
-  if ([string isEqualToString:@"captions"]) {
-    return GCKMediaTextTrackSubtypeCaptions;
-  }
-  if ([string isEqualToString:@"chapters"]) {
-    return GCKMediaTextTrackSubtypeChapters;
-  }
-  if ([string isEqualToString:@"descriptions"]) {
-    return GCKMediaTextTrackSubtypeDescriptions;
-  }
-  if ([string isEqualToString:@"metadata"]) {
-    return GCKMediaTextTrackSubtypeMetadata;
-  }
-  if ([string isEqualToString:@"subtitles"]) {
-    return GCKMediaTextTrackSubtypeSubtitles;
-  }
-
-  return GCKMediaTextTrackSubtypeUnknown;
+    if ([string isEqualToString:@"captions"]) {
+        return GCKMediaTextTrackSubtypeCaptions;
+    }
+    if ([string isEqualToString:@"chapters"]) {
+        return GCKMediaTextTrackSubtypeChapters;
+    }
+    if ([string isEqualToString:@"descriptions"]) {
+        return GCKMediaTextTrackSubtypeDescriptions;
+    }
+    if ([string isEqualToString:@"metadata"]) {
+        return GCKMediaTextTrackSubtypeMetadata;
+    }
+    if ([string isEqualToString:@"subtitles"]) {
+        return GCKMediaTextTrackSubtypeSubtitles;
+    }
+    
+    return GCKMediaTextTrackSubtypeUnknown;
 }
 
 @end

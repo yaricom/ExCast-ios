@@ -10,6 +10,8 @@
 #import "SharedDataUtils.h"
 #import "CVMediaRecordMO+CoreDataProperties.h"
 #import "CVGenreMO+CoreDataProperties.h"
+#import "CVMediaTrack+CoreDataProperties.h"
+#import "CVMediaTrack.h"
 
 static NSString *const kCoreDataAccessErrorName = @"CoreDataAccessError";
 
@@ -24,6 +26,48 @@ static NSString *const kCoreDataAccessErrorName = @"CoreDataAccessError";
 
 @synthesize managedObjectModel=_managedObjectModel, managedObjectContext=_managedObjectContext, persistentStoreCoordinator=_persistentStoreCoordinator;
 
+- (BFTask *) deleteMediaTracksForRecordAsync: (CVMediaRecordMO *)record {
+    BFTask *res = [BFTask taskFromExecutor:[BFExecutor defaultExecutor] withBlock:^id _Nonnull {
+        for (CVMediaTrack *track in record.tracks) {
+            [self.managedObjectContext deleteObject: track];
+        }
+        // make sure it actually saved
+        [self saveContext];
+        
+        return nil;
+    }];
+    return res;
+}
+
+- (BFTask *) createTrackWithURL: (NSURL *)mediaURL
+                          title: (NSString *) title
+                      forRecord: (CVMediaRecordMO *)record {
+    BFTaskCompletionSource *task = [BFTaskCompletionSource taskCompletionSource];
+    CVMediaTrack *track = [NSEntityDescription insertNewObjectForEntityForName: kMediaTrackEntityName
+                                                        inManagedObjectContext: [self managedObjectContext]];
+    track.address = [mediaURL absoluteString];
+    track.name = title;
+    
+    NSMutableOrderedSet * set = [record mutableOrderedSetValueForKey:@"tracks"];
+    [set addObject:track];
+    
+    // make sure it actually saved
+    [self saveContext];
+    
+    return [task task];
+}
+
+- (BFTask *)deleteMediaRecordAsync: (CVMediaRecordMO*) record {
+    BFTask *res = [BFTask taskFromExecutor:[BFExecutor defaultExecutor] withBlock:^id _Nonnull {
+        [self.managedObjectContext deleteObject:record];
+        
+        // make sure it actually saved
+        [self saveContext];
+        
+        return nil;
+    }];
+    return res;
+}
 
 - (BFTask *) listMediaRecordsAsync {
     BFTask *res = [BFTask taskFromExecutor:[BFExecutor defaultExecutor] withBlock:^id _Nonnull {
@@ -42,7 +86,8 @@ static NSString *const kCoreDataAccessErrorName = @"CoreDataAccessError";
                    title: (NSString *)title
              description: (NSString *)description
                    genre: (NSString *)genre
-                subGenre: (NSString *)subGenre {
+                subGenre: (NSString *)subGenre
+            thumbnailURL: (NSURL *)thumbnailURL{
     BFTaskCompletionSource *task = [BFTaskCompletionSource taskCompletionSource];
     
     // read genre
@@ -69,56 +114,22 @@ static NSString *const kCoreDataAccessErrorName = @"CoreDataAccessError";
         record = [NSEntityDescription insertNewObjectForEntityForName: kMediaRecordEntityName
                                                inManagedObjectContext: [self managedObjectContext]];
     }
-    [record addGenres:[NSSet setWithArray:@[genreMO, subGenreMO]]];
+    
     record.dateAdded = [NSDate new];
     record.title = title;
     record.details = description;
     record.pageUrl = [mediaURL absoluteString];
+    record.mimeType = @"video/mp4";
+    record.thumbnailUrl = [thumbnailURL absoluteString];
+    
+    NSMutableOrderedSet * set = [record mutableOrderedSetValueForKey:@"genres"];
+    [set addObjectsFromArray:@[genreMO, subGenreMO]];
+    
     // make sure it actually saved
     [self saveContext];
     
     [task setResult:record];
     return [task task];
-}
-
-- (BFTask *) saveAsyncWithURL: (NSURL *)mediaURL
-                        title: (NSString *)title
-                  description: (NSString *)description
-                        genre: (NSString *)genre
-                     subGenre: (NSString *)subGenre {
-    BFTask *res = [BFTask taskFromExecutor:[BFExecutor defaultExecutor] withBlock:^id _Nonnull {
-        // read genre
-        CVGenreMO *genreMO = [self findOrCreateGenre:genre];
-        if (!genreMO) {
-            NSException *ex = [[NSException alloc]initWithName: kCoreDataAccessErrorName
-                                                        reason: [NSString stringWithFormat:@"Failed to find Main Genre info for name: %@", genre]
-                                                      userInfo: nil];
-            @throw ex;
-        }
-        CVGenreMO *subGenreMO = [self findOrCreateGenre:genre];
-        if (!genreMO) {
-            NSException *ex = [[NSException alloc]initWithName: kCoreDataAccessErrorName
-                                                        reason: [NSString stringWithFormat:@"Failed to find Sub Genre info for name: %@", genre]
-                                                      userInfo: nil];
-            @throw ex;
-        }
-        
-        CVMediaRecordMO *record = [self findRecordByURL:mediaURL];
-        if (!record) {
-            // create new media record if not exists
-            record = [NSEntityDescription insertNewObjectForEntityForName: kMediaRecordEntityName
-                                                                inManagedObjectContext: [self managedObjectContext]];
-        }
-        [record addGenres:[NSSet setWithArray:@[genreMO, subGenreMO]]];
-        record.dateAdded = [NSDate new];
-        record.title = title;
-        record.details = description;
-        record.pageUrl = [mediaURL absoluteString];
-        // make sure it actually saved
-        [self saveContext];
-        return record;
-    }];
-    return res;
 }
 
 - (BFTask *) checkItemForURL: (NSURL *)mediaURL {
@@ -265,8 +276,8 @@ static NSString *const kCoreDataAccessErrorName = @"CoreDataAccessError";
     CVGenreMO *genre = [self findGenreByName:name];
     if (!genre) {
         // create new genre record
-        genre = [NSEntityDescription insertNewObjectForEntityForName:kGenreEntityName
-                                              inManagedObjectContext:[self managedObjectContext]];
+        genre = [NSEntityDescription insertNewObjectForEntityForName: kGenreEntityName
+                                              inManagedObjectContext: [self managedObjectContext]];
         genre.name = name;
     }
     return genre;

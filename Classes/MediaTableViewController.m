@@ -16,11 +16,12 @@
 #import "CastDeviceController.h"
 #import "LocalPlayerViewController.h"
 #import "ExMedia.h"
-#import "PersistentMediaListModel.h"
 #import "MediaTableViewController.h"
+#import "MediaTracksTableViewController.h"
 #import "NotificationConstants.h"
 #import "SimpleImageFetcher.h"
 #import "AlertHelper.h"
+#import "CVMediaRecordMO.h"
 
 #import <GoogleCast/GCKDeviceManager.h>
 #import <GoogleCast/GCKMediaControlChannel.h>
@@ -28,37 +29,28 @@
 #define kDefaultRowHeight 40
 #define kMediaRowHeight 80
 
-@interface MediaTableViewController () <CastDeviceControllerDelegate>
+static NSString *const kShowMediaTracksSegue = @"showMediaTracks";
 
-/** The media to be displayed. */
-@property(nonatomic, strong) PersistentMediaListModel *mediaList;
+@interface MediaTableViewController () <CastDeviceControllerDelegate>
 
 /** The queue button. */
 @property(nonatomic, strong) UIBarButtonItem *showQueueButton;
-@property (strong, nonatomic) IBOutlet UIView *headerView;
-@property (weak, nonatomic) IBOutlet UILabel *loadingText;
 
-/** The refresh control to update movies list */
-@property (weak, nonatomic) IBOutlet UIRefreshControl *listRefreshControl;
-
+/** The media records */
+@property (nonatomic, strong) NSMutableArray<CVMediaRecordMO*>* records;
 
 @end
 
 @implementation MediaTableViewController {
     UIBarButtonItem *editItem;
-    UIBarButtonItem *addItem;
     UIBarButtonItem *doneItem;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // Hide table header by default
-    self.tableView.tableHeaderView = nil;
-    
     // create toolbar
     editItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(editTableItems:)];
-    addItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(onAddURLAction:)];
     doneItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneEditTableItems:)];
     [self initToolbarInEditMode:YES];
     
@@ -67,19 +59,17 @@
     self.navigationItem.titleView = [[UIView alloc] init];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:titleView];
     
-    // Asynchronously load the media json.
-    self.mediaList = [[PersistentMediaListModel alloc] initWithCoreDataController:[AppDelegate sharedInstance].dataController];
     [self reloadMediaList];
     
     // Create the queue button.
-    _showQueueButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"playlist_white.png"]
-                                                        style:UIBarButtonItemStylePlain
-                                                       target:self
-                                                       action:@selector(showQueue:)];
+    self.showQueueButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"playlist_white.png"]
+                                                            style:UIBarButtonItemStylePlain
+                                                           target:self
+                                                           action:@selector(showQueue:)];
     // assign action to refresh control
-    [self.listRefreshControl addTarget:self
-                                action:@selector(reloadMediaList)
-                      forControlEvents:UIControlEventValueChanged];
+    [self.refreshControl addTarget:self
+                            action:@selector(reloadMediaList)
+                  forControlEvents:UIControlEventValueChanged];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -126,11 +116,12 @@
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:@"playMedia"]) {
+    if ([segue.identifier isEqualToString: kShowMediaTracksSegue]) {
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        ExMedia *media = [self.mediaList mediaAtIndex:(int)indexPath.row];
+        CVMediaRecordMO *media = [self.records objectAtIndex:indexPath.row];
         // Pass the currently selected media to the next controller if it needs it.
-        [[segue destinationViewController] setMediaToPlay:media];
+        MediaTracksTableViewController *vc = (MediaTracksTableViewController*)[segue destinationViewController];
+        vc.mediaToPlay = media;
     }
 }
 
@@ -155,7 +146,7 @@
 #pragma mark - Table View
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row < self.mediaList.numberOfMediaLoaded) {
+    if (indexPath.row < [self.records count]) {
         return kMediaRowHeight;
     } else {
         return kDefaultRowHeight;
@@ -163,7 +154,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row < self.mediaList.numberOfMediaLoaded) {
+    if (indexPath.row < [self.records count]) {
         return kMediaRowHeight;
     } else {
         return kDefaultRowHeight;
@@ -175,24 +166,20 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [self.mediaList numberOfMediaLoaded];
+    return [self.records count];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView
-         cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
-    ExMedia *media = [self.mediaList mediaAtIndex:(int)indexPath.row];
+    CVMediaRecordMO *media = [self.records objectAtIndex:indexPath.row];
     
     cell.textLabel.numberOfLines = 2;
     cell.textLabel.text = media.title;
-    cell.detailTextLabel.text = media.subtitle;
+    cell.detailTextLabel.text = media.pageUrl;
     
     // Asynchronously load the table view image
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    
-    dispatch_async(queue, ^{
-        UIImage *image =
-        [UIImage imageWithData:[SimpleImageFetcher getDataFromImageURL:media.thumbnailURL]];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        UIImage *image = [UIImage imageWithData:[SimpleImageFetcher getDataFromImageURL: [media thumbnailURL]]];
         
         dispatch_sync(dispatch_get_main_queue(), ^{
             UIImageView *mediaThumb = cell.imageView;
@@ -206,19 +193,34 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // Display the media details view.
-    [self performSegueWithIdentifier:@"playMedia" sender:self];
+    [self performSegueWithIdentifier:kShowMediaTracksSegue sender:self];
 }
 
 // Asks the data source to commit the insertion or deletion of a specified row in the receiver.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // remove from data source and local cache
-        ExMedia *m = [self.mediaList mediaAtIndex:indexPath.row];
-        [self.mediaList removeMediaAtIndex:indexPath.row];
-        [SimpleImageFetcher removeCacheHitForURL:m.thumbnailURL];
-        
-        // notify table
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        CVMediaRecordMO *item = [self.records objectAtIndex:indexPath.row];
+        [[[[AppDelegate sharedInstance] dataController] deleteMediaRecordAsync:item]
+        continueWithBlock:^id _Nullable(BFTask * _Nonnull task) {
+            //
+            if (!task.faulted) {
+                [self.records removeObject:item];
+                [SimpleImageFetcher removeCacheHitForURL: [item thumbnailURL]];
+                
+                // notify table
+                [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            } else {
+                AlertHelper *alert = [[AlertHelper alloc] init];
+                alert.title = NSLocalizedString(@"Failed to delete", nil);
+                alert.message = NSLocalizedString(@"Failed to delete selected media record! Please rfresh list and try again.", nil);
+                alert.cancelButtonTitle = NSLocalizedString(@"OK", nil);
+                
+                [alert showOnController:self sourceView:self.tableView];
+                NSLog(@"Failed to delete media record, reason: %@", task.error);
+            }
+            return nil;
+        }];
     }
 }
 
@@ -226,51 +228,36 @@
 - (void) reloadMediaList {
     // show refresh control if appropriate
     if (!self.refreshControl.refreshing) {
-        [self.listRefreshControl beginRefreshing];
+        [self.refreshControl beginRefreshing];
     }
     
     // load media list
-    [self.mediaList loadMedia:^(BOOL final) {
-        if (final) {
-            self.title = self.mediaList.mediaTitle;
+    [[[[AppDelegate sharedInstance] dataController] listMediaRecordsAsync]
+    continueWithBlock:^id _Nullable(BFTask * _Nonnull task) {
+        // store and refresh table view
+        if (!task.faulted) {
+            self.records = [NSMutableArray arrayWithArray: task.result];
+            
+        } else {
+            AlertHelper *alert = [[AlertHelper alloc] init];
+            alert.title = NSLocalizedString(@"Failed to load media", nil);
+            alert.message = NSLocalizedString(@"Failed to load list of media records!", nil);
+            alert.cancelButtonTitle = NSLocalizedString(@"OK", nil);
+            [alert showOnController:self sourceView:self.tableView];
+            
+            NSLog(@"Failed to load media records, reason: %@", task.error);
         }
+        
         [self.tableView reloadData];
         // refresh toolbar
         [self initToolbarInEditMode:YES];
-        //        self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
         
         // close refresh control
-        if (self.refreshControl.refreshing && final) {
-            [self.listRefreshControl endRefreshing];
+        if (self.refreshControl.refreshing) {
+            [self.refreshControl endRefreshing];
         }
+        return nil;
     }];
-}
-
-- (void)addMediaFromURL:(NSURL *) url {
-    [ExMedia mediaFromExURL:url
-             withCompletion:^(ExMedia * _Nullable media, NSError * _Nullable error) {
-                 dispatch_async(dispatch_get_main_queue(), ^{
-                     // execute on main UI thread
-                     if (error) {
-                         NSLog(@"Failed to load data, reason: %@", error);
-                         AlertHelper *alert = [[AlertHelper alloc] init];
-                         alert.title = NSLocalizedString(@"Failed to load page info", nil);
-                         alert.message = NSLocalizedString(@"Please make sure that correct page address provided", nil);
-                         alert.cancelButtonTitle = NSLocalizedString(@"OK", nil);
-                     } else {
-                         // populate table
-                         [self addMediaToTable:media];
-                     }
-                     // hide progress
-                     [self showLoadingEnabled:NO withTitle:nil];
-                 });
-             }];
-}
-
-- (void) addMediaToTable:(ExMedia *) media {
-    [self.mediaList addMedia:media];
-    
-    [self.tableView reloadData];
 }
 
 - (void) editTableItems:(id)sender {
@@ -285,53 +272,10 @@
 
 - (void) initToolbarInEditMode:(BOOL) edit {
     if (edit) {
-        self.toolbarItems = @[editItem, [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil], addItem];
-        self.toolbarItems[0].enabled = ([self.mediaList numberOfMediaLoaded] > 0);
+        self.toolbarItems = @[[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil], editItem];
+        self.toolbarItems[0].enabled = ([self.records count] > 0);
     } else {
-        self.toolbarItems = @[doneItem, [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil], addItem];
-    }
-}
-
-#pragma mark - Toolbar actions
-- (IBAction)onAddURLAction:(id)sender {
-    UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Enter page address", nil)
-                                                                   message:NSLocalizedString(@"Enter page address as shown in browser", nil)
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    [alert addTextFieldWithConfigurationHandler:^(UITextField * textField) {
-        textField.borderStyle = UITextBorderStyleNone;
-    }];
-    
-    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-        NSString *urlText = [alert.textFields[0] text];
-        if ([urlText length] > 0) {
-            NSURL *url = [NSURL URLWithString:urlText];
-            if (url) {
-                [self showLoadingEnabled:YES
-                               withTitle:[NSString stringWithFormat:@"loading: %@", urlText]];
-                [self addMediaFromURL:url];
-            } else {
-                AlertHelper *alert = [[AlertHelper alloc] init];
-                alert.title = NSLocalizedString(@"Wrong page address", nil);
-                alert.message = NSLocalizedString(@"Please make sure that correct page address provided", nil);
-                alert.cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
-            }
-        }
-    }];
-    
-    [alert addAction:defaultAction];
-    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", nil) style:UIAlertActionStyleCancel
-                                            handler:^(UIAlertAction * action) {}]];
-    [self presentViewController:alert animated:YES completion:nil];
-    
-}
-
-- (void) showLoadingEnabled:(BOOL)enabled withTitle:(NSString*)title{
-    if (enabled) {
-        [self.loadingText setText:title];
-        self.tableView.tableHeaderView = self.headerView;
-        [self.tableView.tableHeaderView sizeToFit];
-    } else {
-        self.tableView.tableHeaderView = nil;
+        self.toolbarItems = @[[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil], doneItem];
     }
 }
 @end

@@ -36,7 +36,7 @@
     [_coreDataManager.listMediaRecordsAsync continueWithBlock:^id _Nullable(BFTask * _Nonnull task) {
         if (!task.faulted) {
             NSArray<CVMediaRecordMO *> *records = task.result;
-            NSMutableArray<NSString *> *urls = [NSMutableArray arrayWithCapacity:task.result];
+            NSMutableArray<NSString *> *urls = [NSMutableArray arrayWithCapacity:records.count];
             for (CVMediaRecordMO *record in records) {
                 [urls addObject:record.pageUrl];
             }
@@ -53,21 +53,6 @@
         }
         return nil;
     }];
-    
-    
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSLog(@"Load media list from: %@", [[SharedDataUtils pathToMediaFile] absoluteString]);
-        // read data
-        NSArray<NSString *> *urls = [NSArray arrayWithContentsOfURL:[SharedDataUtils pathToMediaFile]];
-        if (urls && [urls count] > 0) {
-            // clear current list
-            [_medias removeAllObjects];
-            // start loading media
-            [self loadFrom:urls atIndex:0 withCallback:callbackBlock];
-        } else {
-            callbackBlock(YES);
-        }
-    });
 }
 
 - (void) loadFrom:(NSArray<NSString *> *)urls atIndex:(NSUInteger)index withCallback:(void (^)(BOOL final))callbackBlock {

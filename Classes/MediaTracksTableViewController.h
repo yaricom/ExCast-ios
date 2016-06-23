@@ -7,11 +7,11 @@
 
 #import <UIKit/UIKit.h>
 
-#import "ExMedia.h"
+#import "CVMediaRecordMO.h"
 
 @interface MediaTracksTableViewController : UITableViewController
 
 // The media holder object
-@property(strong, nonatomic) ExMedia *mediaToPlay;
+@property(strong, nonatomic) CVMediaRecordMO *mediaToPlay;
 
 @end

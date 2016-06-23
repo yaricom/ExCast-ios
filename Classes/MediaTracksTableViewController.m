@@ -10,8 +10,13 @@
 
 #import "SimpleImageFetcher.h"
 #import "ExMediaTrack.h"
+#import "ExMedia.h"
 #import "CastDeviceController.h"
 #import "NotificationConstants.h"
+#import "AlertHelper.h"
+#import "LocalPlayerViewController.h"
+#import "AppDelegate.h"
+#import "CVMediaTrack.h"
 
 #import <GoogleCast/GCKDeviceManager.h>
 #import <GoogleCast/GCKMediaControlChannel.h>
@@ -20,6 +25,8 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *posterImage;
 @property (weak, nonatomic) IBOutlet UILabel *mediaTitleLbl;
+
+
 /** The queue button. */
 @property(nonatomic, strong) UIBarButtonItem *showQueueButton;
 
@@ -33,9 +40,7 @@
     self.mediaTitleLbl.text = self.mediaToPlay.title;
     // load poster image
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        UIImage *image = [UIImage
-                          imageWithData:[SimpleImageFetcher getDataFromImageURL:self.mediaToPlay.thumbnailURL]];
-        
+        UIImage *image = [UIImage imageWithData:[SimpleImageFetcher getDataFromImageURL:[NSURL URLWithString:self.mediaToPlay.thumbnailUrl]]];
         dispatch_sync(dispatch_get_main_queue(), ^{
             self.posterImage.image = image;
             [self.posterImage setNeedsLayout];
@@ -43,10 +48,18 @@
     });
     
     // Create the queue button.
-    _showQueueButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"playlist_white.png"]
-                                                        style:UIBarButtonItemStylePlain
-                                                       target:self
-                                                       action:@selector(showQueue:)];
+    self.showQueueButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"playlist_white.png"]
+                                                            style:UIBarButtonItemStylePlain
+                                                           target:self
+                                                           action:@selector(showQueue:)];
+    
+    [self.refreshControl addTarget: self
+                            action: @selector(loadMediaTracks)
+                  forControlEvents: UIControlEventValueChanged];
+    
+    if ([self.mediaToPlay.tracks count] == 0) {
+        [self loadMediaTracks];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -95,10 +108,10 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
     
     // Configure the cell...
-    ExMediaTrack *track = [self.mediaToPlay.tracks objectAtIndex:indexPath.row];
+    CVMediaTrack *track = [self.mediaToPlay.tracks objectAtIndex:indexPath.row];
     cell.textLabel.text = track.name;
-    cell.detailTextLabel.text = [track.url absoluteString];
-    
+    cell.detailTextLabel.text = track.address;
+
     return cell;
 }
 
@@ -114,19 +127,9 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"playMedia"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        ExMediaTrack *track = self.mediaToPlay.tracks[indexPath.row];
-        
-        // create new media object
-        ExMedia *media = [[ExMedia alloc] init];
-        media.URL = track.url;
-        media.title = self.mediaToPlay.title;
-        media.subtitle = track.name;
-        media.pageUrl = self.mediaToPlay.pageUrl;
-        media.thumbnailURL = self.mediaToPlay.thumbnailURL;
-        media.posterURL = self.mediaToPlay.posterURL;
         
         // Pass the currently selected media to the next controller if it needs it.
-        [[segue destinationViewController] setMediaToPlay:media];
+        [[segue destinationViewController] playMediaTrack:indexPath.row fromRecord:self.mediaToPlay];
     }
 }
 
@@ -160,6 +163,72 @@
 
 - (void)didDisconnect {
     [self updateQueueButton];
+}
+
+#pragma mark - private 
+- (void) onRemoteFetchComplete: (ExMedia *) media {
+    for (ExMediaTrack *track in media.tracks) {
+        [[[[AppDelegate sharedInstance] dataController] createTrackWithURL:track.url title:track.name forRecord:self.mediaToPlay]
+         continueWithBlock:^id _Nullable(BFTask * _Nonnull task) {
+             //
+             if (task.faulted) {
+                 NSLog(@"Failed to store media track, reason: %@", task.error);
+             }
+             
+             return nil;
+         }];
+    }
+}
+
+- (void) loadMediaTracks {
+    // show refresh control if appropriate
+    if (!self.refreshControl.refreshing) {
+        [self.refreshControl beginRefreshing];
+    }
+    
+    // remove existing tracks
+    [[[[AppDelegate sharedInstance] dataController] deleteMediaRecordAsync:self.mediaToPlay]
+     continueWithBlock:^id _Nullable(BFTask * _Nonnull task) {
+         if (!task.faulted) {
+             // load new tracks
+             [self loadRemote];
+         } else {
+             NSLog(@"Failed to delete media tracks, reason: %@", task.error);
+         }
+         
+         return nil;
+     }];
+}
+
+- (void) loadRemote {
+    [ExMedia mediaFromExURL: [self.mediaToPlay pageURL] withCompletion:
+     ^(ExMedia * _Nullable media, NSError * _Nullable error) {
+         dispatch_async(dispatch_get_main_queue(), ^{
+             // execute on main UI thread
+             if (error) {
+                 NSLog(@"Failed to load data, reason: %@", error);
+                 AlertHelper *alert = [[AlertHelper alloc] init];
+                 alert.title = NSLocalizedString(@"Failed to load remote media", nil);
+                 alert.message = NSLocalizedString(@"Remote media was not found. It may be deleted from server or connection to server lost. Please try again later and check that media still present on server.", nil);
+                 alert.cancelButtonTitle = NSLocalizedString(@"OK", nil);
+                 [alert showOnController:self sourceView:self.tableView];
+                 
+                 // mark record as invalid
+                 self.mediaToPlay.valid = [NSNumber numberWithBool:NO];
+             } else {
+                 self.mediaToPlay.valid = [NSNumber numberWithBool:YES];
+                 // populate table
+                 [self onRemoteFetchComplete: media];
+             }
+             
+             [self.tableView reloadData];
+             
+             // close refresh control
+             if (self.refreshControl.refreshing) {
+                 [self.refreshControl endRefreshing];
+             }
+         });
+     }];
 }
 
 

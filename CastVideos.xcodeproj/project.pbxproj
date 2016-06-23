@@ -40,6 +40,11 @@
 		5FA883BF1B2165F1008D7840 /* play_circle@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FA883BD1B2165F1008D7840 /* play_circle@3x.png */; };
 		7813CABE1C481E2E007C6846 /* ExMediaTrack.m in Sources */ = {isa = PBXBuildFile; fileRef = 7813CABD1C481E2E007C6846 /* ExMediaTrack.m */; };
 		7813CAC11C482514007C6846 /* MediaTracksTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7813CAC01C482514007C6846 /* MediaTracksTableViewController.m */; };
+		78409BCF1D1BFA4F00B1C04E /* libPods-ExCastVideos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78409BCE1D1BFA4F00B1C04E /* libPods-ExCastVideos.a */; };
+		78409BDA1D1C202600B1C04E /* CVMediaTrack+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 78409BD71D1C202600B1C04E /* CVMediaTrack+CoreDataProperties.m */; };
+		78409BDB1D1C202600B1C04E /* CVMediaTrack.m in Sources */ = {isa = PBXBuildFile; fileRef = 78409BD91D1C202600B1C04E /* CVMediaTrack.m */; };
+		78409BDC1D1C389200B1C04E /* CVMediaTrack+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 78409BD71D1C202600B1C04E /* CVMediaTrack+CoreDataProperties.m */; };
+		78409BDD1D1C389200B1C04E /* CVMediaTrack.m in Sources */ = {isa = PBXBuildFile; fileRef = 78409BD91D1C202600B1C04E /* CVMediaTrack.m */; };
 		787309731C3B0EE3002E2C23 /* SharedDataUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 787309721C3B0EE3002E2C23 /* SharedDataUtils.m */; };
 		787309741C3B1F35002E2C23 /* SharedDataUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 787309721C3B0EE3002E2C23 /* SharedDataUtils.m */; };
 		78AACF0A1C848161006BABE9 /* MediaRecords.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 78AACF081C848161006BABE9 /* MediaRecords.xcdatamodeld */; };
@@ -172,6 +177,11 @@
 		7813CAC31C484065007C6846 /* ExCastExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ExCastExtension.entitlements; sourceTree = "<group>"; };
 		7813CAC81C48484F007C6846 /* libPods-CastVideos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libPods-CastVideos.a"; path = "Pods/../build/Debug-iphoneos/libPods-CastVideos.a"; sourceTree = "<group>"; };
 		7813CACA1C48485A007C6846 /* libHTMLReader.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libHTMLReader.a; path = "Pods/../build/Debug-iphoneos/libHTMLReader.a"; sourceTree = "<group>"; };
+		78409BCE1D1BFA4F00B1C04E /* libPods-ExCastVideos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libPods-ExCastVideos.a"; path = "../../../Library/Developer/Xcode/DerivedData/CastVideos-dmgrwofnbateksaakjjmgoxwfqrr/Build/Products/Debug-iphonesimulator/libPods-ExCastVideos.a"; sourceTree = "<group>"; };
+		78409BD61D1C202600B1C04E /* CVMediaTrack+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CVMediaTrack+CoreDataProperties.h"; sourceTree = "<group>"; };
+		78409BD71D1C202600B1C04E /* CVMediaTrack+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CVMediaTrack+CoreDataProperties.m"; sourceTree = "<group>"; };
+		78409BD81D1C202600B1C04E /* CVMediaTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CVMediaTrack.h; sourceTree = "<group>"; };
+		78409BD91D1C202600B1C04E /* CVMediaTrack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CVMediaTrack.m; sourceTree = "<group>"; };
 		787309711C3B0EE3002E2C23 /* SharedDataUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedDataUtils.h; sourceTree = "<group>"; };
 		787309721C3B0EE3002E2C23 /* SharedDataUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SharedDataUtils.m; sourceTree = "<group>"; };
 		78AACF091C848161006BABE9 /* MediaRecords.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MediaRecords.xcdatamodel; sourceTree = "<group>"; };
@@ -264,6 +274,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				78409BCF1D1BFA4F00B1C04E /* libPods-ExCastVideos.a in Frameworks */,
 				78AACF211C848B86006BABE9 /* CoreData.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -297,6 +308,7 @@
 		284CBD84182ADC2D007F65F9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				78409BCE1D1BFA4F00B1C04E /* libPods-ExCastVideos.a */,
 				78C192451D1703C500032241 /* libPods-ExCastVideos.a */,
 				78C192391D16FB4200032241 /* HTMLReader.framework */,
 				78C192351D16F2BC00032241 /* libHTMLReader.a */,
@@ -399,6 +411,10 @@
 		78AACF071C847EA2006BABE9 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				78409BD61D1C202600B1C04E /* CVMediaTrack+CoreDataProperties.h */,
+				78409BD71D1C202600B1C04E /* CVMediaTrack+CoreDataProperties.m */,
+				78409BD81D1C202600B1C04E /* CVMediaTrack.h */,
+				78409BD91D1C202600B1C04E /* CVMediaTrack.m */,
 				78AACF0B1C8485D7006BABE9 /* CVMediaRecordMO+CoreDataProperties.h */,
 				78AACF0C1C8485D7006BABE9 /* CVMediaRecordMO+CoreDataProperties.m */,
 				78AACF0D1C8485D7006BABE9 /* CVMediaRecordMO.h */,
@@ -675,6 +691,7 @@
 				78C586011C397EF9009305C7 /* ExMedia.m in Sources */,
 				284CC035182C3396007F65F9 /* CastViewController.m in Sources */,
 				EFD7C20319FE71AF00082842 /* LocalPlayerView.m in Sources */,
+				78409BDA1D1C202600B1C04E /* CVMediaTrack+CoreDataProperties.m in Sources */,
 				284CBD92182ADC2D007F65F9 /* main.m in Sources */,
 				EA64A2261B9F4AFF00A45576 /* NotificationConstants.m in Sources */,
 				124377D0187CC2B500ADF736 /* DeviceTableViewController.m in Sources */,
@@ -689,6 +706,7 @@
 				EF548C2F1B87F3F00026C33F /* CastContainerController.m in Sources */,
 				7813CABE1C481E2E007C6846 /* ExMediaTrack.m in Sources */,
 				284CBDA2182ADC2D007F65F9 /* LocalPlayerViewController.m in Sources */,
+				78409BDB1D1C202600B1C04E /* CVMediaTrack.m in Sources */,
 				EA01BA6D1BB0D2860003EF32 /* Toast.m in Sources */,
 				EF110FB119759BB30009410F /* CastInstructionsViewController.m in Sources */,
 				78AACF131C8485D7006BABE9 /* CVMediaRecordMO+CoreDataProperties.m in Sources */,
@@ -701,6 +719,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				78409BDC1D1C389200B1C04E /* CVMediaTrack+CoreDataProperties.m in Sources */,
+				78409BDD1D1C389200B1C04E /* CVMediaTrack.m in Sources */,
 				78E560451C860194008C858F /* ExMediaTrack.m in Sources */,
 				78E560441C86018B008C858F /* ExMedia.m in Sources */,
 				78AACF161C8485D7006BABE9 /* CVMediaRecordMO.m in Sources */,
@@ -847,7 +867,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = ua.nologin.ChromeCast.ExCast;
 				PRODUCT_NAME = CastVideos;
-				PROVISIONING_PROFILE = "9fbeef52-f157-4d72-add6-fb6139487154";
+				PROVISIONING_PROFILE = "1577c727-6c4e-4c25-b218-dfe3f3cf62f4";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USE_HEADERMAP = YES;
 				WRAPPER_EXTENSION = app;
@@ -862,8 +882,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = CastVideos.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					..,
@@ -881,7 +901,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = ua.nologin.ChromeCast.ExCast;
 				PRODUCT_NAME = CastVideos;
-				PROVISIONING_PROFILE = "9fbeef52-f157-4d72-add6-fb6139487154";
+				PROVISIONING_PROFILE = "1577c727-6c4e-4c25-b218-dfe3f3cf62f4";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USE_HEADERMAP = YES;
 				WRAPPER_EXTENSION = app;
@@ -920,7 +940,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = ua.nologin.ChromeCast.ExCast.ExCastExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "098ebf2f-fdcd-49e9-b17b-56bd834688c1";
+				PROVISIONING_PROFILE = "45c47ed6-3ccf-440f-9faa-c2da23ec8c53";
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -932,8 +952,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_ENTITLEMENTS = ExCastExtension.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -958,7 +978,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = ua.nologin.ChromeCast.ExCast.ExCastExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "098ebf2f-fdcd-49e9-b17b-56bd834688c1";
+				PROVISIONING_PROFILE = "45c47ed6-3ccf-440f-9faa-c2da23ec8c53";
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
