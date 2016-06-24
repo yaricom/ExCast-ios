@@ -65,7 +65,7 @@
     // hide toobar
     self.navigationController.toolbarHidden = YES;
     
-    [self.playerView playMediaTrack:self.trackIndex fromRecord:self.mediaRecord];
+    [self.playerView setMediaTrack:self.trackIndex fromRecord:self.mediaRecord];
     [self.playerView playbackEnabled:self.playbackEnabled];
     _resetEdgesOnDisappear = YES;
     
@@ -112,7 +112,7 @@
 
 - (void)dealloc {
     // Explicitly clear the playing media and release the AVPlayer.
-    [_playerView playMediaTrack:0 fromRecord:nil];
+    [_playerView setMediaTrack:0 fromRecord:nil];
     _playerView.delegate = nil;
 }
 
@@ -151,7 +151,6 @@
     self.mediaTitle.text = self.mediaRecord.title;
     self.mediaSubtitle.text = [[self.mediaRecord trackAtIndex:self.trackIndex] address];
     self.mediaDescription.text = self.mediaRecord.details;
-    NSLog(@"Description %@", self.mediaDescription.text);
 }
 
 #pragma mark - Handling the queue button's display state

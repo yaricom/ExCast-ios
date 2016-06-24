@@ -57,7 +57,7 @@ typedef NS_ENUM(NSUInteger, LPVNavBarStyle) {
 @property(nonatomic, readonly) BOOL fullscreen;
 
 /* Set the media to be displayed and played. */
-- (void) playMediaTrack: (NSInteger)track fromRecord: (CVMediaRecordMO *)record;
+- (void) setMediaTrack: (NSInteger)track fromRecord: (CVMediaRecordMO *)record;
 
 /* Signal an orientation change has occurred. */
 - (void)orientationChanged;

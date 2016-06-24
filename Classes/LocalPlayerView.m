@@ -136,13 +136,14 @@ static NSInteger kToolbarHeight = 44;
 # pragma mark - Interface
 
 /* If given a new media, allocate a media player and the various layers needed. */
-- (void) playMediaTrack: (NSInteger)track fromRecord: (CVMediaRecordMO *)record {
-    if (self.mediaRecord != record && self.trackIndex != track) {
+- (void) setMediaTrack: (NSInteger)track fromRecord: (CVMediaRecordMO *)record {
+    if (self.mediaRecord != nil || (self.mediaRecord == record && self.trackIndex == track)) {
         // Don't reinit if we already have the media.
         return;
     }
     
     self.mediaRecord = record;
+    self.trackIndex = track;
     if (record == nil) {
         [self clearMovie];
         return;
@@ -239,8 +240,7 @@ static NSInteger kToolbarHeight = 44;
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
     
     dispatch_async(queue, ^{
-        UIImage *image = [UIImage
-                          imageWithData:[SimpleImageFetcher getDataFromImageURL:[self.mediaRecord thumbnailURL]]];
+        UIImage *image = [UIImage imageWithData:[SimpleImageFetcher getDataFromImageURL:[self.mediaRecord thumbnailURL]]];
         
         dispatch_sync(dispatch_get_main_queue(), ^{
             _splashImage.image = image;
@@ -555,10 +555,8 @@ static NSInteger kToolbarHeight = 44;
     [self.controlView insertSubview:self.activityIndicator aboveSubview:self.toolbarView];
     
     // Layout.
-    NSString *hlayout =
-    @"|-[playButton(==40)]-5-[currTime(>=40)]-[slider(>=120)]-[totalTime(==currTime)]-|";
-    NSString *vlayout =
-    @"V:|[playButton(==40)]";
+    NSString *hlayout = @"|-[playButton(==40)]-5-[currTime(>=40)]-[slider(>=120)]-[totalTime(==currTime)]-|";
+    NSString *vlayout = @"V:|[playButton(==40)]";
     self.viewsDictionary = @{ @"slider" : self.slider,
                               @"currTime" : self.currTime,
                               @"totalTime" :  self.totalTime,
