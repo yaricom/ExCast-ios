@@ -62,6 +62,9 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    // hide toobar
+    self.navigationController.toolbarHidden = YES;
+    
     [self.playerView playMediaTrack:self.trackIndex fromRecord:self.mediaRecord];
     [self.playerView playbackEnabled:self.playbackEnabled];
     _resetEdgesOnDisappear = YES;
@@ -76,6 +79,7 @@
     [self syncTextToMedia];
     if (self.playerView.fullscreen) {
         [self hideNavigationBar:YES];
+        self.navigationController.toolbarHidden = YES;
     }
     
     // Assign ourselves as delegate ONLY in viewWillAppear of a view controller.
@@ -134,8 +138,8 @@
 
 #pragma mark - Managing the detail item
 
-- (void) playMediaTrack: (NSInteger)track fromRecord: (CVMediaRecordMO *)record {
-    if (self.mediaRecord != record && self.trackIndex != track) {
+- (void) setMediaTrack: (NSInteger)track fromRecord: (CVMediaRecordMO *)record {
+    if (self.mediaRecord == nil || (self.mediaRecord != record && self.trackIndex != track)) {
         self.mediaRecord = record;
         self.trackIndex = track;
         self.playbackEnabled = YES;
@@ -146,7 +150,8 @@
 - (void)syncTextToMedia {
     self.mediaTitle.text = self.mediaRecord.title;
     self.mediaSubtitle.text = [[self.mediaRecord trackAtIndex:self.trackIndex] address];
-    self.mediaDescription.text = self.mediaRecord.description;
+    self.mediaDescription.text = self.mediaRecord.details;
+    NSLog(@"Description %@", self.mediaDescription.text);
 }
 
 #pragma mark - Handling the queue button's display state
@@ -177,8 +182,6 @@
         [self.navigationController.navigationBar setBackgroundImage:nil
                                                       forBarMetrics:UIBarMetricsDefault];
         self.navigationController.navigationBar.shadowImage = nil;
-//        [[UIApplication sharedApplication] setStatusBarHidden:NO
-//                                                withAnimation:UIStatusBarAnimationFade];
         self.navigationController.interactivePopGestureRecognizer.enabled = YES;
         _resetEdgesOnDisappear = NO;
     } else if (style == LPVNavBarTransparent) {
@@ -186,8 +189,6 @@
         [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
                                                       forBarMetrics:UIBarMetricsDefault];
         self.navigationController.navigationBar.shadowImage = [UIImage new];
-//        [[UIApplication sharedApplication] setStatusBarHidden:YES
-//                                                withAnimation:UIStatusBarAnimationFade];
         // Disable the swipe gesture if we're fullscreen.
         self.navigationController.interactivePopGestureRecognizer.enabled = NO;
         _resetEdgesOnDisappear = YES;
@@ -204,6 +205,7 @@
     CastDeviceController *controller = [CastDeviceController sharedInstance];
     CVMediaTrack *track = [self.mediaRecord trackAtIndex:self.trackIndex];
     NSTimeInterval pos = [[track playTime] doubleValue];
+    self.mediaRecord.neverPlayed = [NSNumber numberWithBool: NO];// mark as already played
     if (controller.deviceManager.applicationConnectionState != GCKConnectionStateConnected) {
         if (pos > 0) {
             _playerView.playbackTime = pos;

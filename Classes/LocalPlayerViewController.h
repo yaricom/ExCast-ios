@@ -36,6 +36,6 @@
 @property(weak, nonatomic) IBOutlet UILabel *mediaSubtitle;
 
 /** The media object being played on Chromecast device. Set this before presenting the view. */
-- (void) playMediaTrack: (NSInteger)track fromRecord: (CVMediaRecordMO *)record;
+- (void) setMediaTrack: (NSInteger)track fromRecord: (CVMediaRecordMO *)record;
 
 @end

@@ -867,7 +867,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = ua.nologin.ChromeCast.ExCast;
 				PRODUCT_NAME = CastVideos;
-				PROVISIONING_PROFILE = "1577c727-6c4e-4c25-b218-dfe3f3cf62f4";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USE_HEADERMAP = YES;
 				WRAPPER_EXTENSION = app;
@@ -901,7 +901,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = ua.nologin.ChromeCast.ExCast;
 				PRODUCT_NAME = CastVideos;
-				PROVISIONING_PROFILE = "1577c727-6c4e-4c25-b218-dfe3f3cf62f4";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USE_HEADERMAP = YES;
 				WRAPPER_EXTENSION = app;
@@ -940,7 +940,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = ua.nologin.ChromeCast.ExCast.ExCastExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "45c47ed6-3ccf-440f-9faa-c2da23ec8c53";
+				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -978,7 +978,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = ua.nologin.ChromeCast.ExCast.ExCastExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "45c47ed6-3ccf-440f-9faa-c2da23ec8c53";
+				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
 			};
 			name = Release;

@@ -31,14 +31,14 @@ static int const kSubGenreRow = 3;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *doneBarBtn;
 
+@property (weak, nonatomic) UITextView *textView;
+
 // the page URL if any
 @property (strong, nonatomic) NSURL *pageUrl;
 // the page address
 @property (strong, nonatomic) NSString *pageUrlText;
 // the media object associated with page
 @property (strong, nonatomic) ExMedia *media;
-// the movie description
-@property (strong, nonatomic) NSString *movieDetails;
 
 // the section titles
 @property (strong, nonatomic) NSArray<NSString*> *sectionTitles;
@@ -193,8 +193,8 @@ static int const kSubGenreRow = 3;
     } else if (self.media) {
         // description
         cell = [tableView dequeueReusableCellWithIdentifier:kTextFieldCellIdentifier];
-        UITextView *textView = [cell viewWithTag:101];
-        [textView setText:@""];
+        self.textView = [cell viewWithTag:101];
+        [self.textView setText:@""];
     }
     
     return cell;
@@ -362,7 +362,7 @@ static int const kSubGenreRow = 3;
         if (!expired) {
             [[self.dataControler saveWithURL: self.pageUrl
                                        title: self.media.title
-                                 description: self.movieDetails
+                                 description: [self.textView text]
                                        genre: self.genres[self.mainGenreIndex]
                                     subGenre: self.genres[self.subGenreIndex]
                                 thumbnailURL: self.media.thumbnailURL]

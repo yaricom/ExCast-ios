@@ -59,8 +59,6 @@ static NSString *const kShowMediaTracksSegue = @"showMediaTracks";
     self.navigationItem.titleView = [[UIView alloc] init];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:titleView];
     
-    [self reloadMediaList];
-    
     // Create the queue button.
     self.showQueueButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"playlist_white.png"]
                                                             style:UIBarButtonItemStylePlain
@@ -74,6 +72,9 @@ static NSString *const kShowMediaTracksSegue = @"showMediaTracks";
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
+    // reload media list to update
+    [self reloadMediaList];
     
     // show toobar
     self.navigationController.toolbarHidden = NO;
@@ -176,6 +177,12 @@ static NSString *const kShowMediaTracksSegue = @"showMediaTracks";
     cell.textLabel.numberOfLines = 2;
     cell.textLabel.text = media.title;
     cell.detailTextLabel.text = media.pageUrl;
+    // mark played videos
+    if ([media.neverPlayed boolValue]) {
+        cell.textLabel.font = [UIFont boldSystemFontOfSize:16];
+    } else {
+        cell.textLabel.font = [UIFont systemFontOfSize:16];
+    }
     
     // Asynchronously load the table view image
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{

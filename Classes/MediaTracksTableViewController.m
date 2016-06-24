@@ -64,10 +64,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    
-    // show toobar
-    self.navigationController.toolbarHidden = NO;
-    
+
     // Assign ourselves as delegate ONLY in viewWillAppear of a view controller.
     CastDeviceController *controller = [CastDeviceController sharedInstance];
     controller.delegate = self;
@@ -129,7 +126,7 @@
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
         
         // Pass the currently selected media to the next controller if it needs it.
-        [[segue destinationViewController] playMediaTrack:indexPath.row fromRecord:self.mediaToPlay];
+        [[segue destinationViewController] setMediaTrack:indexPath.row fromRecord:self.mediaToPlay];
     }
 }
 
@@ -181,13 +178,15 @@
 }
 
 - (void) loadMediaTracks {
+    [self initToolbarWithProgress: YES];
+    
     // show refresh control if appropriate
     if (!self.refreshControl.refreshing) {
         [self.refreshControl beginRefreshing];
     }
     
     // remove existing tracks
-    [[[[AppDelegate sharedInstance] dataController] deleteMediaRecordAsync:self.mediaToPlay]
+    [[[[AppDelegate sharedInstance] dataController] deleteMediaTracksForRecordAsync:self.mediaToPlay]
      continueWithBlock:^id _Nullable(BFTask * _Nonnull task) {
          if (!task.faulted) {
              // load new tracks
@@ -227,8 +226,31 @@
              if (self.refreshControl.refreshing) {
                  [self.refreshControl endRefreshing];
              }
+             
+             [self initToolbarWithProgress: NO];
          });
      }];
+}
+
+- (void) initToolbarWithProgress: (BOOL)enabled {
+    self.navigationController.toolbarHidden = !enabled;
+    if (enabled) {
+        UIBarButtonItem *spacerItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+        
+        UIActivityIndicatorView *progress = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        [progress startAnimating];
+        UIBarButtonItem *progressItem = [[UIBarButtonItem alloc] initWithCustomView: progress];
+        
+        UILabel *prompt = [UILabel new];
+        prompt.text = NSLocalizedString(@"Loading tracks from remote...", nil);
+        prompt.numberOfLines = 0;
+        prompt.font = [UIFont systemFontOfSize:13];
+        [prompt sizeToFit];
+        prompt.lineBreakMode = NSLineBreakByTruncatingTail;
+        UIBarButtonItem *promptItem = [[UIBarButtonItem alloc] initWithCustomView:prompt];
+        
+        self.toolbarItems = @[promptItem, spacerItem, progressItem];
+    }
 }
 
 
