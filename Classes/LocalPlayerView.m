@@ -149,6 +149,9 @@ static NSInteger kToolbarHeight = 44;
         return;
     }
     
+    // set playback time
+    self.playbackTime = [[[self.mediaRecord.tracks objectAtIndex:track] playTime] integerValue];
+    
     self.translatesAutoresizingMaskIntoConstraints = NO;
     _state = LPVSplash;
     
@@ -343,6 +346,8 @@ static NSInteger kToolbarHeight = 44;
         NSInteger secs = floor((int)self.slider.value % 60);
         self.currTime.text = [NSString stringWithFormat:@"%02ld:%02ld", (long)mins, (long)secs];
     }
+    // store for current track
+    [[self.mediaRecord.tracks objectAtIndex:self.trackIndex] setPlayTime:[NSNumber numberWithInteger:self.playbackTime]];
 }
 
 
@@ -634,8 +639,7 @@ static NSInteger kToolbarHeight = 44;
     
     if (!self.duration) {
         self.slider.minimumValue = 0;
-        self.duration = self.slider.maximumValue =
-        CMTimeGetSeconds(self.moviePlayer.currentItem.duration);
+        self.duration = self.slider.maximumValue = CMTimeGetSeconds(self.moviePlayer.currentItem.duration);
         self.slider.enabled = YES;
         [self.activityIndicator stopAnimating];
         NSInteger mins = floor(self.slider.maximumValue / 60);

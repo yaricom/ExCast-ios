@@ -223,9 +223,7 @@
     [helper addAction:NSLocalizedString(@"Play Now", nil) handler:^{
         if (pos > 0) {
             // start playback from stored position
-            [controller.mediaControlChannel loadMedia: media
-                                             autoplay: YES
-                                         playPosition: pos];
+            [controller.mediaControlChannel loadMedia: media autoplay: YES playPosition: pos];
         } else {
             [controller mediaPlayNow: media];
         }

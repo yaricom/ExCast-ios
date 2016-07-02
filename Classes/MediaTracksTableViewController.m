@@ -189,6 +189,7 @@
     [[[[AppDelegate sharedInstance] dataController] deleteMediaTracksForRecordAsync:self.mediaToPlay]
      continueWithBlock:^id _Nullable(BFTask * _Nonnull task) {
          if (!task.faulted) {
+             [self.tableView reloadData];
              // load new tracks
              [self loadRemote];
          } else {

@@ -48,14 +48,12 @@
     editItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(editTableItems:)];
     deleteItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(didTapClearQueue:)];
     doneItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneEditTableItems:)];
-    
-    [self initToolbarInEditMode:YES];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    self.navigationController.toolbarHidden = NO;
+    self.navigationController.toolbarHidden = YES;
     
     // Assign ourselves as delegate ONLY in viewWillAppear of a view controller.
     CastDeviceController *controller = [CastDeviceController sharedInstance];

@@ -68,6 +68,10 @@ static NSString * const kVersionFooter = @"v";
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleDefault;
+}
+
 - (void)scanDidChange {
     [self.tableView reloadData];
 }
