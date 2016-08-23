@@ -67,8 +67,9 @@ extern NSString * const kCastViewController;
  * Invoked to signal that stream position was updated
  *
  * @param position the new position value
+ * @param streamId the stream ID
  */
-- (void)didUpdateStreamPosition:(NSTimeInterval)position;
+- (void)didUpdateStreamPosition:(NSTimeInterval)position streamID: (NSString* )streamId ;
 
 @end
 

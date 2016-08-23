@@ -214,6 +214,8 @@
         return YES;
     }
     
+    // Play on the connected Chromecast device
+    //
     AlertHelper *helper = [[AlertHelper alloc] init];
     helper.cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
     
@@ -223,7 +225,7 @@
     [helper addAction:NSLocalizedString(@"Play Now", nil) handler:^{
         if (pos > 0) {
             // start playback from stored position
-            [controller.mediaControlChannel loadMedia: media autoplay: YES playPosition: pos];
+            [controller.mediaControlChannel loadMedia:media autoplay:YES playPosition:pos];
         } else {
             [controller mediaPlayNow: media];
         }
@@ -299,8 +301,12 @@
     }
 }
 
-- (void)didUpdateStreamPosition: (NSTimeInterval)position {
-    [[self.mediaRecord trackAtIndex:self.trackIndex] setPlayTime:[NSNumber numberWithDouble:position]];
+- (void)didUpdateStreamPosition:(NSTimeInterval)position streamID: (NSString* )streamId {
+    CVMediaTrack *track = [self.mediaRecord trackAtIndex:self.trackIndex];
+    if (streamId && [track.address isEqualToString:streamId]) {
+        // to avoid setting time from previous track before new track is starting
+        [track setPlayTime:[NSNumber numberWithDouble:position]];
+    }
 }
 
 @end

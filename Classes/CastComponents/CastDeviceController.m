@@ -118,16 +118,15 @@ GCKMediaControlChannelDelegate
 
 - (void)dealloc {
     // Stop the position tracker.
-    [_streamPositionUpdateTimer invalidateTimer];
-    self.streamPositionUpdateTimer = nil;
+    [self stopPositionTracker];
 }
 
 # pragma mark - Internals
 
 - (void)updateLastPosition {
     self.lastPosition = [_mediaControlChannel approximateStreamPosition];
-    if ([_delegate respondsToSelector: @selector(didUpdateStreamPosition:)]) {
-        [_delegate didUpdateStreamPosition: self.lastPosition];
+    if ([self.delegate respondsToSelector: @selector(didUpdateStreamPosition:streamID:)]) {
+        [self.delegate didUpdateStreamPosition: self.lastPosition streamID:self.lastContentID];
     }
 }
 
@@ -183,8 +182,8 @@ GCKMediaControlChannelDelegate
 
 - (void)chooseDevice:(id)sender {
     BOOL showPicker = YES;
-    if ([_delegate respondsToSelector:@selector(shouldDisplayModalDeviceController)]) {
-        showPicker = [_delegate shouldDisplayModalDeviceController];
+    if ([self.delegate respondsToSelector:@selector(shouldDisplayModalDeviceController)]) {
+        showPicker = [self.delegate shouldDisplayModalDeviceController];
     }
     if (self.controller && showPicker) {
         UINavigationController *dtvc = (UINavigationController *)
@@ -248,8 +247,7 @@ GCKMediaControlChannelDelegate
     [self updateCastIconButtonStates];
 }
 
-- (void)deviceManager:(GCKDeviceManager *)deviceManager
-didConnectToCastApplication:(GCKApplicationMetadata *)applicationMetadata
+- (void)deviceManager:(GCKDeviceManager *)deviceManager didConnectToCastApplication:(GCKApplicationMetadata *)applicationMetadata
             sessionID:(NSString *)sessionID
   launchedApplication:(BOOL)launchedApplication {
     self.mediaControlChannel = [[GCKMediaControlChannel alloc] init];
@@ -261,8 +259,8 @@ didConnectToCastApplication:(GCKApplicationMetadata *)applicationMetadata
     [[NSNotificationCenter defaultCenter] postNotificationName:kCastApplicationConnectedNotification
                                                         object:self];
     
-    if ([_delegate respondsToSelector:@selector(didConnectToDevice:)]) {
-        [_delegate didConnectToDevice:deviceManager.device];
+    if ([self.delegate respondsToSelector:@selector(didConnectToDevice:)]) {
+        [self.delegate didConnectToDevice:deviceManager.device];
     }
     
     self.isReconnecting = NO;
@@ -274,21 +272,18 @@ didConnectToCastApplication:(GCKApplicationMetadata *)applicationMetadata
     [defaults synchronize];
 }
 
-- (void)deviceManager:(GCKDeviceManager *)deviceManager
-volumeDidChangeToLevel:(float)volumeLevel
+- (void)deviceManager:(GCKDeviceManager *)deviceManager volumeDidChangeToLevel:(float)volumeLevel
               isMuted:(BOOL)isMuted {
     [[NSNotificationCenter defaultCenter] postNotificationName:kCastVolumeChangedNotification
                                                         object:self];
 }
 
-- (void)deviceManager:(GCKDeviceManager *)deviceManager
-didFailToConnectToApplicationWithError:(NSError *)error {
+- (void)deviceManager:(GCKDeviceManager *)deviceManager didFailToConnectToApplicationWithError:(NSError *)error {
     self.isReconnecting = NO;
     [self updateCastIconButtonStates];
 }
 
-- (void)deviceManager:(GCKDeviceManager *)deviceManager
-didFailToConnectWithError:(GCKError *)error {
+- (void)deviceManager:(GCKDeviceManager *)deviceManager didFailToConnectWithError:(GCKError *)error {
     [self clearPreviousSession];
     
     [self updateCastIconButtonStates];
@@ -298,8 +293,7 @@ didFailToConnectWithError:(GCKError *)error {
     NSLog(@"Received notification that device disconnected");
     
     // Stop the position tracker.
-    [_streamPositionUpdateTimer invalidateTimer];
-    self.streamPositionUpdateTimer = nil;
+    [self stopPositionTracker];
     
     if (!error || (
                    error.code == GCKErrorCodeDeviceAuthenticationFailure ||
@@ -309,23 +303,22 @@ didFailToConnectWithError:(GCKError *)error {
     }
     
     _mediaInformation = nil;
+    self.lastContentID = nil;
     [self updateCastIconButtonStates];
     
     [[NSNotificationCenter defaultCenter]
      postNotificationName:kCastApplicationDisconnectedNotification object:self];
     
-    if ([_delegate respondsToSelector:@selector(didDisconnect)]) {
-        [_delegate didDisconnect];
+    if ([self.delegate respondsToSelector:@selector(didDisconnect)]) {
+        [self.delegate didDisconnect];
     }
 }
 
-- (void)deviceManager:(GCKDeviceManager *)deviceManager
-didDisconnectFromApplicationWithError:(NSError *)error {
+- (void)deviceManager:(GCKDeviceManager *)deviceManager didDisconnectFromApplicationWithError:(NSError *)error {
     NSLog(@"Received notification that app disconnected");
     
     // Stop the position tracker.
-    [_streamPositionUpdateTimer invalidateTimer];
-    self.streamPositionUpdateTimer = nil;
+    [self stopPositionTracker];
     
     if (error) {
         NSLog(@"Application disconnected with error: %@", error);
@@ -365,8 +358,8 @@ didDisconnectFromApplicationWithError:(NSError *)error {
         [self connectToDevice:device];
     }
     
-    if ([_delegate respondsToSelector:@selector(didDiscoverDeviceOnNetwork)]) {
-        [_delegate didDiscoverDeviceOnNetwork];
+    if ([self.delegate respondsToSelector:@selector(didDiscoverDeviceOnNetwork)]) {
+        [self.delegate didDiscoverDeviceOnNetwork];
     }
     
     [[NSNotificationCenter defaultCenter] postNotificationName:kCastScanStatusUpdatedNotification
@@ -393,14 +386,12 @@ didDisconnectFromApplicationWithError:(NSError *)error {
     _mediaInformation = mediaControlChannel.mediaStatus.mediaInformation;
     
     // Always invalidate the existing stream position timer; we can get a new one later if necessary.
-    [_streamPositionUpdateTimer invalidateTimer];
-    self.streamPositionUpdateTimer = nil;
+    [self stopPositionTracker];
     // Start a new stream position timer if there's content playing.
     if (_mediaInformation.contentID) {
-        self.streamPositionUpdateTimer =
-        [[RepeatingTimerManager alloc] initWithTarget: self
-                                             selector: @selector(updateLastPosition)
-                                            frequency: 1.0];
+        self.streamPositionUpdateTimer = [[RepeatingTimerManager alloc] initWithTarget: self
+                                                                              selector: @selector(updateLastPosition)
+                                                                             frequency: 1.0];
     }
     
     self.lastContentID = _mediaInformation.contentID;
@@ -422,8 +413,8 @@ didDisconnectFromApplicationWithError:(NSError *)error {
     [[NSNotificationCenter defaultCenter] postNotificationName:kCastQueueUpdatedNotification
                                                         object:self];
     
-    if ([_delegate respondsToSelector:@selector(didUpdateQueueForDevice:)]) {
-        [_delegate didUpdateQueueForDevice:_deviceManager.device];
+    if ([self.delegate respondsToSelector:@selector(didUpdateQueueForDevice:)]) {
+        [self.delegate didUpdateQueueForDevice:_deviceManager.device];
     }
 }
 
@@ -438,8 +429,8 @@ didDisconnectFromApplicationWithError:(NSError *)error {
         self.preloadingItem = nil;
     }
     
-    if ([_delegate respondsToSelector:@selector(didUpdatePreloadStatusForItem:)]) {
-        [_delegate didUpdatePreloadStatusForItem:self.preloadingItem];
+    if ([self.delegate respondsToSelector:@selector(didUpdatePreloadStatusForItem:)]) {
+        [self.delegate didUpdatePreloadStatusForItem:self.preloadingItem];
     }
     
     [[NSNotificationCenter defaultCenter]
@@ -547,6 +538,12 @@ didDisconnectFromApplicationWithError:(NSError *)error {
 - (void)logFromFunction:(const char *)function message:(NSString *)message {
     // Send SDK’s log messages directly to the console, as an example.
     NSLog(@"%s  %@", function, message);
+}
+
+#pragma mark - Private 
+- (void) stopPositionTracker {
+    [self.streamPositionUpdateTimer invalidateTimer];
+    self.streamPositionUpdateTimer = nil;
 }
 
 @end
