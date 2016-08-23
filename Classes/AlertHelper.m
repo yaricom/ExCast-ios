@@ -24,98 +24,62 @@
 @implementation AlertHelperAction
 @end
 
-@interface AlertHelper () <UIAlertViewDelegate>
+@interface AlertHelper ()
 
 @end
 
 @implementation AlertHelper {
-  NSMutableArray *_handlers;
-  NSMutableDictionary *_indexedHandlers;
+    NSMutableArray *_handlers;
+    NSMutableDictionary *_indexedHandlers;
 }
 
 - (instancetype)init {
-  if ((self = [super init])) {
-    _handlers = [NSMutableArray array];
-  }
-  return self;
+    if ((self = [super init])) {
+        _handlers = [NSMutableArray array];
+    }
+    return self;
 }
 
 - (void)addAction:(NSString *)title handler:(void(^)())handler {
-  AlertHelperAction *action = [[AlertHelperAction alloc] init];
-  action.title = title;
-  action.handler = handler;
-  [_handlers addObject:action];
+    AlertHelperAction *action = [[AlertHelperAction alloc] init];
+    action.title = title;
+    action.handler = handler;
+    [_handlers addObject:action];
 }
 
 - (void)showOnController:(UIViewController *)parent
               sourceView:(UIView *)sourceView {
-  if ([UIAlertController class]) {
     // iOS 8+ approach.
     UIAlertController *controller =
-        [UIAlertController alertControllerWithTitle:_title
-                                            message:_message
-                                     preferredStyle:UIAlertControllerStyleActionSheet];
-
+    [UIAlertController alertControllerWithTitle:_title
+                                        message:_message
+                                 preferredStyle:UIAlertControllerStyleActionSheet];
+    
     for (AlertHelperAction *action in _handlers) {
-      UIAlertAction *alertAction = [UIAlertAction actionWithTitle:action.title
-                                                            style:UIAlertActionStyleDefault
-                                                          handler:^(UIAlertAction *unused) {
-                                                            action.handler();
-                                                          }];
-      [controller addAction:alertAction];
+        UIAlertAction *alertAction = [UIAlertAction actionWithTitle:action.title
+                                                              style:UIAlertActionStyleDefault
+                                                            handler:^(UIAlertAction *unused) {
+                                                                action.handler();
+                                                            }];
+        [controller addAction:alertAction];
     }
-
+    
     if (_cancelButtonTitle) {
-      UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:_cancelButtonTitle style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-        [controller dismissViewControllerAnimated:YES completion:nil];
-      }];
-      [controller addAction:cancelAction];
+        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:_cancelButtonTitle style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+            [controller dismissViewControllerAnimated:YES completion:nil];
+        }];
+        [controller addAction:cancelAction];
     }
-
+    
     // Present the controller in the right location, on iPad. On iPhone, it always displays at the
     // bottom of the screen.
     UIPopoverPresentationController *presentationController =
-        [controller popoverPresentationController];
+    [controller popoverPresentationController];
     presentationController.sourceView = sourceView;
     presentationController.sourceRect = sourceView.bounds;
     presentationController.permittedArrowDirections = 0;
-
+    
     [parent presentViewController:controller animated:YES completion:nil];
-
-  } else {
-    // iOS 7 and below.
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:_title
-                                                        message:_message
-                                                       delegate:self
-                                              cancelButtonTitle:_cancelButtonTitle
-                                              otherButtonTitles:nil];
-
-    _indexedHandlers = [NSMutableDictionary dictionaryWithCapacity:_handlers.count];
-    for (AlertHelperAction *action in _handlers) {
-      NSInteger position = [alertView addButtonWithTitle:action.title];
-      _indexedHandlers[@(position)] = action;
-    }
-    [alertView show];
-
-    // Hold onto this AlertHelper until the UIAlertView is dismissed. This ensures that the delegate
-    // is not released (as UIAlertView usually only holds a weak reference to us).
-    static char kAlertHelperKey;
-    objc_setAssociatedObject(alertView, &kAlertHelperKey, self, OBJC_ASSOCIATION_RETAIN);
-  }
-}
-
-#pragma mark - UIAlertViewDelegate
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-  AlertHelperAction *action = _indexedHandlers[@(buttonIndex)];
-  _indexedHandlers = nil;  // clicked something, clear handlers
-  if (action != nil) {
-    action.handler();
-  }
-}
-
-- (void)alertViewCancel:(UIAlertView *)alertView {
-  _indexedHandlers = nil;
 }
 
 @end

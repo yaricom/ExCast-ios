@@ -17,30 +17,47 @@
 
 #import <AVFoundation/AVFoundation.h>
 
+#import <GoogleCast/GoogleCast.h>
+
 @implementation AppDelegate
 
-- (BOOL)application:(UIApplication *)application
-    didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
++ (AppDelegate*) sharedInstance {
+    return [[UIApplication sharedApplication] delegate];
+}
 
-  [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    // Turn on the Cast logging for debug purposes.
+    [[CastDeviceController sharedInstance] enableLogging];
+    // Set the receiver application ID to initialise scanning.
+    [CastDeviceController sharedInstance].applicationID = kGCKMediaDefaultReceiverApplicationID;
+    
+    // Set playback category mode to allow playing audio on the video files even when the ringer
+    // mute switch is on.
+    NSError *setCategoryError;
+    BOOL success = [[AVAudioSession sharedInstance]
+                    setCategory:AVAudioSessionCategoryPlayback
+                    error: &setCategoryError];
+    if (!success) {
+        NSLog(@"Error setting audio category: %@", setCategoryError.localizedDescription);
+    }
+    
+    // initialize core data controller
+    self.dataController = [[CVCoreDataController alloc] init];
+    
+    return YES;
+}
 
-  // Turn on the Cast logging for debug purposes.
-  [[CastDeviceController sharedInstance] enableLogging];
-  // Set the receiver application ID to initialise scanning.
-  [CastDeviceController sharedInstance].applicationID = @"BE13B491";
-  // Replace the value above with your app id.
+- (void)applicationWillTerminate:(UIApplication *)application {
+    [self.dataController saveContext];
+}
 
-  // Set playback category mode to allow playing audio on the video files even when the ringer
-  // mute switch is on.
-  NSError *setCategoryError;
-  BOOL success = [[AVAudioSession sharedInstance]
-                  setCategory:AVAudioSessionCategoryPlayback
-                        error: &setCategoryError];
-  if (!success) {
-    NSLog(@"Error setting audio category: %@", setCategoryError.localizedDescription);
-  }
+- (void)applicationWillResignActive:(UIApplication *)application {
+    [self.dataController saveContext];
+}
 
-  return YES;
+- (void)applicationDidEnterBackground:(UIApplication *)application {
+    [self.dataController saveContext];
 }
 
 @end

@@ -12,13 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "MediaListModel.h"
+#import "PersistentMediaListModel.h"
 
 #import <UIKit/UIKit.h>
+
+#import "CVCoreDataController.h"
 
 @interface AppDelegate : UIResponder<UIApplicationDelegate>
 
 @property(nonatomic, strong) UIWindow *window;
-@property(nonatomic, strong) MediaListModel *mediaList;
+@property(nonatomic, strong) CVCoreDataController *dataController;
+
+// Method to get shared instance of the delegate
++ (AppDelegate*) sharedInstance;
 
 @end

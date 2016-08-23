@@ -35,4 +35,9 @@
  */
 + (UIImage *)scaleImage:(UIImage *)image toSize:(CGSize)newSize;
 
+/**
+ * Method to clear cache record for specified URL
+ */
++ (void) removeCacheHitForURL:(NSURL *)urlToFetch;
+
 @end

@@ -63,6 +63,14 @@ extern NSString * const kCastViewController;
  */
 - (BOOL)shouldDisplayModalDeviceController;
 
+/**
+ * Invoked to signal that stream position was updated
+ *
+ * @param position the new position value
+ * @param streamId the stream ID
+ */
+- (void)didUpdateStreamPosition:(NSTimeInterval)position streamID: (NSString* )streamId ;
+
 @end
 
 @interface CastDeviceController : NSObject <GCKDeviceScannerListener>

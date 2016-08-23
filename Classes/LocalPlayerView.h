@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "Media.h"
+#import "CVMediaRecordMO.h"
 
 #import <UIKit/UIKit.h>
 
@@ -57,7 +57,7 @@ typedef NS_ENUM(NSUInteger, LPVNavBarStyle) {
 @property(nonatomic, readonly) BOOL fullscreen;
 
 /* Set the media to be displayed and played. */
-- (void)setMedia:(Media *)media;
+- (void) setMediaTrack: (NSInteger)track fromRecord: (CVMediaRecordMO *)record;
 
 /* Signal an orientation change has occurred. */
 - (void)orientationChanged;
@@ -67,5 +67,8 @@ typedef NS_ENUM(NSUInteger, LPVNavBarStyle) {
 
 /* Reset the state of the player to show the splash screen. */
 - (void)showSplashScreen;
+
+/* Invoked to enable/disble playback button */
+- (void)playbackEnabled:(BOOL) enabled;
 
 @end
